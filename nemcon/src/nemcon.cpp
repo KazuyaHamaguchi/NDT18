@@ -89,7 +89,7 @@ void switch_cb(const nemcon::switch_in& msg)
 
 			acc_move(0, 1, 0, 0.5, 1.05, 0, 0, 4);	//SZ横
 			ros::Duration(3.632449 + 0.05).sleep();
-			acc_move(0, 1, 0, 0.5, 4.8, -1.1, 0, 1);	//TZ1横
+			acc_move(0, 1, 0, 0.5, 4.8, -1.05, 0, 1);	//TZ1横
 			ros::Duration(7.941593 + 0.05).sleep();
 			msg_throw.data = 30;
 			pub_throw.publish(msg_throw);
@@ -165,13 +165,13 @@ void receive_cb(const std_msgs::Int8& msg)
 	if(msg.data == -11)
 	{
 		set_servo_pulsewidth(pi, pin_servo, 1520);
-		acc_move(0, 1, 0, 0.5, 1.3, -1, 6.4, 2);
+		acc_move(0, 1, 0, 0.5, 1.3, -1, 6.3, 2);
 		pre_TZ = TZ;
 	}
 	if(msg.data == -111)
 	{
 		set_servo_pulsewidth(pi, pin_servo, 1520);
-		acc_move(0, 1, 0, 0.5, 4.8, -1, 6.4, 2);
+		acc_move(0, 1, 0, 0.5, 4.8, -1, 6.3, 2);
  		pre_TZ = TZ;
 	}
 
@@ -212,28 +212,25 @@ void judg_cb(const std_msgs::Int8& msg)
 
 	if(msg.data == 2)	//TZ1と判断
 	{
-		set_servo_pulsewidth(pi, pin_servo, 1400);
+		set_servo_pulsewidth(pi, pin_servo, 1450);
 		ROS_INFO("TZ = 1");
 		TZ = 1;
 		msg_judg.data = 51;
 		pub_judg.publish(msg_judg);
-		set_servo_pulsewidth(pi, pin_servo, 1520);
 	}
 	if(msg.data == 3)	//TZ2と判断
 	{
-		set_servo_pulsewidth(pi, pin_servo, 1400);
+		set_servo_pulsewidth(pi, pin_servo, 1450);
 		TZ = 2;
 		msg_judg.data = 51;
 		pub_judg.publish(msg_judg);
-		set_servo_pulsewidth(pi, pin_servo, 1520);
 	}
 	if(msg.data == 4)	//TZ3と判断
 	{
-		set_servo_pulsewidth(pi, pin_servo, 1400);
+		set_servo_pulsewidth(pi, pin_servo, 1450);
 		TZ = 3;
 		msg_judg.data = 51;
 		pub_judg.publish(msg_judg);
-		set_servo_pulsewidth(pi, pin_servo, 1520);
 	}
 
 	ROS_INFO("pre_TZ: %d, TZ: %d", pre_TZ, TZ);
@@ -243,6 +240,7 @@ void judg_cb(const std_msgs::Int8& msg)
 		ROS_INFO("leave2");
 		if(TZ == 1 && pre_TZ == 1)
 		{
+      set_servo_pulsewidth(pi, pin_servo, 1520);
 			msg_throw.data = 41;
 			pub_throw.publish(msg_throw);
 			ROS_INFO("TZ1 OK!");
@@ -254,6 +252,7 @@ void judg_cb(const std_msgs::Int8& msg)
 		}
 		else if(TZ == 2 && pre_TZ == 1)
 		{
+      set_servo_pulsewidth(pi, pin_servo, 1520);
 			ROS_INFO("TZ2 OK!");
 			acc_move(0, 1, 0, 0.5, 1, -1, 4.4, 2);
 			ros::Duration(3.544908 + 0.05).sleep();
@@ -269,8 +268,9 @@ void judg_cb(const std_msgs::Int8& msg)
 		}
 		else if(TZ == 3 && (pre_TZ == 2 || pre_TZ == 3))
 		{
+      set_servo_pulsewidth(pi, pin_servo, 1520);
 			ROS_INFO("TZ3 OK!");
-			acc_move(0, 1, 0, 0.5, 4.7, -1, 6.4, 4);
+			acc_move(0, 1, 0, 0.5, 4.7, -1, 6.3, 4);
 			ros::Duration(7.841593 + 0.05).sleep();
 			msg_lrf.flag = true;
 			msg_lrf.TZ = 3;
@@ -280,6 +280,7 @@ void judg_cb(const std_msgs::Int8& msg)
 		}
 		else
 		{
+      set_servo_pulsewidth(pi, pin_servo, 1700);
 			msg_judg.data = 52;
 			pub_judg.publish(msg_judg);
 		}
