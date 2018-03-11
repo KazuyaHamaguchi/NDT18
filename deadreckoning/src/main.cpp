@@ -2,8 +2,7 @@
 #include <deadreckoning/enc.h>
 #include <sensor_msgs/Imu.h>
 #include <geometry_msgs/PoseStamped.h>
-
-const float M_PI = 3.1415926535897932;		// 円周率
+#include <math.h>
 
 const float DISTANCE_LRF_TO_CENTER = 0.00;	//[m]
 
@@ -16,10 +15,10 @@ float yawfirst = 0.0f;
 
 void encCallback(const deadreckoning::enc& msg)
 {
-	pose_msg.pose.position.x += msg.distance_x * cos(yaw);
-	pose_msg.pose.position.y += msg.distance_x * sin(yaw);
-	pose_msg.pose.position.x += msg.distance_y * cos(M_PI/2 + yaw);
-	pose_msg.pose.position.y += msg.distance_y * sin(M_PI/2 + yaw);
+	pose_msg.pose.position.x += msg.distance_X * cos(yaw);
+	pose_msg.pose.position.y += msg.distance_X * sin(yaw);
+	pose_msg.pose.position.x += msg.distance_Y * cos(M_PI/2 + yaw);
+	pose_msg.pose.position.y += msg.distance_Y * sin(M_PI/2 + yaw);
 	pub.publish(pose_msg);
 }
 
