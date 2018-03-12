@@ -17,10 +17,10 @@ int threshold;
 double dist_lrf;
 bool backward;
 
-#define FIELD_WIDTH 8.420
+#define FIELD_WIDTH 1.970
 
 
-#define FENCE_WIDTH				0.04	//[m]
+#define FENCE_WIDTH				0.05	//[m]
 #define FENCE_DEPTH				8.2
 
 pthread_mutex_t	mutex;  // MUTEX
