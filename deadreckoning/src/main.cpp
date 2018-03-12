@@ -27,7 +27,7 @@ void encCallback(const deadreckoning::enc& msg)
 
 void imuCallback(const sensor_msgs::Imu& msg)
 {
-	yaw = msg.orientation.x;
+	yaw = msg.orientation.z;
 	pose_msg.pose.orientation.w = msg.orientation.w;
 	pose_msg.pose.orientation.x = msg.orientation.x;
 	pose_msg.pose.orientation.y = msg.orientation.y;
