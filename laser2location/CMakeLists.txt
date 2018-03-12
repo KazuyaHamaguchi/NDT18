@@ -10,7 +10,7 @@ project(laser2location)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
-  std_msg
+  std_msgs
   tf
 )
 
@@ -71,7 +71,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
+#   std_msgs
 # )
 
 ################################################
@@ -106,7 +106,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES laser2location
-#  CATKIN_DEPENDS roscpp rospy std_msg tf
+#  CATKIN_DEPENDS roscpp rospy std_msgs tf
 #  DEPENDS system_lib
 )
 
@@ -198,6 +198,3 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
-
-add_executable(laser2location src/laser2location.cpp)
-target_link_libraries(laser2location ${catkin_LIBRARIES})
