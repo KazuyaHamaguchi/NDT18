@@ -33,7 +33,7 @@ void imuCallback(const sensor_msgs::Imu& msg)
 
 int main(int argc, char **argv)
 {
-	ros::init(argc, argv, "robotPose");
+	ros::init(argc, argv, "deadreckoning");
 
 	ros::NodeHandle nh;
 
