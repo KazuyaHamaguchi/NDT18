@@ -198,3 +198,7 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+
+add_executable(laser2location src/laser2location.cpp)
+target_link_libraries(laser2location ${catkin_LIBRARIES})
