@@ -38,7 +38,7 @@ void thread_main();
 
 void LaserCallback(const sensor_msgs::LaserScan& msg)
 {
-	ROS_INFO("Received [%f][%f][%f]", msg.scan_time, msg.angle_min, msg.angle_max );
+	//ROS_INFO("Received [%f][%f][%f]", msg.scan_time, msg.angle_min, msg.angle_max );
 
 	pthread_mutex_lock( &mutex );
 	lasermsg = msg;
@@ -126,8 +126,6 @@ int main(int argc, char** argv){
 void thread_main(){
 	ROS_INFO("New thread Created.");
 	pthread_detach( pthread_self( ));
-
-	ROS_INFO("OK");
 
 	ros::Publisher publisher;
 	image_transport::Publisher image_pub;
