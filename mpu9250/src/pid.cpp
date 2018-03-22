@@ -19,9 +19,8 @@ static float I = 2.00;
 static float D = 0.05;
 
 static float delta_t = 0.01;
-
-static float lasterror = 0, integral = 0, error = 0, turn = 0;
 float speedFR = 0, speedRL = 0, speedFL = 0, speedRR = 0;
+float turn_acc = 0;
 
 ros::Publisher pub;
 mpu9250::motor msg_m;
@@ -52,73 +51,30 @@ float clamp(float input, float min, float max)
 	return output;
 }
 
-void pid_control(const sensor_msgs::Imu& msg)
+void pid_acc(const sensor_msgs::Imu& msg)
 {
-	static float lasterror = 0, integral = 0, error = 0, turn = 0;
+	float lasterror = 0, integral = 0, error = 0;
 	error = msg.orientation.z - 0.0000;
 
 	integral += (error + lasterror) / 2.0 * delta_t;
 
-	turn = P * error + I * integral + D * (error - lasterror) / delta_t;
+	turn_acc = P * error + I * integral + D * (error - lasterror) / delta_t;
 
 	lasterror = error;
-	if(speed == 0)
-	{
-		speedFR = clamp(nearbyint(speed - turn), -20, 20);
-		speedFL = clamp(nearbyint(speed + turn), -20, 20);
-		speedRL = clamp(nearbyint(speed + turn), -20, 20);
-		speedRR = clamp(nearbyint(speed - turn), -20, 20);
-	}
-	if(speed > 0)
-	{
-		switch(front)
-		{
-			case 1:	//前
-				speedFR = clamp(nearbyint( speed - turn), 0, 20);
-				speedFL = clamp(nearbyint( speed + turn), 0, 20);
-				speedRL = clamp(nearbyint( speed + turn), 0, 20);
-				speedRR = clamp(nearbyint( speed - turn), 0, 20);
-				break;
-
-			case 2:	//右
-				speedFR = clamp(nearbyint(-(speed + turn)), -20, 0);
-				speedFL = clamp(nearbyint( speed + turn), 0, 20);
-				speedRL = clamp(nearbyint(-(speed - turn)), -20, 0);
-				speedRR = clamp(nearbyint( speed - turn), 0, 20);
-				break;
-
-			case 3:	//後
-				speedFR = clamp(nearbyint( -(speed + turn)), -20, 0);
-				speedFL = clamp(nearbyint( -(speed - turn + 4)), -20, 0);
-				speedRL = clamp(nearbyint( -(speed - turn + 4)), -20, 0);
-				speedRR = clamp(nearbyint( -(speed + turn)), -20, 0);
-				break;
-
-			case 4:	//左
-				speedFR = clamp(nearbyint( speed - turn + 2 ), 0, 20);
-				speedFL = clamp(nearbyint(-(speed - turn)), -20, 0);
-				speedRL = clamp(nearbyint( speed + turn + 2), 0, 20);
-				speedRR = clamp(nearbyint(-(speed + turn)), -20, 0);
-				break;
-
-			default:
-				speedFR = 0;
-				speedFL = 0;
-				speedRL = 0;
-				speedRR = 0;
-				break;
-		}
-	}
-
-	msg_m.motor_FR = speedFR;
-	msg_m.motor_FL = speedFL;
-	msg_m.motor_RR = speedRR;
-	msg_m.motor_RL = speedRL;
-
-	printf("%f\t %f\t %f\t %f\n", msg.orientation.z, turn, speedFR, speedRL);
-
-	pub.publish(msg_m);
 }
+
+void pid_enc(const sensor_msgs::Imu& msg)
+{
+	float lasterror = 0, integral = 0, error = 0;
+	error =  - 0.0000;
+
+	integral += (error + lasterror) / 2.0 * delta_t;
+
+	turn_acc = P * error + I * integral + D * (error - lasterror) / delta_t;
+
+	lasterror = error;
+}
+
 
 void mySigintHandler(int sig)
 {
@@ -134,12 +90,75 @@ int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "pid_control", ros::init_options::NoSigintHandler);
 	ros::NodeHandle nh;
+	ros::NodeHandle local_nh("~");
 
-	ros::Subscriber sub = nh.subscribe("/imu/data_raw", 1000, pid_control);
+	/*if(!local_nh.hasParam(""))*/
 
-	pub = nh.advertise<mpu9250::motor>("motor", 100);
+	ros::Subscriber sub = nh.subscribe("/imu/data_raw", 1000, pid_acc);
+	ros::Subscriber sub = nh.subscribe("/enc", 1000, pid_enc);
+
+	pub = nh.advertise<mpu9250::motor>("motor", 1);
 
 	signal(SIGINT, mySigintHandler);
 
-	ros::spin();
+	while(ros::ok())
+	{
+		if(speed == 0)
+		{
+			speedFR = clamp(nearbyint(speed - turn), -20, 20);
+			speedFL = clamp(nearbyint(speed + turn), -20, 20);
+			speedRL = clamp(nearbyint(speed + turn), -20, 20);
+			speedRR = clamp(nearbyint(speed - turn), -20, 20);
+		}
+		if(speed > 0)
+		{
+			switch(front)
+			{
+				case 1:	//前
+					speedFR = clamp(nearbyint( speed - turn), 0, 20);
+					speedFL = clamp(nearbyint( speed + turn), 0, 20);
+					speedRL = clamp(nearbyint( speed + turn), 0, 20);
+					speedRR = clamp(nearbyint( speed - turn), 0, 20);
+					break;
+
+				case 2:	//右
+					speedFR = clamp(nearbyint(-(speed + turn)), -20, 0);
+					speedFL = clamp(nearbyint( speed + turn), 0, 20);
+					speedRL = clamp(nearbyint(-(speed - turn)), -20, 0);
+					speedRR = clamp(nearbyint( speed - turn), 0, 20);
+					break;
+
+				case 3:	//後
+					speedFR = clamp(nearbyint( -(speed + turn)), -20, 0);
+					speedFL = clamp(nearbyint( -(speed - turn + 4)), -20, 0);
+					speedRL = clamp(nearbyint( -(speed - turn + 4)), -20, 0);
+					speedRR = clamp(nearbyint( -(speed + turn)), -20, 0);
+					break;
+
+				case 4:	//左
+					speedFR = clamp(nearbyint( speed - turn + 2 ), 0, 20);
+					speedFL = clamp(nearbyint(-(speed - turn)), -20, 0);
+					speedRL = clamp(nearbyint( speed + turn + 2), 0, 20);
+					speedRR = clamp(nearbyint(-(speed + turn)), -20, 0);
+					break;
+
+				default:
+					speedFR = 0;
+					speedFL = 0;
+					speedRL = 0;
+					speedRR = 0;
+					break;
+			}
+		}
+
+		msg_m.motor_FR = speedFR;
+		msg_m.motor_FL = speedFL;
+		msg_m.motor_RR = speedRR;
+		msg_m.motor_RL = speedRL;
+
+		printf("%f\t %f\t %f\t %f\n", msg.orientation.z, turn, speedFR, speedRL);
+
+		pub.publish(msg_m);
+		ros::spinOnce();
+	}
 }
