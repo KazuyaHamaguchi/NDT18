@@ -5,7 +5,7 @@
 // srvTutorialサービスファイルのヘッダー
 // CMakelists.txtでビルド後に自動的に生成されるように設定したサービスファ
 // イルのヘッダーをインクルードする。
-#include "arduino_throw_on/throw_on.h"
+#include "main/throw_on.h"
 // atoll関数を使用するためのライブラリ
 #include <cstdlib>
 // サービスクライアントノードのメイン関数
