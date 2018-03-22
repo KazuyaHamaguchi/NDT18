@@ -9,7 +9,7 @@ int pi = pigpio_start(0, 0);
 ros::Publisher pub;
 mpu9250::motor msg_m;
 
-#define e_pin 15;
+#define e_pin 15
 int motor, accel;
 int flag = 0;
 
