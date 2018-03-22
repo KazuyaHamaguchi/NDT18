@@ -9,6 +9,7 @@ int pi = pigpio_start(0, 0);
 ros::Publisher pub;
 mpu9250::motor msg_m;
 
+#define e_pin 15;
 int motor, accel;
 int flag = 0;
 
@@ -27,7 +28,7 @@ void callback_m(const mpu9250::motor& msg)
 
 void callback_a(const sensor_msgs::Imu& msg)
 {
-	if(msg.linear_acceleration.x > 3 || msg.linear_acceleration.x < -3 || msg.linear_acceleration.y > 3 || msg.linear_acceleration.y < -3)
+	if(msg.linear_acceleration.x > 2 || msg.linear_acceleration.x < -2 || msg.linear_acceleration.y > 2 || msg.linear_acceleration.y < -2)
 	{
 		ROS_INFO("A_OK");
 		accel = 1;
@@ -45,7 +46,7 @@ int main(int argc, char **argv)
 	ros::Subscriber sub_motor = nh.subscribe("motor", 1000, callback_m);
 	ros::Subscriber sub_imu = nh.subscribe("/imu/data_raw", 1000, callback_a);
 	pub = nh.advertise<mpu9250::motor>("motor", 1000);
-	set_mode(pi, 26, PI_OUTPUT);
+	set_mode(pi, e_pin, PI_OUTPUT);
 
 	while(ros::ok())
 	{
@@ -55,7 +56,7 @@ int main(int argc, char **argv)
 			{
 				flag = 1;
 
-				gpio_write(pi, 26, 1);
+				gpio_write(pi, e_pin, 1);
 
 				msg_m.motor_FR = 0;
 				msg_m.motor_FL = 0;
@@ -73,12 +74,12 @@ int main(int argc, char **argv)
 			if(flag == 1)
 			{
 				flag = 0;
-				gpio_write(pi, 26, 0);
+				gpio_write(pi, e_pin, 0);
 				ROS_INFO("NG");
 			}
 			else;
 		}
-			ros::spinOnce();
+		ros::spinOnce();
 	}
 	return 0;
 }
