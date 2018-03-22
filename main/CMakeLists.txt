@@ -200,5 +200,5 @@ include_directories(
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
-add_executable(arduino_service_srv_clien src/main.cpp)
-target_link_libraries(arduino_service_srv_clien ${catkin_LIBRARIES})
+add_executable(arduino_service_srv_client src/main.cpp)
+target_link_libraries(arduino_service_srv_client ${catkin_LIBRARIES})
