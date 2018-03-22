@@ -20,10 +20,11 @@ static float D = 0.05;
 
 static float delta_t = 0.01;
 float speedFR = 0, speedRL = 0, speedFL = 0, speedRR = 0;
-float turn_acc = 0, return_acc;
+float turn_acc = 0;
 
 ros::Publisher pub;
 mpu9250::motor msg_m;
+sensor_msgs::Imu msg_acc;
 
 float clamp(float input, float min, float max)
 {
@@ -48,7 +49,7 @@ float clamp(float input, float min, float max)
 	{
 		output = -2;
 	}
-	return_acc output;
+	return output;
 }
 
 void pid_acc(const sensor_msgs::Imu& msg)
@@ -156,7 +157,7 @@ int main(int argc, char **argv)
 		msg_m.motor_RR = speedRR;
 		msg_m.motor_RL = speedRL;
 
-		printf("%f\t %f\t %f\t %f\n", sensor_msgs::Imu.orientation.z, turn_acc, speedFR, speedRL);
+		printf("%f\t %f\t %f\t %f\n", msg_acc.orientation.z, turn_acc, speedFR, speedRL);
 
 		pub.publish(msg_m);
 		ros::spinOnce();
