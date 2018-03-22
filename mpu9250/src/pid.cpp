@@ -20,7 +20,7 @@ static float D = 0.05;
 
 static float delta_t = 0.01;
 float speedFR = 0, speedRL = 0, speedFL = 0, speedRR = 0;
-float turn_acc = 0;
+float turn_acc = 0, return_acc;
 
 ros::Publisher pub;
 mpu9250::motor msg_m;
@@ -156,7 +156,7 @@ int main(int argc, char **argv)
 		msg_m.motor_RR = speedRR;
 		msg_m.motor_RL = speedRL;
 
-		printf("%f\t %f\t %f\t %f\n", sub_imu.orientation.z, turn_acc, speedFR, speedRL);
+		printf("%f\t %f\t %f\t %f\n", sensor_msgs::Imu.orientation.z, turn_acc, speedFR, speedRL);
 
 		pub.publish(msg_m);
 		ros::spinOnce();
