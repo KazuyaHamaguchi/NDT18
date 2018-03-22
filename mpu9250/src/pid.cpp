@@ -20,7 +20,7 @@ static float D = 0.05;
 
 static float delta_t = 0.01;
 float speedFR = 0, speedRL = 0, speedFL = 0, speedRR = 0;
-float turn_acc = 0;
+float turn_acc_acc = 0;
 
 ros::Publisher pub;
 mpu9250::motor msg_m;
@@ -48,7 +48,7 @@ float clamp(float input, float min, float max)
 	{
 		output = -2;
 	}
-	return output;
+	return_acc output;
 }
 
 void pid_acc(const sensor_msgs::Imu& msg)
@@ -58,7 +58,7 @@ void pid_acc(const sensor_msgs::Imu& msg)
 
 	integral += (error + lasterror) / 2.0 * delta_t;
 
-	turn_acc = P * error + I * integral + D * (error - lasterror) / delta_t;
+	turn_acc_acc = P * error + I * integral + D * (error - lasterror) / delta_t;
 
 	lasterror = error;
 }
@@ -70,7 +70,7 @@ void pid_enc(const sensor_msgs::Imu& msg)
 
 	integral += (error + lasterror) / 2.0 * delta_t;
 
-	turn_acc = P * error + I * integral + D * (error - lasterror) / delta_t;
+	turn_acc_acc = P * error + I * integral + D * (error - lasterror) / delta_t;
 
 	lasterror = error;
 }
@@ -94,8 +94,8 @@ int main(int argc, char **argv)
 
 	/*if(!local_nh.hasParam(""))*/
 
-	ros::Subscriber sub = nh.subscribe("/imu/data_raw", 1000, pid_acc);
-	ros::Subscriber sub = nh.subscribe("/enc", 1000, pid_enc);
+	ros::Subscriber sub_imu = nh.subscribe("/imu/data_raw", 1000, pid_acc);
+	ros::Subscriber sub_enc = nh.subscribe("/enc", 1000, pid_enc);
 
 	pub = nh.advertise<mpu9250::motor>("motor", 1);
 
@@ -105,41 +105,41 @@ int main(int argc, char **argv)
 	{
 		if(speed == 0)
 		{
-			speedFR = clamp(nearbyint(speed - turn), -20, 20);
-			speedFL = clamp(nearbyint(speed + turn), -20, 20);
-			speedRL = clamp(nearbyint(speed + turn), -20, 20);
-			speedRR = clamp(nearbyint(speed - turn), -20, 20);
+			speedFR = clamp(nearbyint(speed - ), -20, 20);
+			speedFL = clamp(nearbyint(speed + turn_acc), -20, 20);
+			speedRL = clamp(nearbyint(speed + turn_acc), -20, 20);
+			speedRR = clamp(nearbyint(speed - turn_acc), -20, 20);
 		}
 		if(speed > 0)
 		{
 			switch(front)
 			{
 				case 1:	//前
-					speedFR = clamp(nearbyint( speed - turn), 0, 20);
-					speedFL = clamp(nearbyint( speed + turn), 0, 20);
-					speedRL = clamp(nearbyint( speed + turn), 0, 20);
-					speedRR = clamp(nearbyint( speed - turn), 0, 20);
+					speedFR = clamp(nearbyint( speed - turn_acc), 0, 20);
+					speedFL = clamp(nearbyint( speed + turn_acc), 0, 20);
+					speedRL = clamp(nearbyint( speed + turn_acc), 0, 20);
+					speedRR = clamp(nearbyint( speed - turn_acc), 0, 20);
 					break;
 
 				case 2:	//右
-					speedFR = clamp(nearbyint(-(speed + turn)), -20, 0);
-					speedFL = clamp(nearbyint( speed + turn), 0, 20);
-					speedRL = clamp(nearbyint(-(speed - turn)), -20, 0);
-					speedRR = clamp(nearbyint( speed - turn), 0, 20);
+					speedFR = clamp(nearbyint(-(speed + turn_acc)), -20, 0);
+					speedFL = clamp(nearbyint( speed + turn_acc), 0, 20);
+					speedRL = clamp(nearbyint(-(speed - turn_acc)), -20, 0);
+					speedRR = clamp(nearbyint( speed - turn_acc), 0, 20);
 					break;
 
 				case 3:	//後
-					speedFR = clamp(nearbyint( -(speed + turn)), -20, 0);
-					speedFL = clamp(nearbyint( -(speed - turn + 4)), -20, 0);
-					speedRL = clamp(nearbyint( -(speed - turn + 4)), -20, 0);
-					speedRR = clamp(nearbyint( -(speed + turn)), -20, 0);
+					speedFR = clamp(nearbyint( -(speed + turn_acc)), -20, 0);
+					speedFL = clamp(nearbyint( -(speed - turn_acc + 4)), -20, 0);
+					speedRL = clamp(nearbyint( -(speed - turn_acc + 4)), -20, 0);
+					speedRR = clamp(nearbyint( -(speed + turn_acc)), -20, 0);
 					break;
 
 				case 4:	//左
-					speedFR = clamp(nearbyint( speed - turn + 2 ), 0, 20);
-					speedFL = clamp(nearbyint(-(speed - turn)), -20, 0);
-					speedRL = clamp(nearbyint( speed + turn + 2), 0, 20);
-					speedRR = clamp(nearbyint(-(speed + turn)), -20, 0);
+					speedFR = clamp(nearbyint( speed - turn_acc + 2 ), 0, 20);
+					speedFL = clamp(nearbyint(-(speed - turn_acc)), -20, 0);
+					speedRL = clamp(nearbyint( speed + turn_acc + 2), 0, 20);
+					speedRR = clamp(nearbyint(-(speed + turn_acc)), -20, 0);
 					break;
 
 				default:
@@ -156,7 +156,7 @@ int main(int argc, char **argv)
 		msg_m.motor_RR = speedRR;
 		msg_m.motor_RL = speedRL;
 
-		printf("%f\t %f\t %f\t %f\n", msg.orientation.z, turn, speedFR, speedRL);
+		printf("%f\t %f\t %f\t %f\n", imu_m.orientation.z, turn_acc, speedFR, speedRL);
 
 		pub.publish(msg_m);
 		ros::spinOnce();
