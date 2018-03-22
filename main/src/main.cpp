@@ -5,7 +5,7 @@
 // srvTutorialサービスファイルのヘッダー
 // CMakelists.txtでビルド後に自動的に生成されるように設定したサービスファ
 // イルのヘッダーをインクルードする。
-#include "main/throw_on.h"
+#include "arduino_throw_on/throw_on.h"
 // atoll関数を使用するためのライブラリ
 #include <cstdlib>
 // サービスクライアントノードのメイン関数
@@ -13,22 +13,29 @@ int main(int argc, char **argv)
 {
 	// ノード名の初期化
 	ros::init(argc, argv, "arduino_service_srv_client");
+	// 入力値エラー処理
+	if(argc != 2)
+	{
+		ROS_INFO("cmd: rosrun arduino_throw_on throw_on_service_client arg1");
+		ROS_INFO( "arg1: double number");
+		return 1;
+	}
 	// ROSシステムとの通信のためのノードのハンドル宣言
 	ros::NodeHandle nh;
 	// サービスクライアント宣言、
 	// arduino_serviceパッケージのsrvTutorialサービスファイルを利用した。
 	// サービスクライアントarduino_service_clientを作成する。
 	// サービス名は「Throw_on」である。
-	ros::ServiceClient arduino_service_client =
+	ros::ServiceClient throw_on_service_client =
 	nh.serviceClient <main::throw_on>("Throw_on");
 	// srvという名前でsrvTutorialサービスを利用する
 	// サービスのファイルを宣言する。
 	main::throw_on test;
 	// サービスリクエスト値をそれぞれのa、bに格納する。
-	test.request.input = atoll(argv [1]);;
+	test.request.input = atoll(argv [1]);
 	// サービスをリクエストし、レスポンスが返された場合、
 	// レスポンス値を表示する。
-	if(arduino_service_client.call(test))
+	if(throw_on_service_client.call(test))
 	{
 		ROS_INFO("send srv.request.input: %d",
 		test.request.input);
@@ -37,9 +44,8 @@ int main(int argc, char **argv)
 	}
 	else
 	{
-		ROS_ERROR("Failed to call service Throw_on");
+		ROS_ERROR("Failed to call service Throw_on_1");
 		return 1;
 	}
 	return 0;
-} 
-
+}
