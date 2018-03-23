@@ -37,9 +37,9 @@ int main(int argc, char **argv)
 	// レスポンス値を表示する。
 	if(throw_on_service_client.call(test))
 	{
-		ROS_INFO("send srv.request.input: %d",
+		ROS_INFO("send srv.request.input: %f",
 		test.request.input);
-		ROS_INFO("receive srv.response.output: %d",
+		ROS_INFO("receive srv.response.output: %f",
 		test.response.output);
 	}
 	else
