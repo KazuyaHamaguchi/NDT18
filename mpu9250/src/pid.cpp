@@ -3,6 +3,7 @@
 #include <signal.h>
 
 #include <mpu9250/motor.h>
+#include <deadreckoning/enc.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,17 +11,22 @@
 
 using namespace std;
 
-static float speed = 10;
+static float speed = 0;
 int front = 1;	//前：1，右：2，後：3，左：4
 
 
-static float P = 20.00;
-static float I = 2.00;
-static float D = 0.05;
+static float acc_P = 20.00;
+static float acc_I = 2.00;
+static float acc_D = 0.05;
+
+static float enc_P = 20.00;
+static float enc_I = 2.00;
+static float enc_D = 0.05;
+
 
 static float delta_t = 0.01;
 float speedFR = 0, speedRL = 0, speedFL = 0, speedRR = 0;
-float turn_acc = 0;
+float turn_acc = 0, turn_enc_x = 0, turn_enc_y = 0;
 
 ros::Publisher pub;
 mpu9250::motor msg_m;
@@ -59,21 +65,26 @@ void pid_acc(const sensor_msgs::Imu& msg)
 
 	integral += (error + lasterror) / 2.0 * delta_t;
 
-	turn_acc = P * error + I * integral + D * (error - lasterror) / delta_t;
+	turn_acc = acc_P * error + acc_I * integral + acc_D * (error - lasterror) / delta_t;
 
 	lasterror = error;
 }
 
-void pid_enc(const sensor_msgs::Imu& msg)
+void pid_enc(const geometry_msgs::PoseStamped& msg)
 {
-	float lasterror = 0, integral = 0, error = 0;
-	error =  - 0.0000;
+	float lasterror_x = 0, lasterror_y = 0, integral_x = 0, integral_y = 0, error_x = 0, error_y = 0;
 
-	integral += (error + lasterror) / 2.0 * delta_t;
+	error_x = msg.pose.position.x - 0.0000;
+	error_y = msg.pose.position.y - 0.0000;
 
-	turn_acc = P * error + I * integral + D * (error - lasterror) / delta_t;
+	integral_x += (error_x + lasterror_x) / 2.0 * delta_t;
+	integral_y += (error_y + lasterror_y) / 2.0 * delta_t;
 
-	lasterror = error;
+	turn_enc_x = enc_P * error_x + enc_I * integral_x + enc_D * (error_x - lasterror_x) / delta_t;
+	turn_enc_y = enc_P * error_y + enc_I * integral_y + enc_D * (error_y - lasterror_y) / delta_t;
+
+	lasterror_x = error_x;
+	lasterror_y = error_y;
 }
 
 
@@ -96,7 +107,7 @@ int main(int argc, char **argv)
 	/*if(!local_nh.hasParam(""))*/
 
 	ros::Subscriber sub_imu = nh.subscribe("/imu/data_raw", 1000, pid_acc);
-	ros::Subscriber sub_enc = nh.subscribe("/enc", 1000, pid_enc);
+	ros::Subscriber sub_enc = nh.subscribe("/robot/pose", 1000, pid_enc);
 
 	pub = nh.advertise<mpu9250::motor>("motor", 1);
 
@@ -106,10 +117,10 @@ int main(int argc, char **argv)
 	{
 		if(speed == 0)
 		{
-			speedFR = clamp(nearbyint(speed - turn_acc), -20, 20);
-			speedFL = clamp(nearbyint(speed + turn_acc), -20, 20);
-			speedRL = clamp(nearbyint(speed + turn_acc), -20, 20);
-			speedRR = clamp(nearbyint(speed - turn_acc), -20, 20);
+			speedFR = clamp(nearbyint(speed - turn_acc + turn_enc_x), -20, 20);
+			speedFL = clamp(nearbyint(speed + turn_acc - turn_enc_x), -20, 20);
+			speedRL = clamp(nearbyint(speed + turn_acc + turn_enc_x), -20, 20);
+			speedRR = clamp(nearbyint(speed - turn_acc - turn_enc_x), -20, 20);
 		}
 		if(speed > 0)
 		{
