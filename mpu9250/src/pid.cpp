@@ -21,9 +21,9 @@ static float acc_P = 20.00;
 static float acc_I = 2.00;
 static float acc_D = 0.05;
 
-static float enc_P = 20.00;
-static float enc_I = 2.00;
-static float enc_D = 0.05;
+static float enc_P = 0.00;
+static float enc_I = 0.00;
+static float enc_D = 0.00;
 
 
 static float delta_t = 0.01;
@@ -104,7 +104,9 @@ int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "pid_control", ros::init_options::NoSigintHandler);
 	ros::NodeHandle nh;
+	ros::Rate loop_rate(100);
 	ros::NodeHandle local_nh("~");
+
 
 	/*if(!local_nh.hasParam(""))*/
 
@@ -119,20 +121,20 @@ int main(int argc, char **argv)
 	{
 		if(speed == 0)
 		{
-			speedFR = clamp(nearbyint(speed - turn_acc + turn_enc_x), -20, 20);
-			speedFL = clamp(nearbyint(speed + turn_acc - turn_enc_x), -20, 20);
-			speedRL = clamp(nearbyint(speed + turn_acc + turn_enc_x), -20, 20);
-			speedRR = clamp(nearbyint(speed - turn_acc - turn_enc_x), -20, 20);
+			speedFR = clamp(nearbyint(speed - turn_acc), -20, 20);
+			speedFL = clamp(nearbyint(speed + turn_acc), -20, 20);
+			speedRL = clamp(nearbyint(speed + turn_acc), -20, 20);
+			speedRR = clamp(nearbyint(speed - turn_acc), -20, 20);
 		}
 		if(speed > 0)
 		{
 			switch(front)
 			{
 				case 1:	//前
-					speedFR = clamp(nearbyint( speed - turn_acc), 0, 20);
-					speedFL = clamp(nearbyint( speed + turn_acc), 0, 20);
-					speedRL = clamp(nearbyint( speed + turn_acc), 0, 20);
-					speedRR = clamp(nearbyint( speed - turn_acc), 0, 20);
+					speedFR = clamp(nearbyint( speed - turn_acc + turn_enc_x), 0, 20);
+					speedFL = clamp(nearbyint( speed + turn_acc - turn_enc_x), 0, 20);
+					speedRL = clamp(nearbyint( speed + turn_acc + turn_enc_x), 0, 20);
+					speedRR = clamp(nearbyint( speed - turn_acc - turn_enc_x), 0, 20);
 					break;
 
 				case 2:	//右
@@ -143,17 +145,17 @@ int main(int argc, char **argv)
 					break;
 
 				case 3:	//後
-					speedFR = clamp(nearbyint( -(speed + turn_acc)), -20, 0);
-					speedFL = clamp(nearbyint( -(speed - turn_acc + 4)), -20, 0);
-					speedRL = clamp(nearbyint( -(speed - turn_acc + 4)), -20, 0);
-					speedRR = clamp(nearbyint( -(speed + turn_acc)), -20, 0);
+					speedFR = clamp(nearbyint( -(speed + turn_acc + turn_enc_x)), -20, 0);
+					speedFL = clamp(nearbyint( -(speed - turn_acc - turn_enc_x)), -20, 0);
+					speedRL = clamp(nearbyint( -(speed - turn_acc + turn_enc_x)), -20, 0);
+					speedRR = clamp(nearbyint( -(speed + turn_acc - turn_enc_x)), -20, 0);
 					break;
 
 				case 4:	//左
-					speedFR = clamp(nearbyint( speed - turn_acc + 2 ), 0, 20);
-					speedFL = clamp(nearbyint(-(speed - turn_acc)), -20, 0);
-					speedRL = clamp(nearbyint( speed + turn_acc + 2), 0, 20);
-					speedRR = clamp(nearbyint(-(speed + turn_acc)), -20, 0);
+					speedFR = clamp(nearbyint( speed - turn_acc - turn_enc_y ), 0, 20);
+					speedFL = clamp(nearbyint(-(speed - turn_acc + turn_enc_y)), -20, 0);
+					speedRL = clamp(nearbyint( speed + turn_acc - turn_enc_y), 0, 20);
+					speedRR = clamp(nearbyint(-(speed + turn_acc + turn_enc_y)), -20, 0);
 					break;
 
 				default:
@@ -173,6 +175,7 @@ int main(int argc, char **argv)
 		printf("%f\t %f\t %f\t %f\n", msg_acc.orientation.z, turn_acc, speedFR, speedRL);
 
 		pub.publish(msg_m);
+		loop_rate.sleep();
 		ros::spinOnce();
 	}
 }
