@@ -21,6 +21,6 @@ DEPENDS system_lib
 include_directories(include ${catkin_INCLUDE_DIRS})
 ## arduino_service_srv_clientサービスクライアントノードの設定
 ## 実行ファイル、ターゲットリンクライブラリ、追加の依存関係などを設定
-add_executable(receive_service_client src/receive_service_client.cpp)
-target_link_libraries(receive_service_client ${catkin_LIBRARIES})
-add_dependencies(receive_service_client receive_service_generate_messages_cpp)
+#add_executable(receive_service_client src/receive_service_client.cpp)
+#target_link_libraries(receive_service_client ${catkin_LIBRARIES})
+#add_dependencies(receive_service_client receive_service_generate_messages_cpp)
