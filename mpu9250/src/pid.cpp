@@ -115,10 +115,11 @@ int main(int argc, char **argv)
 
 	pub = nh.advertise<mpu9250::motor>("motor", 1);
 
-	signal(SIGINT, mySigintHandler);
+
 
 	while(ros::ok())
 	{
+		signal(SIGINT, mySigintHandler);
 		if(speed == 0)
 		{
 			speedFR = clamp(nearbyint(speed - turn_acc), -20, 20);
