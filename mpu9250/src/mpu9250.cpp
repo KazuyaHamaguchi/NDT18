@@ -763,8 +763,8 @@ void MPU9250::getAccel(float* ax, float* ay, float* az)
 
     getAccelCounts(&accel[0], &accel[1], &accel[2]);
 
-    *ax = -(((((float) accel[0]) * _accelScale) + _offsetAccelX) * G); // 型変換と値の縮尺
-    *ay = -(((((float) accel[1]) * _accelScale) + _offsetAccelY) * G);
+    *ax = ((((float) accel[0]) * _accelScale) + _offsetAccelX) * G; // 型変換と値の縮尺
+    *ay = ((((float) accel[1]) * _accelScale) + _offsetAccelY) * G;
     *az = ((((float) accel[2]) * _accelScale) + _offsetAccelZ) * G;
 }
 
@@ -777,9 +777,9 @@ void MPU9250::getGyroCounts(int16_t* gx, int16_t* gy, int16_t* gz)
 
     readRegisters(GYRO_OUT, sizeof(buff), buff); // MPU9250からデータを取得する
 
-    *gx = u2s((((int16_t)buff[0]) << 8) | buff[1]); // 16ビット値に変換
-    *gy = u2s((((int16_t)buff[2]) << 8) | buff[3]);
-    *gz = u2s((((int16_t)buff[4]) << 8) | buff[5]);
+    *gx = -(u2s((((int16_t)buff[0]) << 8) | buff[1])); // 16ビット値に変換
+    *gy = -(u2s((((int16_t)buff[2]) << 8) | buff[3]));
+    *gz = -(u2s((((int16_t)buff[4]) << 8) | buff[5]));
 }
 
 float MPU9250::calibGyro()
