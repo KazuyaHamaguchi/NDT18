@@ -17,9 +17,9 @@ static float speed = 0;
 int front = 1;	//前：1，右：2，後：3，左：4
 
 
-static float acc_P = 20.00;
-static float acc_I = 2.00;
-static float acc_D = 0.05;
+static float acc_P = 2.00;
+static float acc_I = 0.00;
+static float acc_D = 0.00;
 
 static float enc_P = 0.00;
 static float enc_I = 0.00;
