@@ -779,7 +779,7 @@ void MPU9250::getGyroCounts(int16_t* gx, int16_t* gy, int16_t* gz)
 
     *gx = -(u2s((((int16_t)buff[0]) << 8) | buff[1])); // 16ビット値に変換
     *gy = -(u2s((((int16_t)buff[2]) << 8) | buff[3]));
-    *gz = -(u2s((((int16_t)buff[4]) << 8) | buff[5]));
+    *gz = u2s((((int16_t)buff[4]) << 8) | buff[5]);
 }
 
 float MPU9250::calibGyro()
