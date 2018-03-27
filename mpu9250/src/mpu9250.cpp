@@ -255,8 +255,7 @@ int main(int argc, char **argv)
 
             IMU.getTemp(&t);
 
-            //imu_distance = toDifference(ay);
-            imu_distance = ay;
+            imu_distance = toDifference(ax);
             dis_msg_.disy = imu_distance;
             //printf("%f\n", imu_distance);
             dis_pub_.publish(dis_msg_);
@@ -724,8 +723,8 @@ void MPU9250::getAccelCounts(int16_t* ax, int16_t* ay, int16_t* az)
 
     readRegisters(ACCEL_OUT, sizeof(buff), buff); // MPU9250からデータを取得する
 
-    *ax = u2s((((int16_t)buff[0]) << 8) | buff[1]); // 16ビット値に変換
-    *ay = u2s((((int16_t)buff[2]) << 8) | buff[3]);
+    *ax = -(u2s((((int16_t)buff[0]) << 8) | buff[1])); // 16ビット値に変換
+    *ay = -(u2s((((int16_t)buff[2]) << 8) | buff[3])); //軸変換「-」(センサの向きがx，yそれぞれ負の向きなので)
     *az = u2s((((int16_t)buff[4]) << 8) | buff[5]);
 }
 
@@ -764,8 +763,8 @@ void MPU9250::getAccel(float* ax, float* ay, float* az)
 
     getAccelCounts(&accel[0], &accel[1], &accel[2]);
 
-    *ax = ((((float) accel[0]) * _accelScale) + _offsetAccelX) * G; // 型変換と値の縮尺
-    *ay = ((((float) accel[1]) * _accelScale) + _offsetAccelY) * G;
+    *ax = -(((((float) accel[0]) * _accelScale) + _offsetAccelX) * G); // 型変換と値の縮尺
+    *ay = -(((((float) accel[1]) * _accelScale) + _offsetAccelY) * G);
     *az = ((((float) accel[2]) * _accelScale) + _offsetAccelZ) * G;
 }
 
@@ -871,8 +870,8 @@ void MPU9250::getMagCounts(int16_t* hx, int16_t* hy, int16_t* hz)
         hyy = u2s((((int16_t)buff[3]) << 8) | buff[2]);
         hzz = u2s((((int16_t)buff[5]) << 8) | buff[4]);
 
-        *hx = tX[0]*hxx + tX[1]*hyy + tX[2]*hzz; // 軸の変換
-        *hy = tY[0]*hxx + tY[1]*hyy + tY[2]*hzz;
+        *hx = -(tX[0]*hxx + tX[1]*hyy + tX[2]*hzz); // 軸の変換
+        *hy = -(tY[0]*hxx + tY[1]*hyy + tY[2]*hzz);
         *hz = tZ[0]*hxx + tZ[1]*hyy + tZ[2]*hzz;
     }
     else
