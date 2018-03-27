@@ -723,8 +723,8 @@ void MPU9250::getAccelCounts(int16_t* ax, int16_t* ay, int16_t* az)
 
     readRegisters(ACCEL_OUT, sizeof(buff), buff); // MPU9250からデータを取得する
 
-    *ax = -(u2s((((int16_t)buff[0]) << 8) | buff[1])); // 16ビット値に変換
-    *ay = -(u2s((((int16_t)buff[2]) << 8) | buff[3])); //軸変換「-」(センサの向きがx，yそれぞれ負の向きなので)
+    *ax = u2s((((int16_t)buff[0]) << 8) | buff[1]); // 16ビット値に変換
+    *ay = u2s((((int16_t)buff[2]) << 8) | buff[3]);
     *az = u2s((((int16_t)buff[4]) << 8) | buff[5]);
 }
 
@@ -777,8 +777,8 @@ void MPU9250::getGyroCounts(int16_t* gx, int16_t* gy, int16_t* gz)
 
     readRegisters(GYRO_OUT, sizeof(buff), buff); // MPU9250からデータを取得する
 
-    *gx = -(u2s((((int16_t)buff[0]) << 8) | buff[1])); // 16ビット値に変換
-    *gy = -(u2s((((int16_t)buff[2]) << 8) | buff[3]));
+    *gx = u2s((((int16_t)buff[0]) << 8) | buff[1]); // 16ビット値に変換
+    *gy = u2s((((int16_t)buff[2]) << 8) | buff[3]);
     *gz = u2s((((int16_t)buff[4]) << 8) | buff[5]);
 }
 
@@ -870,8 +870,8 @@ void MPU9250::getMagCounts(int16_t* hx, int16_t* hy, int16_t* hz)
         hyy = u2s((((int16_t)buff[3]) << 8) | buff[2]);
         hzz = u2s((((int16_t)buff[5]) << 8) | buff[4]);
 
-        *hx = -(tX[0]*hxx + tX[1]*hyy + tX[2]*hzz); // 軸の変換
-        *hy = -(tY[0]*hxx + tY[1]*hyy + tY[2]*hzz);
+        *hx = tX[0]*hxx + tX[1]*hyy + tX[2]*hzz; // 軸の変換
+        *hy = tY[0]*hxx + tY[1]*hyy + tY[2]*hzz;
         *hz = tZ[0]*hxx + tZ[1]*hyy + tZ[2]*hzz;
     }
     else
