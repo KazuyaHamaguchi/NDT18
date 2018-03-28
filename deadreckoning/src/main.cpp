@@ -1,5 +1,5 @@
 #include <ros/ros.h>
-#include <deadreckoning/enc.h>
+#include <deadreckoning/encD.h>
 #include <sensor_msgs/Imu.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <math.h>
