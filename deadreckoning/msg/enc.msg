@@ -1,4 +1,4 @@
-float64 distance_X
-float64 distance_Y
-float64 speed_X
-float64 speed_Y
+float32 distance_X
+float32 distance_Y
+float32 speed_X
+float32 speed_Y
