@@ -14,7 +14,7 @@ float yawfirst = 0.0f;
 float old_x = 0;
 float old_y = 0;
 
-void encCallback(const deadreckoning::enc& msg)
+void encCallback(const deadreckoning::encD& msg)
 {
 	pose_msg.pose.position.x += (msg.distance_X - old_x) * cos(yaw);
 	pose_msg.pose.position.y += (msg.distance_X - old_x) * sin(yaw);
@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 
 	ros::NodeHandle nh;
 
-	ros::Subscriber subEnc = nh.subscribe("/enc", 1000, encCallback);
+	ros::Subscriber subEnc = nh.subscribe("/encD", 1000, encCallback);
 	ros::Subscriber subIMU = nh.subscribe("/imu/data_raw", 1000, imuCallback);
 
 	pose_msg.header.frame_id = "/map";
