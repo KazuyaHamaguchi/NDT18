@@ -137,7 +137,7 @@ int main(int argc, char **argv)
 
 	ros::Subscriber sub = nh.subscribe("/imu/data_raw", 1000, pid_control);
 
-	pub = nh.advertise<mpu9250::motor>("motor", 1000);
+	pub = nh.advertise<mpu9250::motor>("motor", 100);
 
 	signal(SIGINT, mySigintHandler);
 
