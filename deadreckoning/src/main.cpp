@@ -1,5 +1,5 @@
 #include <ros/ros.h>
-#include <std_msgs/float64.h>
+#include <std_msgs/Float64.h>
 #include <sensor_msgs/Imu.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <math.h>
