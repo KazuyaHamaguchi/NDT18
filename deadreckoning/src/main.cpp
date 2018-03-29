@@ -14,7 +14,7 @@ float yawfirst = 0.0f;
 float old_x = 0;
 float old_y = 0;
 
-void encXCallback(const std_msgs::float64& msg)
+void encXCallback(const std_msgs::Float64& msg)
 {
 	pose_msg.pose.position.x += (msg.data - old_x) * cos(yaw);
 	pose_msg.pose.position.x += (msg.data - old_x) * cos(M_PI/2 + yaw);
@@ -22,7 +22,7 @@ void encXCallback(const std_msgs::float64& msg)
 	pub.publish(pose_msg);
 }
 
-void encYCallback(const std_msgs::float64& msg)
+void encYCallback(const std_msgs::Float64& msg)
 {
 	pose_msg.pose.position.y += (msg.data - old_y) * cos(yaw);
 	pose_msg.pose.position.x += (msg.data - old_y) * cos(M_PI/2 + yaw);
