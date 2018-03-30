@@ -1,5 +1,5 @@
 #include <ros/ros.h>
-#include <std_msgs/Float64.h>
+#include <deadreckoning/enc.h>
 #include <sensor_msgs/Imu.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <math.h>
@@ -14,19 +14,14 @@ float yawfirst = 0.0f;
 float old_x = 0;
 float old_y = 0;
 
-void encXCallback(const std_msgs::Float64& msg)
+void encCallback(const deadreckoning::enc& msg)
 {
-	pose_msg.pose.position.x += (msg.data - old_x) * cos(yaw);
-	pose_msg.pose.position.x += (msg.data - old_x) * cos(M_PI/2 + yaw);
-	old_x = msg.data;
-	pub.publish(pose_msg);
-}
-
-void encYCallback(const std_msgs::Float64& msg)
-{
-	pose_msg.pose.position.y += (msg.data - old_y) * cos(yaw);
-	pose_msg.pose.position.x += (msg.data - old_y) * cos(M_PI/2 + yaw);
-	old_x = msg.data;
+	pose_msg.pose.position.x += (msg.distance_X - old_x) * cos(yaw);
+	pose_msg.pose.position.y += (msg.distance_X - old_x) * sin(yaw);
+	pose_msg.pose.position.x += (msg.distance_Y - old_y) * cos(M_PI/2 + yaw);
+	pose_msg.pose.position.y += (msg.distance_Y - old_y) * sin(M_PI/2 + yaw);
+	old_x = msg.distance_X;
+	old_y = msg.distance_Y;
 	pub.publish(pose_msg);
 }
 
@@ -46,8 +41,7 @@ int main(int argc, char **argv)
 
 	ros::NodeHandle nh;
 
-	ros::Subscriber subEncX = nh.subscribe("/enc_distance_X", 1000, encXCallback);
-	ros::Subscriber subEncY = nh.subscribe("/enc_distance_Y", 1000, encYCallback);
+	ros::Subscriber subEnc = nh.subscribe("/enc", 1000, encCallback);
 	ros::Subscriber subIMU = nh.subscribe("/imu/data_raw", 1000, imuCallback);
 
 	pose_msg.header.frame_id = "/map";
