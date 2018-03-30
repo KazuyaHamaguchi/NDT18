@@ -71,9 +71,9 @@ void pid_acc(const sensor_msgs::Imu& msg)
 	error = msg.orientation.z - 0.0000;
 	printf("%f\t %f\n", dt, error);
 
-	integral += (error + lasterror) / 2.0 * dt/*delta_t*/;
+	integral += (error + lasterror) / 2.0 * dt;
 
-	turn_imu = imu_P * error + imu_I * integral + imu_D * (error - lasterror) / dt/*delta_t*/;
+	turn_imu = imu_P * error + imu_I * integral + imu_D * (error - lasterror) / dt;
 
 	lasterror = error;
 	last_imu_time = current_imu_time;
@@ -82,18 +82,22 @@ void pid_acc(const sensor_msgs::Imu& msg)
 void pid_enc(const geometry_msgs::PoseStamped& msg)
 {
 	float lasterror_x = 0, lasterror_y = 0, integral_x = 0, integral_y = 0, error_x = 0, error_y = 0;
+	current_enc_time = ros::Time::now();
+
+	double dt = (current_enc_time - last_enc_time).toSec();
 
 	error_x = msg.pose.position.x - 0.0000;
 	error_y = msg.pose.position.y - 0.0000;
 
-	integral_x += (error_x + lasterror_x) / 2.0 * delta_t;
-	integral_y += (error_y + lasterror_y) / 2.0 * delta_t;
+	integral_x += (error_x + lasterror_x) / 2.0 * dt;
+	integral_y += (error_y + lasterror_y) / 2.0 * dt;
 
-	turn_enc_x = enc_P * error_x + enc_I * integral_x + enc_D * (error_x - lasterror_x) / delta_t;
-	turn_enc_y = enc_P * error_y + enc_I * integral_y + enc_D * (error_y - lasterror_y) / delta_t;
+	turn_enc_x = enc_P * error_x + enc_I * integral_x + enc_D * (error_x - lasterror_x) / dt;
+	turn_enc_y = enc_P * error_y + enc_I * integral_y + enc_D * (error_y - lasterror_y) / dt;
 
 	lasterror_x = error_x;
 	lasterror_y = error_y;
+	last_enc_time = current_enc_time;
 }
 
 
