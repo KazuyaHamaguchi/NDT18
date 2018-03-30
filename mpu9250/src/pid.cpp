@@ -110,10 +110,10 @@ int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "pid_control", ros::init_options::NoSigintHandler);
 	ros::NodeHandle nh;
-	current_imu_time = ros::Time::now();
+	/*current_imu_time = ros::Time::now();
 	last_imu_time = ros::Time::now();
 	current_enc_time = ros::Time::now();
-	last_enc_time = ros::Time::now();
+	last_enc_time = ros::Time::now();*/
 	ros::Rate loop_rate(10);
 	ros::NodeHandle local_nh("~");
 
