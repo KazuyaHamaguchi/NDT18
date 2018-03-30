@@ -16,17 +16,14 @@ using namespace std;
 int speed;
 int front;	//前：1，右：2，後：3，左：4
 
+float imu_P = 20.00;
+float imu_I = 2.00;
+float imu_D = 0.05;
 
-static float imu_P = 20.00;
-static float imu_I = 2.00;
-static float imu_D = 0.05;
+float enc_P = 2.00;
+float enc_I = 0.00;
+float enc_D = 0.00;
 
-static float enc_P = 2.00;
-static float enc_I = 0.00;
-static float enc_D = 0.00;
-
-
-static float delta_t = 0.01;
 float speedFR = 0, speedRL = 0, speedFL = 0, speedRR = 0;
 float turn_imu = 0, turn_enc_x = 0, turn_enc_y = 0;
 
@@ -111,6 +108,8 @@ void mySigintHandler(int sig)
 	ros::shutdown();
 }
 
+/*****************************************************************************************************/
+
 int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "pid_control", ros::init_options::NoSigintHandler);
@@ -122,13 +121,13 @@ int main(int argc, char **argv)
 	ros::Rate loop_rate(20);
 	ros::NodeHandle local_nh("~");
 
+	/*****************************************************************************/
 
 	if(!local_nh.hasParam("speed"))
 	{
 		ROS_INFO("Parameter speed is not defind. Now, it is set default value.");
 		local_nh.setParam("speed", 0);
 	}
-
 	if(!local_nh.getParam("speed", speed))
 	{
 		ROS_ERROR("parameter speed is invalid.");
@@ -141,7 +140,6 @@ int main(int argc, char **argv)
 		ROS_INFO("Parameter front is not defind. Now, it is set default value.");
 		local_nh.setParam("front", 10);
 	}
-
 	if(!local_nh.getParam("front", front))
 	{
 		ROS_ERROR("parameter front is invalid.");
@@ -149,10 +147,88 @@ int main(int argc, char **argv)
 	}
 	ROS_INFO("front: %d", front);
 
+	/*****************************************************************************/
+
+	if(!local_nh.hasParam("imu_P"))
+	{
+		ROS_INFO("Parameter imu_P is not defind. Now, it is set default value.");
+		local_nh.setParam("imu_P", 20);
+	}
+	if(!local_nh.getParam("imu_P", imu_P))
+	{
+		ROS_ERROR("parameter front is invalid.");
+		return -1;
+	}
+	ROS_INFO("imu_P: %f", imu_P);
+
+	if(!local_nh.hasParam("imu_I"))
+	{
+		ROS_INFO("Parameter imu_I is not defind. Now, it is set default value.");
+		local_nh.setParam("imu_I", 2,00);
+	}
+	if(!local_nh.getParam("imu_I", imu_I))
+	{
+		ROS_ERROR("parameter front is invalid.");
+		return -1;
+	}
+	ROS_INFO("imu_I: %f", imu_I);
+
+	if(!local_nh.hasParam("imu_D"))
+	{
+		ROS_INFO("Parameter imu_D is not defind. Now, it is set default value.");
+		local_nh.setParam("imu_D", 0.05);
+	}
+	if(!local_nh.getParam("imu_D", imu_D))
+	{
+		ROS_ERROR("parameter front is invalid.");
+		return -1;
+	}
+	ROS_INFO("imu_D: %f", imu_D);
+
+		/************************************************************************/
+
+	if(!local_nh.hasParam("enc_P"))
+	{
+		ROS_INFO("Parameter enc_P is not defind. Now, it is set default value.");
+		local_nh.setParam("enc_P", 0);
+	}
+	if(!local_nh.getParam("enc_P", enc_P))
+	{
+		ROS_ERROR("parameter front is invalid.");
+		return -1;
+	}
+	ROS_INFO("enc_P: %f", enc_P);
+
+	if(!local_nh.hasParam("enc_I"))
+	{
+		ROS_INFO("Parameter enc_I is not defind. Now, it is set default value.");
+		local_nh.setParam("enc_I", 0);
+	}
+	if(!local_nh.getParam("enc_I", enc_I))
+	{
+		ROS_ERROR("parameter front is invalid.");
+		return -1;
+	}
+	ROS_INFO("enc_I: %f", enc_I);
+
+	if(!local_nh.hasParam("enc_D"))
+	{
+		ROS_INFO("Parameter enc_D is not defind. Now, it is set default value.");
+		local_nh.setParam("enc_D", 0);
+	}
+	if(!local_nh.getParam("enc_D", enc_D))
+	{
+		ROS_ERROR("parameter front is invalid.");
+		return -1;
+	}
+	ROS_INFO("enc_D: %f", enc_D);
+
+	/**************************************************************************/
+
 	ros::Subscriber sub_imu = nh.subscribe("/imu/data_raw", 1, pid_acc);
 	ros::Subscriber sub_enc = nh.subscribe("/robot/pose", 1, pid_enc);
 
-	pub = nh.advertise<mpu9250::motor>("motor", 100);
+	pub = nh.advertise<mpu9250::motor>("motor", 1000);
 
 
 
