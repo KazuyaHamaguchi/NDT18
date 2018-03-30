@@ -13,15 +13,15 @@
 
 using namespace std;
 
-static float speed = 10;
+static float speed = 0;
 int front = 1;	//前：1，右：2，後：3，左：4
 
 
-static float acc_P = 20.00;
-static float acc_I = 3.00;
-static float acc_D = 0.05;
+static float acc_P = 2.00;
+static float acc_I = 0.00;
+static float acc_D = 0.00;
 
-static float enc_P = 0.00;
+static float enc_P = 2.00;
 static float enc_I = 0.00;
 static float enc_D = 0.00;
 
@@ -92,10 +92,10 @@ void pid_enc(const geometry_msgs::PoseStamped& msg)
 
 void mySigintHandler(int sig)
 {
-	msg_m.motor_FR = 8080;
-	msg_m.motor_FL = 8080;
-	msg_m.motor_RR = 8080;
-	msg_m.motor_RL = 8080;
+	msg_m.motor_FR = 0;
+	msg_m.motor_FL = 0;
+	msg_m.motor_RR = 0;
+	msg_m.motor_RL = 0;
 	pub.publish(msg_m);
 	ros::shutdown();
 }
@@ -104,7 +104,7 @@ int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "pid_control", ros::init_options::NoSigintHandler);
 	ros::NodeHandle nh;
-	ros::Rate loop_rate(10);
+	ros::Rate loop_rate(100);
 	ros::NodeHandle local_nh("~");
 
 
@@ -115,10 +115,11 @@ int main(int argc, char **argv)
 
 	pub = nh.advertise<mpu9250::motor>("motor", 1);
 
-	signal(SIGINT, mySigintHandler);
+
 
 	while(ros::ok())
 	{
+		signal(SIGINT, mySigintHandler);
 		if(speed == 0)
 		{
 			speedFR = clamp(nearbyint(speed - turn_acc), -20, 20);
