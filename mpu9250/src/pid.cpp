@@ -27,7 +27,8 @@ float enc_D;
 float speedFR = 0, speedRL = 0, speedFL = 0, speedRR = 0;
 float turn_imu = 0, turn_enc_x = 0, turn_enc_y = 0;
 
-ros::Time current_imu_time , last_imu_time, current_enc_time, last_enc_time;
+ros::Time current_time , last_time;
+double dt = 0.0;
 
 ros::Publisher pub;
 mpu9250::motor msg_m;
@@ -61,10 +62,6 @@ float clamp(float input, float min, float max)
 void pid_acc(const sensor_msgs::Imu& msg)
 {
 	float lasterror = 0, integral = 0, error = 0;
-	current_imu_time = ros::Time::now();
-
-	double dt = (current_imu_time - last_imu_time).toSec();
-
 	error = msg.orientation.z - 0.00000f;
 	printf("%f\t %f\n", dt, error);
 
@@ -79,9 +76,6 @@ void pid_acc(const sensor_msgs::Imu& msg)
 void pid_enc(const geometry_msgs::PoseStamped& msg)
 {
 	float lasterror_x = 0, lasterror_y = 0, integral_x = 0, integral_y = 0, error_x = 0, error_y = 0;
-	current_enc_time = ros::Time::now();
-
-	double dt = (current_enc_time - last_enc_time).toSec();
 
 	error_x = msg.pose.position.x - 0.00000f;
 	error_y = msg.pose.position.y - 0.00000f;
@@ -94,7 +88,6 @@ void pid_enc(const geometry_msgs::PoseStamped& msg)
 
 	lasterror_x = error_x;
 	lasterror_y = error_y;
-	last_enc_time = current_enc_time;
 }
 
 
@@ -225,16 +218,19 @@ int main(int argc, char **argv)
 
 	/**************************************************************************/
 
-	ros::Subscriber sub_imu = nh.subscribe("/imu/data_raw", 1, pid_acc);
-	ros::Subscriber sub_enc = nh.subscribe("/robot/pose", 1, pid_enc);
+	ros::Subscriber sub_imu = nh.subscribe("/imu/data_raw", 1000, pid_acc);
+	ros::Subscriber sub_enc = nh.subscribe("/robot/pose", 1000, pid_enc);
 
-	pub = nh.advertise<mpu9250::motor>("motor", 1000);
+	pub = nh.advertise<mpu9250::motor>("motor", 100);
 
 
 
 	while(ros::ok())
 	{
 		signal(SIGINT, mySigintHandler);
+		current_time = ros::Time::now();
+		dt = (current_time - last_time).toSec();
+
 		if(speed == 0)
 		{
 			speedFR = clamp(nearbyint(speed - turn_imu), -20, 20);
@@ -287,8 +283,10 @@ int main(int argc, char **argv)
 		msg_m.motor_FL = speedFL;
 		msg_m.motor_RR = speedRR;
 		msg_m.motor_RL = speedRL;
-
 		pub.publish(msg_m);
+
+		last_time = current_time;
+
 		loop_rate.sleep();
 		ros::spinOnce();
 	}
