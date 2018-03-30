@@ -132,10 +132,10 @@ int main(int argc, char **argv)
 			switch(front)
 			{
 				case 1:	//前
-					speedFR = clamp(nearbyint( speed - turn_acc + turn_enc_x), 0, 20);
-					speedFL = clamp(nearbyint( speed + turn_acc - turn_enc_x), 0, 20);
-					speedRL = clamp(nearbyint( speed + turn_acc + turn_enc_x), 0, 20);
-					speedRR = clamp(nearbyint( speed - turn_acc - turn_enc_x), 0, 20);
+					speedFR = clamp(nearbyint( speed - turn_acc - turn_enc_x), 0, 20);
+					speedFL = clamp(nearbyint( speed + turn_acc + turn_enc_x), 0, 20);
+					speedRL = clamp(nearbyint( speed + turn_acc - turn_enc_x), 0, 20);
+					speedRR = clamp(nearbyint( speed - turn_acc + turn_enc_x), 0, 20);
 					break;
 
 				case 2:	//右
