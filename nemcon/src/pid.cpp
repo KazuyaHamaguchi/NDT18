@@ -5,7 +5,6 @@
 #include <signal.h>
 
 #include <nemcon/motor.h>
-#include <deadreckoning/enc.h>
 
 #include <stdio.h>
 #include <stdlib.h>
