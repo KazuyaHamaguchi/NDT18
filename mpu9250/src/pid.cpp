@@ -13,7 +13,7 @@
 
 using namespace std;
 
-static float speed = 0;
+static float speed = 10;
 int front = 1;	//前：1，右：2，後：3，左：4
 
 
@@ -131,7 +131,7 @@ int main(int argc, char **argv)
 			switch(front)
 			{
 				case 1:	//前
-					speedFR = clamp(nearbyint( speed - turn_acc + turn_enc_x + 3), 0, 20);
+					speedFR = clamp(nearbyint( speed - turn_acc + turn_enc_x), 0, 20);
 					speedFL = clamp(nearbyint( speed + turn_acc - turn_enc_x), 0, 20);
 					speedRL = clamp(nearbyint( speed + turn_acc + turn_enc_x), 0, 20);
 					speedRR = clamp(nearbyint( speed - turn_acc - turn_enc_x), 0, 20);
