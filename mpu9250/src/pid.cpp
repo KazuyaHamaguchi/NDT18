@@ -13,7 +13,7 @@
 
 using namespace std;
 
-static float speed = 0;
+static float speed = 10;
 int front = 1;	//前：1，右：2，後：3，左：4
 
 
