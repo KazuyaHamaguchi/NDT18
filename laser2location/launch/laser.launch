@@ -1,0 +1,13 @@
+<launch>
+  <node name="urg_node" pkg="urg_node" type="urg_node" output="screen">
+    <param name="serial_port" value="/dev/ttyACM_URG" />
+  </node>
+
+  <node name="laser2location" pkg="laser2location" type="laser2location" output="screen">
+    <param name="image_size" value="1000" />
+    <param name="scale" value="40" />
+    <param name="threshold" value="39" />
+    <param name="dist_lrf" value="0.1995" />
+    <param name="backward" value="true" />
+  </node>
+</launch>
