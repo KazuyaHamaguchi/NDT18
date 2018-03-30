@@ -18,7 +18,7 @@ int front = 1;	//前：1，右：2，後：3，左：4
 
 
 static float acc_P = 20.00;
-static float acc_I = 2.00;
+static float acc_I = 3.00;
 static float acc_D = 0.05;
 
 static float enc_P = 0.00;
@@ -92,10 +92,10 @@ void pid_enc(const geometry_msgs::PoseStamped& msg)
 
 void mySigintHandler(int sig)
 {
-	msg_m.motor_FR = 0;
-	msg_m.motor_FL = 0;
-	msg_m.motor_RR = 0;
-	msg_m.motor_RL = 0;
+	msg_m.motor_FR = 8080;
+	msg_m.motor_FL = 8080;
+	msg_m.motor_RR = 8080;
+	msg_m.motor_RL = 8080;
 	pub.publish(msg_m);
 	ros::shutdown();
 }
@@ -131,7 +131,7 @@ int main(int argc, char **argv)
 			switch(front)
 			{
 				case 1:	//前
-					speedFR = clamp(nearbyint( speed - turn_acc + turn_enc_x), 0, 20);
+					speedFR = clamp(nearbyint( speed - turn_acc + turn_enc_x + 3), 0, 20);
 					speedFL = clamp(nearbyint( speed + turn_acc - turn_enc_x), 0, 20);
 					speedRL = clamp(nearbyint( speed + turn_acc + turn_enc_x), 0, 20);
 					speedRR = clamp(nearbyint( speed - turn_acc - turn_enc_x), 0, 20);
