@@ -70,7 +70,6 @@ void pid_acc(const sensor_msgs::Imu& msg)
 	turn_imu = imu_P * error + imu_I * integral + imu_D * (error - lasterror) / dt;
 
 	lasterror = error;
-	last_imu_time = current_imu_time;
 }
 
 void pid_enc(const geometry_msgs::PoseStamped& msg)
@@ -107,10 +106,8 @@ int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "pid_control", ros::init_options::NoSigintHandler);
 	ros::NodeHandle nh;
-	current_imu_time = ros::Time::now();
-	last_imu_time = ros::Time::now();
-	current_enc_time = ros::Time::now();
-	last_enc_time = ros::Time::now();
+	current_time = ros::Time::now();
+	last_time = ros::Time::now();
 	ros::Rate loop_rate(20);
 	ros::NodeHandle local_nh("~");
 
