@@ -8,6 +8,6 @@
     <param name="scale" value="40" />
     <param name="threshold" value="39" />
     <param name="dist_lrf" value="0.1995" />
-    <param name="backward" value="true" />
+    <param name="backward" value="false" />
   </node>
 </launch>
