@@ -16,13 +16,13 @@ using namespace std;
 int speed;
 int front;	//前：1，右：2，後：3，左：4
 
-float imu_P = 20.00;
-float imu_I = 2.00;
-float imu_D = 0.05;
+float imu_P;
+float imu_I;
+float imu_D;
 
-float enc_P = 2.00;
-float enc_I = 0.00;
-float enc_D = 0.00;
+float enc_P;
+float enc_I;
+float enc_D;
 
 float speedFR = 0, speedRL = 0, speedFL = 0, speedRR = 0;
 float turn_imu = 0, turn_enc_x = 0, turn_enc_y = 0;
@@ -65,7 +65,7 @@ void pid_acc(const sensor_msgs::Imu& msg)
 
 	double dt = (current_imu_time - last_imu_time).toSec();
 
-	error = msg.orientation.z - 0.0000;
+	error = msg.orientation.z - 0.00000f;
 	printf("%f\t %f\n", dt, error);
 
 	integral += (error + lasterror) / 2.0 * dt;
@@ -83,8 +83,8 @@ void pid_enc(const geometry_msgs::PoseStamped& msg)
 
 	double dt = (current_enc_time - last_enc_time).toSec();
 
-	error_x = msg.pose.position.x - 0.0000;
-	error_y = msg.pose.position.y - 0.0000;
+	error_x = msg.pose.position.x - 0.00000f;
+	error_y = msg.pose.position.y - 0.00000f;
 
 	integral_x += (error_x + lasterror_x) / 2.0 * dt;
 	integral_y += (error_y + lasterror_y) / 2.0 * dt;
