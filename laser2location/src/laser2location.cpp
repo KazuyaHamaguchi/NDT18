@@ -11,16 +11,18 @@
 
 #include "tf/tf.h"
 
+//#define CV_PRINT
+
 int image_size;
 int scale;
 int threshold;
 double dist_lrf;
 bool backward;
 
-#define FIELD_WIDTH 1.970
+#define FIELD_WIDTH 8.420
 
 
-#define FENCE_WIDTH				0.05	//[m]
+#define FENCE_WIDTH				0.04	//[m]
 #define FENCE_DEPTH				8.2
 
 pthread_mutex_t	mutex;  // MUTEX
@@ -251,14 +253,14 @@ void thread_main(){
 			//ROS_INFO("Hough:rho=%f theta=%f[deg]",dist, theta_deg);
 
 			geometry_msgs::Point p;
-			p.x = dist*cos(-CV_PI/2+theta)+cos(theta)*10;
-			p.y = dist*sin(-CV_PI/2+theta)+sin(theta)*10;
+			p.x = dist*sin(-CV_PI/2+theta)+sin(theta)*10 ;
+			p.y = dist*cos(-CV_PI/2+theta)+cos(theta)*10;
 			p.z = 0;
 
 			line_list.points.push_back(p);
 
-			p.x = dist*cos(-CV_PI/2+theta)-cos(theta)*10;
-			p.y = dist*sin(-CV_PI/2+theta)-sin(theta)*10;
+			p.x = dist*sin(-CV_PI/2+theta)-sin(theta)*10 ;
+			p.y = dist*cos(-CV_PI/2+theta)-cos(theta)*10;
 			p.z = 0;
 			line_list.points.push_back(p);
 
