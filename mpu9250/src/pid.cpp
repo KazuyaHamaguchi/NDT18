@@ -17,8 +17,8 @@ static float speed = 10;
 int front = 1;	//前：1，右：2，後：3，左：4
 
 
-static float imu_P = 0.50;
-static float imu_I = 1.00;
+static float imu_P = 0.20;
+static float imu_I = 0.90;
 static float imu_D = 0.05;
 
 static float enc_P = 2.00;
