@@ -123,7 +123,7 @@ int main(int argc, char **argv)
 	/*if(!local_nh.hasParam(""))*/
 
 	ros::Subscriber sub_imu = nh.subscribe("/imu/data_raw", 1000, imu_cb);
-	ros::Subscriber sub_enc = nh.subscribe("/robot/pose", 1000, enn_cb);
+	ros::Subscriber sub_enc = nh.subscribe("/robot/pose", 1000, enc_cb);
 
 	pub = nh.advertise<mpu9250::motor>("motor", 100);
 
