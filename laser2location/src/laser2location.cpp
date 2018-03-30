@@ -318,7 +318,7 @@ void thread_main(){
 		}
 
 		if(front!=NULL){
-			pose.pose.position.x = front->dist;
+			pose.pose.position.x = -front->dist;
 		}
 
 		if(left!=NULL){
