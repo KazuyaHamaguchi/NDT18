@@ -339,8 +339,8 @@ void thread_main(){
 		//double yaw_deg = yaw*180/CV_PI;
 		//ROS_INFO("yaw=%f[deg] x=%f[m] y=%f[m]",yaw_deg, pose.pose.position.x, pose.pose.position.y );
 
-		pose.pose.position.x += dist_lrf*cos(yaw-M_PI/2);
-		pose.pose.position.y += dist_lrf*sin(yaw-M_PI/2);
+		pose.pose.position.x += dist_lrf*sin(yaw-M_PI/2);
+		pose.pose.position.y += dist_lrf*cos(yaw-M_PI/2);
 
 		pose.pose.position.y += FENCE_WIDTH / 2;
 
