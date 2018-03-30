@@ -164,7 +164,7 @@ int main(int argc, char **argv)
 	if(!local_nh.hasParam("imu_I"))
 	{
 		ROS_INFO("Parameter imu_I is not defind. Now, it is set default value.");
-		local_nh.setParam("imu_I", 2,00);
+		local_nh.setParam("imu_I", 2.00);
 	}
 	if(!local_nh.getParam("imu_I", imu_I))
 	{
