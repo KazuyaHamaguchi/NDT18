@@ -66,7 +66,7 @@ void imu_cb(const sensor_msgs::Imu& msg)
 	imu_P = msg.orientation.z - 0.00;
 }
 
-void pid_enc(const geometry_msgs::PoseStamped& msg)
+void enc_cb(const geometry_msgs::PoseStamped& msg)
 {
 	/*float lasterror_x = 0, lasterror_y = 0, integral_x = 0, integral_y = 0, error_x = 0, error_y = 0;
 
@@ -92,7 +92,7 @@ void pid_enc(const geometry_msgs::PoseStamped& msg)
 void imu_pid()
 {
 	imu_I += (imu_P + pre_imu_P) / 2.0 * dt;
-	imu_D = (imu_P - pre_imu_P) /dt
+	imu_D = (imu_P - pre_imu_P) /dt;
 	turn_imu = imu_Kp * imu_P + imu_Ki * imu_I + imu_Kd * imu_D;
 
 	pre_imu_P = imu_P;
@@ -123,7 +123,7 @@ int main(int argc, char **argv)
 	/*if(!local_nh.hasParam(""))*/
 
 	ros::Subscriber sub_imu = nh.subscribe("/imu/data_raw", 1000, imu_cb);
-	ros::Subscriber sub_enc = nh.subscribe("/robot/pose", 1000, enc_cb);
+	ros::Subscriber sub_enc = nh.subscribe("/robot/pose", 1000, enn_cb);
 
 	pub = nh.advertise<mpu9250::motor>("motor", 100);
 
@@ -134,7 +134,7 @@ int main(int argc, char **argv)
 		signal(SIGINT, mySigintHandler);
 
 		current_time = ros::Time::now();
-		dt = (current_imu_time - last_imu_time).toSec();
+		dt = (current_time - last_time).toSec();
 
 		imu_pid();
 
