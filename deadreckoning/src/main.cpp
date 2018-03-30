@@ -20,10 +20,10 @@ void encCallback(const deadreckoning::enc& msg)
 	pose_msg.pose.position.y += (msg.distance_X - old_x) * sin(yaw);
 	pose_msg.pose.position.x += (msg.distance_Y - old_y) * cos(M_PI/2 + yaw);
 	pose_msg.pose.position.y += (msg.distance_Y - old_y) * sin(M_PI/2 + yaw);*/
-	pose_msg.pose.position.x += (msg.distance_X - old_x) * cos(M_PI/2 + yaw);
-	pose_msg.pose.position.y += (msg.distance_X - old_x) * sin(M_PI/2 + yaw);
-	pose_msg.pose.position.x += (msg.distance_Y - old_y) * cos(yaw);
-	pose_msg.pose.position.y += (msg.distance_Y - old_y) * sin(yaw);
+	pose_msg.pose.position.x += (msg.distance_X - old_x) * sin(M_PI/2 + yaw);
+	pose_msg.pose.position.y += (msg.distance_X - old_x) * cos(M_PI/2 + yaw);
+	pose_msg.pose.position.x += (msg.distance_Y - old_y) * sin(yaw);
+	pose_msg.pose.position.y += (msg.distance_Y - old_y) * cos(yaw);
 	/*pose_msg.pose.position.x += (msg.distance_X - old_x) * sin(yaw);
 	pose_msg.pose.position.y -= (msg.distance_X - old_x) * cos(yaw);
 	pose_msg.pose.position.x += (msg.distance_Y - old_y) * sin(M_PI/2 + yaw);
