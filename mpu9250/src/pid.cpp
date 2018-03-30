@@ -115,8 +115,7 @@ int main(int argc, char **argv)
 	last_imu_time = ros::Time::now();
 	current_enc_time = ros::Time::now();
 	last_enc_time = ros::Time::now();
-	ros::Subscriber sub_imu = nh.subscribe("/imu/data_raw", 2, pid_acc);
-	ros::Rate loop_rate(10);
+	ros::Rate loop_rate(20);
 	ros::NodeHandle local_nh("~");
 
 
@@ -146,7 +145,8 @@ int main(int argc, char **argv)
 	}
 	ROS_INFO("front: %d", front);
 
-	ros::Subscriber sub_enc = nh.subscribe("/robot/pose", 100, pid_enc);
+	ros::Subscriber sub_imu = nh.subscribe("/imu/data_raw", 1, pid_acc);
+	ros::Subscriber sub_enc = nh.subscribe("/robot/pose", 1, pid_enc);
 
 	pub = nh.advertise<mpu9250::motor>("motor", 100);
 
