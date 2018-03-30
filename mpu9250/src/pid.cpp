@@ -65,13 +65,17 @@ void pid_acc(const sensor_msgs::Imu& msg)
 {
 	float lasterror = 0, integral = 0, error = 0;
 	current_imu_time = ros::Time::now();
+
+	double dt = (current_time - last_time).toSec();
+
 	error = msg.orientation.z - 0.0000;
-
-	integral += (error + lasterror) / 2.0 * delta_t;
-
-	turn_imu = imu_P * error + imu_I * integral + imu_D * (error - lasterror) / delta_t;
+	integral += (error + lasterror) / 2.0 * dt;
+	turn_imu = imu_P * error + imu_I * integral + imu_D * (error - lasterror) / dt;
 
 	lasterror = error;
+	last_time = current_time;
+
+	printf("%d", dt);
 }
 
 void pid_enc(const geometry_msgs::PoseStamped& msg)
