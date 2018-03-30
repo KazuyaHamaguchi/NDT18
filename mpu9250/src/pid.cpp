@@ -13,7 +13,7 @@
 
 using namespace std;
 
-int speed = 10;
+int speed;
 int front = 1;	//前：1，右：2，後：3，左：4
 
 
