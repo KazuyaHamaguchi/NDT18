@@ -342,7 +342,7 @@ void thread_main(){
 		pose.pose.position.x += dist_lrf*sin(yaw-M_PI/2);
 		pose.pose.position.y += dist_lrf*cos(yaw-M_PI/2);
 
-		pose.pose.position.y += FENCE_WIDTH / 2;
+		pose.pose.position.x += FENCE_WIDTH / 2;
 
 		//pose.pose.position.x += dist_lrf*cos(yaw+M_PI/2);
 		//pose.pose.position.y -= dist_lrf*sin(yaw+M_PI/2);
