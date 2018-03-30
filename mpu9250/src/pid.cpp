@@ -17,18 +17,20 @@ static float speed = 10;
 int front = 1;	//前：1，右：2，後：3，左：4
 
 
-static float imu_P = 0.20;
-static float imu_I = 0.90;
-static float imu_D = 0.05;
+static float imu_Kp = 0.20;
+static float imu_Ki = 0.90;
+static float imu_Kd = 0.05;
 
-static float enc_P = 2.00;
-static float enc_I = 0.00;
-static float enc_D = 0.00;
+static float enc_Kp = 2.00;
+static float enc_Ki = 0.00;
+static float enc_Kd = 0.00;
 
+float imu_P = 0, imu_I = 0, imu_D = 0, pre_imu_P = 0;
 float speedFR = 0, speedRL = 0, speedFL = 0, speedRR = 0;
 float turn_imu = 0, turn_enc_x = 0, turn_enc_y = 0;
 
-ros::Time current_imu_time , last_imu_time, current_enc_time, last_enc_time;
+ros::Time current_time , last_time;
+double dt;
 
 ros::Publisher pub;
 mpu9250::motor msg_m;
@@ -59,29 +61,16 @@ float clamp(float input, float min, float max)
 	return output;
 }
 
-void pid_acc(const sensor_msgs::Imu& msg)
+void imu_cb(const sensor_msgs::Imu& msg)
 {
-	float lasterror = 0, integral = 0, error = 0;
-	current_imu_time = ros::Time::now();
-
-	double dt = (current_imu_time - last_imu_time).toSec();
-
-	error = msg.orientation.z - 0.0000;
-	integral += (error + lasterror) / 2.0 * dt;
-	turn_imu = imu_P * error + imu_I * integral + imu_D * (error - lasterror) / dt;
-
-	lasterror = error;
-	last_imu_time = current_imu_time;
-
-	printf("imu:%f\n", dt);
+	imu_P = msg.orientation.z - 0.00;
 }
 
 void pid_enc(const geometry_msgs::PoseStamped& msg)
 {
 	float lasterror_x = 0, lasterror_y = 0, integral_x = 0, integral_y = 0, error_x = 0, error_y = 0;
-	current_enc_time = ros::Time::now();
 
-	double dt = (current_enc_time - last_enc_time).toSec();
+	dt = (current_enc_time - last_enc_time).toSec();
 
 	error_x = msg.pose.position.x - 0.0000;
 	error_y = msg.pose.position.y - 0.0000;
@@ -97,8 +86,18 @@ void pid_enc(const geometry_msgs::PoseStamped& msg)
 
 	last_enc_time = current_enc_time;
 
-	printf("enc:%f\n", dt);
+	//printf("enc:%f\n", dt);
 }
+
+void imu_pid()
+{
+	imu_I += (imu_P + pre_imu_P) / 2.0 * dt;
+	imu_D = (imu_P - pre_imu_P) /dt
+	turn_imu = imu_Kp * imu_P + imu_Ki * imu_I + imu_Kd * imu_D;
+
+	pre_imu_P = imu_P;
+}
+
 
 
 void mySigintHandler(int sig)
@@ -125,8 +124,8 @@ int main(int argc, char **argv)
 
 	/*if(!local_nh.hasParam(""))*/
 
-	ros::Subscriber sub_imu = nh.subscribe("/imu/data_raw", 1000, pid_acc);
-	ros::Subscriber sub_enc = nh.subscribe("/robot/pose", 1000, pid_enc);
+	ros::Subscriber sub_imu = nh.subscribe("/imu/data_raw", 1000, imu_cb);
+	ros::Subscriber sub_enc = nh.subscribe("/robot/pose", 1000, enc_cb);
 
 	pub = nh.advertise<mpu9250::motor>("motor", 100);
 
@@ -135,6 +134,13 @@ int main(int argc, char **argv)
 	while(ros::ok())
 	{
 		signal(SIGINT, mySigintHandler);
+
+		current_time = ros::Time::now();
+		dt = (current_imu_time - last_imu_time).toSec();
+
+		imu_pid();
+
+
 		if(speed == 0)
 		{
 			speedFR = clamp(nearbyint(speed - turn_imu), -20, 20);
@@ -188,9 +194,10 @@ int main(int argc, char **argv)
 		msg_m.motor_RR = speedRR;
 		msg_m.motor_RL = speedRL;
 
-		printf("%f\t %f\t %f\t %f\n", turn_imu, turn_enc_x, speedFR, speedRL);
+		printf("%f\t %f\t %f\t %f\t %f\n",dt, turn_imu, turn_enc_x, speedFR, speedRL);
 
 		pub.publish(msg_m);
+		last_time = current_time;
 		loop_rate.sleep();
 		ros::spinOnce();
 	}
