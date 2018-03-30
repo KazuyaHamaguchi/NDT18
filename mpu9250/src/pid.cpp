@@ -69,7 +69,7 @@ void pid_acc(const sensor_msgs::Imu& msg)
 	double dt = (current_imu_time - last_imu_time).toSec();
 
 	error = msg.orientation.z - 0.0000;
-	printf("%f %f", dt, error);
+	printf("%f\t %f\n", dt, error);
 
 	integral += (error + lasterror) / 2.0 * dt/*delta_t*/;
 
