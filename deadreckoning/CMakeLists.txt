@@ -202,5 +202,5 @@ include_directories(
 # catkin_add_nosetests(test)
 
 
-add_executable(deadreckoning src/main.cpp)
-target_link_libraries(deadreckoning ${catkin_LIBRARIES})
+#add_executable(deadreckoning src/main.cpp)
+#target_link_libraries(deadreckoning ${catkin_LIBRARIES})
