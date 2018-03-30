@@ -118,6 +118,7 @@ int main(int argc, char **argv)
 		ROS_ERROR("parameter speed is invalid.");
 		return -1;
 	}
+	ROS_INFO("speed: %d", speed);
 
 	ros::Subscriber sub_imu = nh.subscribe("/imu/data_raw", 1000, pid_acc);
 	ros::Subscriber sub_enc = nh.subscribe("/robot/pose", 1000, pid_enc);
