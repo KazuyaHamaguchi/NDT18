@@ -47,11 +47,15 @@ float clamp(float input, float min, float max)
 	{
 		output = max;
 	}
-	if(1 <= input && input < 3 && min >= 0)
+	if(input <= min)
+	{
+		output = min;
+	}
+	if(1 <= input && input < 3)
 	{
 		output = 2;
 	}
-	if(-3 < input && input <= -1 && min <= 0)
+	if(-3 < input && input <= -1)
 	{
 		output = -2;
 	}
