@@ -183,7 +183,7 @@ int main(int argc, char **argv)
 		msg_m.motor_RR = speedRR;
 		msg_m.motor_RL = speedRL;
 
-		printf("%f\t %f\t %f\t %f\n", msg_acc.orientation.z, turn_acc, speedFR, speedRL);
+		printf("%f\t %f\t %f\n", turn_imu, speedFR, speedRL);
 
 		pub.publish(msg_m);
 		loop_rate.sleep();
