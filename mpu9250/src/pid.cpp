@@ -14,7 +14,7 @@
 using namespace std;
 
 int speed;
-int front = 1;	//前：1，右：2，後：3，左：4
+int front;	//前：1，右：2，後：3，左：4
 
 
 static float imu_P = 20.00;
@@ -48,11 +48,11 @@ float clamp(float input, float min, float max)
 	{
 		output = max;
 	}
-	if(1 <= input && input < 3)
+	if(1 <= input && input < 3 && min >= 0)
 	{
 		output = 2;
 	}
-	if(-3 < input && input <= -1)
+	if(-3 < input && input <= -1 && min <= 0)
 	{
 		output = -2;
 	}
@@ -110,7 +110,7 @@ int main(int argc, char **argv)
 	if(!local_nh.hasParam("speed"))
 	{
 		ROS_INFO("Parameter speed is not defind. Now, it is set default value.");
-		local_nh.setParam("speed", 10);
+		local_nh.setParam("speed", 0);
 	}
 
 	if(!local_nh.getParam("speed", speed))
@@ -119,6 +119,19 @@ int main(int argc, char **argv)
 		return -1;
 	}
 	ROS_INFO("speed: %d", speed);
+
+	if(!local_nh.hasParam("front"))
+	{
+		ROS_INFO("Parameter front is not defind. Now, it is set default value.");
+		local_nh.setParam("front", 10);
+	}
+
+	if(!local_nh.getParam("front", front))
+	{
+		ROS_ERROR("parameter front is invalid.");
+		return -1;
+	}
+	ROS_INFO("front: %d", front);
 
 	ros::Subscriber sub_imu = nh.subscribe("/imu/data_raw", 1000, pid_acc);
 	ros::Subscriber sub_enc = nh.subscribe("/robot/pose", 1000, pid_enc);
