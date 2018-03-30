@@ -146,10 +146,10 @@ int main(int argc, char **argv)
 					break;
 
 				case 3:	//後
-					speedFR = clamp(nearbyint( -(speed + turn_acc + turn_enc_x)), -20, 0);
-					speedFL = clamp(nearbyint( -(speed - turn_acc - turn_enc_x)), -20, 0);
-					speedRL = clamp(nearbyint( -(speed - turn_acc + turn_enc_x)), -20, 0);
-					speedRR = clamp(nearbyint( -(speed + turn_acc - turn_enc_x)), -20, 0);
+					speedFR = clamp(nearbyint( -(speed + turn_acc - turn_enc_x)), -20, 0);
+					speedFL = clamp(nearbyint( -(speed - turn_acc + turn_enc_x)), -20, 0);
+					speedRL = clamp(nearbyint( -(speed - turn_acc - turn_enc_x)), -20, 0);
+					speedRR = clamp(nearbyint( -(speed + turn_acc + turn_enc_x)), -20, 0);
 					break;
 
 				case 4:	//左
