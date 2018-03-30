@@ -18,7 +18,7 @@ int front = 1;	//前：1，右：2，後：3，左：4
 
 
 static float imu_P = 0.50;
-static float imu_I = 2.00;
+static float imu_I = 1.00;
 static float imu_D = 0.05;
 
 static float enc_P = 2.00;
@@ -73,7 +73,7 @@ void pid_acc(const sensor_msgs::Imu& msg)
 	lasterror = error;
 	last_imu_time = current_imu_time;
 
-	printf("%f\n", dt);
+	printf("%f\t", dt);
 }
 
 void pid_enc(const geometry_msgs::PoseStamped& msg)
@@ -96,6 +96,8 @@ void pid_enc(const geometry_msgs::PoseStamped& msg)
 	lasterror_y = error_y;
 
 	last_enc_time = current_enc_time;
+
+	printf("%f\t", dt);
 }
 
 
@@ -186,7 +188,7 @@ int main(int argc, char **argv)
 		msg_m.motor_RR = speedRR;
 		msg_m.motor_RL = speedRL;
 
-		printf("%f\t %f\t %f\n", turn_imu, speedFR, speedRL);
+		printf("%f\t %f\t %f\t %f\n", turn_imu, turn_enc_x, speedFR, speedRL);
 
 		pub.publish(msg_m);
 		loop_rate.sleep();
