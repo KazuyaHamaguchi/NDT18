@@ -104,7 +104,7 @@ int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "pid_control", ros::init_options::NoSigintHandler);
 	ros::NodeHandle nh;
-	ros::Rate loop_rate(100);
+	ros::Rate loop_rate(10);
 	ros::NodeHandle local_nh("~");
 
 
@@ -113,7 +113,7 @@ int main(int argc, char **argv)
 	ros::Subscriber sub_imu = nh.subscribe("/imu/data_raw", 1000, pid_acc);
 	ros::Subscriber sub_enc = nh.subscribe("/robot/pose", 1000, pid_enc);
 
-	pub = nh.advertise<mpu9250::motor>("motor", 1);
+	pub = nh.advertise<mpu9250::motor>("motor", 100);
 
 
 
