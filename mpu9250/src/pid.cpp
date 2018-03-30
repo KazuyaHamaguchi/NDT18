@@ -68,7 +68,7 @@ void imu_cb(const sensor_msgs::Imu& msg)
 
 void pid_enc(const geometry_msgs::PoseStamped& msg)
 {
-	float lasterror_x = 0, lasterror_y = 0, integral_x = 0, integral_y = 0, error_x = 0, error_y = 0;
+	/*float lasterror_x = 0, lasterror_y = 0, integral_x = 0, integral_y = 0, error_x = 0, error_y = 0;
 
 	dt = (current_enc_time - last_enc_time).toSec();
 
@@ -86,7 +86,7 @@ void pid_enc(const geometry_msgs::PoseStamped& msg)
 
 	last_enc_time = current_enc_time;
 
-	//printf("enc:%f\n", dt);
+	//printf("enc:%f\n", dt);*/
 }
 
 void imu_pid()
