@@ -62,7 +62,6 @@ void pid_acc(const sensor_msgs::Imu& msg)
 {
 	float lasterror = 0, integral = 0, error = 0;
 	error = msg.orientation.z - 0.00000f;
-	printf("%f\t %f\n", dt, error);
 
 	integral += (error + lasterror) / 2.0 * dt;
 
