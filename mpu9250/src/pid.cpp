@@ -30,11 +30,11 @@ static float delta_t = 0.01;
 float speedFR = 0, speedRL = 0, speedFL = 0, speedRR = 0;
 float turn_imu = 0, turn_enc_x = 0, turn_enc_y = 0;
 
-ros::time current_imu_time , last_imu_time, current_enc_time, last_enc_time;
-current_imu_time = ros::time::now();
-last_imu_time = ros::time::now();
-current_enc_time = ros:: time::now();
-last_enc_time = ros::time::now();
+ros::Time current_imu_time , last_imu_time, current_enc_time, last_enc_time;
+current_imu_time = ros::Time::now();
+last_imu_time = ros::Time::now();
+current_enc_time = ros::Time::now();
+last_enc_time = ros::Time::now();
 
 ros::Publisher pub;
 mpu9250::motor msg_m;
@@ -68,7 +68,7 @@ float clamp(float input, float min, float max)
 void pid_acc(const sensor_msgs::Imu& msg)
 {
 	float lasterror = 0, integral = 0, error = 0;
-	current_imu_time = ros::time::now();
+	current_imu_time = ros::Time::now();
 	error = msg.orientation.z - 0.0000;
 
 	integral += (error + lasterror) / 2.0 * delta_t;
