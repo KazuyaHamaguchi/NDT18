@@ -322,10 +322,10 @@ void thread_main(){
 		}
 
 		if(left!=NULL){
-			pose.pose.position.y = -FIELD_WIDTH/2 + left->dist;
+			pose.pose.position.y = FIELD_WIDTH/2 - right->dist;
 		}
 		else if(right!=NULL){
-			pose.pose.position.y = FIELD_WIDTH/2 - right->dist;
+			pose.pose.position.y = -FIELD_WIDTH/2 + left->dist;
 		}
 #if false
 		if(left!=NULL)	std::cout << "L";
