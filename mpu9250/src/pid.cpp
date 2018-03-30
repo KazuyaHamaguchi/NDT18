@@ -13,24 +13,22 @@
 
 using namespace std;
 
-static float speed = 10;
+int speed = 10;
 int front = 1;	//前：1，右：2，後：3，左：4
 
 
-static float imu_Kp = 0.20;
-static float imu_Ki = 0.90;
-static float imu_Kd = 0.05;
+static float imu_P = 20.00;
+static float imu_I = 2.00;
+static float imu_D = 0.05;
 
-static float enc_Kp = 2.00;
-static float enc_Ki = 0.00;
-static float enc_Kd = 0.00;
+static float enc_P = 2.00;
+static float enc_I = 0.00;
+static float enc_D = 0.00;
 
-float imu_P = 0, imu_I = 0, imu_D = 0, pre_imu_P = 0;
+
+static float delta_t = 0.01;
 float speedFR = 0, speedRL = 0, speedFL = 0, speedRR = 0;
 float turn_imu = 0, turn_enc_x = 0, turn_enc_y = 0;
-
-ros::Time current_time , last_time;
-double dt;
 
 ros::Publisher pub;
 mpu9250::motor msg_m;
@@ -61,43 +59,34 @@ float clamp(float input, float min, float max)
 	return output;
 }
 
-void imu_cb(const sensor_msgs::Imu& msg)
+void pid_acc(const sensor_msgs::Imu& msg)
 {
-	imu_P = msg.orientation.z - 0.00;
+	float lasterror = 0, integral = 0, error = 0;
+	error = msg.orientation.z - 0.0000;
+
+	integral += (error + lasterror) / 2.0 * delta_t;
+
+	turn_acc = imu_P * error + imu_I * integral + imu_D * (error - lasterror) / delta_t;
+
+	lasterror = error;
 }
 
-void enc_cb(const geometry_msgs::PoseStamped& msg)
+void pid_enc(const geometry_msgs::PoseStamped& msg)
 {
-	/*float lasterror_x = 0, lasterror_y = 0, integral_x = 0, integral_y = 0, error_x = 0, error_y = 0;
-
-	dt = (current_enc_time - last_enc_time).toSec();
+	float lasterror_x = 0, lasterror_y = 0, integral_x = 0, integral_y = 0, error_x = 0, error_y = 0;
 
 	error_x = msg.pose.position.x - 0.0000;
 	error_y = msg.pose.position.y - 0.0000;
 
-	integral_x += (error_x + lasterror_x) / 2.0 * dt;
-	integral_y += (error_y + lasterror_y) / 2.0 * dt;
+	integral_x += (error_x + lasterror_x) / 2.0 * delta_t;
+	integral_y += (error_y + lasterror_y) / 2.0 * delta_t;
 
-	turn_enc_x = enc_P * error_x + enc_I * integral_x + enc_D * (error_x - lasterror_x) / dt;
-	turn_enc_y = enc_P * error_y + enc_I * integral_y + enc_D * (error_y - lasterror_y) / dt;
+	turn_enc_x = enc_P * error_x + enc_I * integral_x + enc_D * (error_x - lasterror_x) / delta_t;
+	turn_enc_y = enc_P * error_y + enc_I * integral_y + enc_D * (error_y - lasterror_y) / delta_t;
 
 	lasterror_x = error_x;
 	lasterror_y = error_y;
-
-	last_enc_time = current_enc_time;
-
-	//printf("enc:%f\n", dt);*/
 }
-
-void imu_pid()
-{
-	imu_I += (imu_P + pre_imu_P) / 2.0 * dt;
-	imu_D = (imu_P - pre_imu_P) /dt;
-	turn_imu = imu_Kp * imu_P + imu_Ki * imu_I + imu_Kd * imu_D;
-
-	pre_imu_P = imu_P;
-}
-
 
 
 void mySigintHandler(int sig)
@@ -114,16 +103,24 @@ int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "pid_control", ros::init_options::NoSigintHandler);
 	ros::NodeHandle nh;
-	current_time = ros::Time::now();
-	last_time = ros::Time::now();
 	ros::Rate loop_rate(10);
 	ros::NodeHandle local_nh("~");
 
 
-	/*if(!local_nh.hasParam(""))*/
+	if(!local_nh.hasParam("speed"))
+	{
+		ROS_INFO("Parameter speed is not defind. Now, it is set default value.");
+		local_nh.setParam("speed, 10");
+	}
 
-	ros::Subscriber sub_imu = nh.subscribe("/imu/data_raw", 1000, imu_cb);
-	ros::Subscriber sub_enc = nh.subscribe("/robot/pose", 1000, enc_cb);
+	if(!local_nh.getParam("speed", speed))
+	{
+		ROS_ERROR("parameter speed is invalid.");
+		return -1;
+	}
+
+	ros::Subscriber sub_imu = nh.subscribe("/imu/data_raw", 1000, pid_acc);
+	ros::Subscriber sub_enc = nh.subscribe("/robot/pose", 1000, pid_enc);
 
 	pub = nh.advertise<mpu9250::motor>("motor", 100);
 
@@ -132,19 +129,12 @@ int main(int argc, char **argv)
 	while(ros::ok())
 	{
 		signal(SIGINT, mySigintHandler);
-
-		current_time = ros::Time::now();
-		dt = (current_time - last_time).toSec();
-
-		imu_pid();
-
-
 		if(speed == 0)
 		{
-			speedFR = clamp(nearbyint(speed - turn_imu), -20, 20);
-			speedFL = clamp(nearbyint(speed + turn_imu), -20, 20);
-			speedRL = clamp(nearbyint(speed + turn_imu), -20, 20);
-			speedRR = clamp(nearbyint(speed - turn_imu), -20, 20);
+			speedFR = clamp(nearbyint(speed - turn_acc), -20, 20);
+			speedFL = clamp(nearbyint(speed + turn_acc), -20, 20);
+			speedRL = clamp(nearbyint(speed + turn_acc), -20, 20);
+			speedRR = clamp(nearbyint(speed - turn_acc), -20, 20);
 		}
 		if(speed > 0)
 		{
@@ -192,10 +182,7 @@ int main(int argc, char **argv)
 		msg_m.motor_RR = speedRR;
 		msg_m.motor_RL = speedRL;
 
-		printf("%f\t %f\t %f\t %f\t %f\n",dt, turn_imu, turn_enc_x, speedFR, speedRL);
-
 		pub.publish(msg_m);
-		last_time = current_time;
 		loop_rate.sleep();
 		ros::spinOnce();
 	}
