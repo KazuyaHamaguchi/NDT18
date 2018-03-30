@@ -66,7 +66,7 @@ void pid_acc(const sensor_msgs::Imu& msg)
 
 	integral += (error + lasterror) / 2.0 * delta_t;
 
-	turn_acc = imu_P * error + imu_I * integral + imu_D * (error - lasterror) / delta_t;
+	turn_imu = imu_P * error + imu_I * integral + imu_D * (error - lasterror) / delta_t;
 
 	lasterror = error;
 }
@@ -110,7 +110,7 @@ int main(int argc, char **argv)
 	if(!local_nh.hasParam("speed"))
 	{
 		ROS_INFO("Parameter speed is not defind. Now, it is set default value.");
-		local_nh.setParam("speed, 10");
+		local_nh.setParam("speed", 10);
 	}
 
 	if(!local_nh.getParam("speed", speed))
