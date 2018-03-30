@@ -8,7 +8,6 @@ const float DISTANCE_LRF_TO_CENTER = 0.00;	//[m]
 
 ros::Publisher pub;
 geometry_msgs::PoseStamped pose_msg;
-deadreckoning::enc& enc_msg;
 
 float yaw = 0.0f;
 float yawfirst = 0.0f;
