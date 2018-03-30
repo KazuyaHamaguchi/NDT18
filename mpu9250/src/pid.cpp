@@ -75,7 +75,7 @@ void pid_acc(const sensor_msgs::Imu& msg)
 	lasterror = error;
 	last_imu_time = current_imu_time;
 
-	printf("%f", dt);
+	printf("%f\n", dt);
 }
 
 void pid_enc(const geometry_msgs::PoseStamped& msg)
