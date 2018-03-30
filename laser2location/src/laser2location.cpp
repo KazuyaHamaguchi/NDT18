@@ -253,14 +253,14 @@ void thread_main(){
 			//ROS_INFO("Hough:rho=%f theta=%f[deg]",dist, theta_deg);
 
 			geometry_msgs::Point p;
-			p.x = dist*sin(-CV_PI/2+theta)+sin(theta)*10 ;
-			p.y = dist*cos(-CV_PI/2+theta)+cos(theta)*10;
+			p.x = -dist*cos(-CV_PI/2+theta)+cos(theta)*10;
+			p.y = -dist*sin(-CV_PI/2+theta)+sin(theta)*10;
 			p.z = 0;
 
 			line_list.points.push_back(p);
 
-			p.x = dist*sin(-CV_PI/2+theta)-sin(theta)*10 ;
-			p.y = dist*cos(-CV_PI/2+theta)-cos(theta)*10;
+			p.x = -dist*cos(-CV_PI/2+theta)-cos(theta)*10;
+			p.y = -dist*sin(-CV_PI/2+theta)-sin(theta)*10;
 			p.z = 0;
 			line_list.points.push_back(p);
 
