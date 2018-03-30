@@ -16,6 +16,7 @@ float old_y = 0;
 
 void encCallback(const deadreckoning::enc& msg)
 {
+<<<<<<< HEAD
     pose_msg.pose.position.x += (msg.distance_X - old_x) * cos(yaw);
       pose_msg.pose.position.y += (msg.distance_X - old_x) * sin(yaw);
         pose_msg.pose.position.x += (msg.distance_Y - old_y) * cos(M_PI/2 + yaw);
@@ -23,6 +24,15 @@ void encCallback(const deadreckoning::enc& msg)
             old_x = msg.distance_X;
               old_y = msg.distance_Y;
                 pub.publish(pose_msg);
+=======
+	pose_msg.pose.position.x += (msg.distance_X - old_x) * cos(yaw);
+	pose_msg.pose.position.y += (msg.distance_X - old_x) * sin(yaw);
+	pose_msg.pose.position.x += (msg.distance_Y - old_y) * cos(M_PI/2 + yaw);
+	pose_msg.pose.position.y += (msg.distance_Y - old_y) * sin(M_PI/2 + yaw);
+	old_x = msg.distance_X;
+	old_y = msg.distance_Y;
+	pub.publish(pose_msg);
+>>>>>>> 7881b412a37704a7d1502925ba667662680aa7c0
 }
 
 void imuCallback(const sensor_msgs::Imu& msg)
@@ -41,8 +51,13 @@ int main(int argc, char **argv)
 
       ros::NodeHandle nh;
 
+<<<<<<< HEAD
         ros::Subscriber subEnc = nh.subscribe("/enc", 1000, encCallback);
           ros::Subscriber subIMU = nh.subscribe("/imu/data_raw", 1000, imuCallback);
+=======
+	ros::Subscriber subEnc = nh.subscribe("/enc", 1000, encCallback);
+	ros::Subscriber subIMU = nh.subscribe("/imu/data_raw", 1000, imuCallback);
+>>>>>>> 7881b412a37704a7d1502925ba667662680aa7c0
 
             pose_msg.header.frame_id = "/map";
               pose_msg.pose.position.x = pose_msg.pose.position.y = pose_msg.pose.position.z = 0.0f;
