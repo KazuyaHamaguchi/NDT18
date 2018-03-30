@@ -4,7 +4,7 @@
 
 #include <signal.h>
 
-#include <mpu9250/motor.h>
+#include <nemcon/motor.h>
 #include <deadreckoning/enc.h>
 
 #include <stdio.h>
@@ -31,7 +31,7 @@ ros::Time current_time , last_time;
 double dt = 0.0;
 
 ros::Publisher pub;
-mpu9250::motor msg_m;
+nemcon::motor msg_m;
 
 float clamp(float input, float min, float max)
 {
@@ -218,7 +218,7 @@ int main(int argc, char **argv)
 	ros::Subscriber sub_imu = nh.subscribe("/imu/data_raw", 1000, pid_acc);
 	ros::Subscriber sub_enc = nh.subscribe("/robot/pose", 1000, pid_enc);
 
-	pub = nh.advertise<mpu9250::motor>("motor", 100);
+	pub = nh.advertise<nemcon::motor>("motor", 100);
 
 
 

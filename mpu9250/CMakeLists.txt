@@ -50,7 +50,6 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate messages in the 'msg' folder
 add_message_files(
   FILES
-  motor.msg
   distance.msg
 #   Message1.msg
 #   Message2.msg
@@ -209,9 +208,5 @@ find_library(LIBPIGPIOD_IF2_LIBRARIES NAMES pigpiod_if2)
 
 add_executable(mpu9250 src/mpu9250.cpp)
 target_link_libraries(mpu9250 ${catkin_LIBRARIES} ${LIBPIGPIOD_IF2_LIBRARIES})
-add_executable(pid_control src/pid.cpp)
-target_link_libraries(pid_control ${catkin_LIBRARIES})
 add_executable(Gyro src/Gyro.cpp)
 target_link_libraries(Gyro ${catkin_LIBRARIES} ${LIBPIGPIOD_IF2_LIBRARIES})
-add_executable(emergency_stop src/emergency_stop.cpp)
-target_link_libraries(emergency_stop ${catkin_LIBRARIES} ${LIBPIGPIOD_IF2_LIBRARIES})

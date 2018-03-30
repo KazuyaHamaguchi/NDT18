@@ -48,11 +48,12 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
+add_message_files(
+  FILES
+  motor.msg
 #   Message1.msg
 #   Message2.msg
-# )
+)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -69,10 +70,10 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs
-# )
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -120,6 +121,11 @@ include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
 )
+
+
+# Find PIGPIO http://abyz.co.uk/rpi/pigpio/
+find_library(LIBPIGPIOD_IF2_LIBRARIES NAMES pigpiod_if2)
+
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
@@ -198,3 +204,8 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+add_executable(pid_control src/pid.cpp)
+target_link_libraries(pid_control ${catkin_LIBRARIES})
+add_executable(emergency_stop src/emergency_stop.cpp)
+target_link_libraries(emergency_stop ${catkin_LIBRARIES} ${LIBPIGPIOD_IF2_LIBRARIES})
