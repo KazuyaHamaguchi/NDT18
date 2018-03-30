@@ -145,8 +145,8 @@ int main(int argc, char **argv)
 	}
 	ROS_INFO("front: %d", front);
 
-	ros::Subscriber sub_imu = nh.subscribe("/imu/data_raw", 1000, pid_acc);
-	ros::Subscriber sub_enc = nh.subscribe("/robot/pose", 1000, pid_enc);
+	ros::Subscriber sub_imu = nh.subscribe("/imu/data_raw", 100, pid_acc);
+	ros::Subscriber sub_enc = nh.subscribe("/robot/pose", 100, pid_enc);
 
 	pub = nh.advertise<mpu9250::motor>("motor", 100);
 
