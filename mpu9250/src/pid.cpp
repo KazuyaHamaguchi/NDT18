@@ -30,6 +30,8 @@ static float delta_t = 0.01;
 float speedFR = 0, speedRL = 0, speedFL = 0, speedRR = 0;
 float turn_imu = 0, turn_enc_x = 0, turn_enc_y = 0;
 
+ros::Time current_imu_time , last_imu_time, current_enc_time, last_enc_time;
+
 ros::Publisher pub;
 mpu9250::motor msg_m;
 
@@ -62,13 +64,19 @@ float clamp(float input, float min, float max)
 void pid_acc(const sensor_msgs::Imu& msg)
 {
 	float lasterror = 0, integral = 0, error = 0;
+	current_imu_time = ros::Time::now();
+
+	double dt = (current_imu_time - last_imu_time).toSec();
+
 	error = msg.orientation.z - 0.0000;
+	printf("%f %f", dt, error)
 
-	integral += (error + lasterror) / 2.0 * delta_t;
+	integral += (error + lasterror) / 2.0 * dt/*delta_t*/;
 
-	turn_imu = imu_P * error + imu_I * integral + imu_D * (error - lasterror) / delta_t;
+	turn_imu = imu_P * error + imu_I * integral + imu_D * (error - lasterror) / dt/*delta_t*/;
 
 	lasterror = error;
+	last_imu_time = current_imu_time;
 }
 
 void pid_enc(const geometry_msgs::PoseStamped& msg)
@@ -103,6 +111,10 @@ int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "pid_control", ros::init_options::NoSigintHandler);
 	ros::NodeHandle nh;
+	current_imu_time = ros::Time::now();
+	last_imu_time = ros::Time::now();
+	current_enc_time = ros::Time::now();
+	last_enc_time = ros::Time::now();
 	ros::Rate loop_rate(10);
 	ros::NodeHandle local_nh("~");
 
