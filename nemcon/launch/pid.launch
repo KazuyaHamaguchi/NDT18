@@ -3,7 +3,7 @@
   <node name="deadreckoning" pkg="deadreckoning" type="deadreckoning" />
 
   <node name="pid_control" pkg="nemcon" type="pid_control" output="screen">
-    <param name="speed" value="0" />
+    <param name="speed" value="10" />
     <param name="front" value="1" />
     <param name="imu_P" value="20.0" />
     <param name="imu_I" value="2.00" />
