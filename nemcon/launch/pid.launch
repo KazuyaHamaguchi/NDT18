@@ -1,7 +1,4 @@
 <launch>
-  <node name="mpu9250" pkg="mpu9250" type="mpu9250" output="screen" />
-  <node name="deadreckoning" pkg="deadreckoning" type="deadreckoning" />
-
   <node name="pid_control" pkg="nemcon" type="pid_control" output="screen">
     <param name="speed" value="10" />
     <param name="front" value="4" /> <!-- 前：1，右：2，後：3，左：4 -->
