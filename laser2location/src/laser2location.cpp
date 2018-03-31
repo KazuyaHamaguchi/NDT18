@@ -322,10 +322,10 @@ void thread_main(){
 		}
 
 		if(left!=NULL){
-			pose.pose.position.y = -FIELD_WIDTH/2 + left->dist;
+			pose.pose.position.y = /*-FIELD_WIDTH/2 +*/ left->dist;
 		}
 		else if(right!=NULL){
-			pose.pose.position.y = FIELD_WIDTH/2 - right->dist;
+			pose.pose.position.y = /*FIELD_WIDTH/2*/ - right->dist;
 		}
 #if false
 		if(left!=NULL)	std::cout << "L";
@@ -336,8 +336,8 @@ void thread_main(){
 		else			std::cout << " ";
 		std::cout << std::endl;
 #endif
-		//double yaw_deg = yaw*180/CV_PI;
-		//ROS_INFO("yaw=%f[deg] x=%f[m] y=%f[m]",yaw_deg, pose.pose.position.x, pose.pose.position.y );
+		double yaw_deg = yaw*180/CV_PI;
+		ROS_INFO("yaw=%f[deg] x=%f[m] y=%f[m]",yaw_deg, pose.pose.position.x, pose.pose.position.y );
 
 		pose.pose.position.x += dist_lrf*sin(yaw-M_PI/2);
 		pose.pose.position.y += dist_lrf*cos(yaw-M_PI/2);
