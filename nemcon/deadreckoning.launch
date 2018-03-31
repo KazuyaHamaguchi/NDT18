@@ -1,4 +1,0 @@
-<launch>
-  <node name="mpu9250" pkg="mpu9250" type="mpu9250" output="screen" />
-  <node name="deadreckoning" pkg="deadreckoning" type="deadreckoning" />
-</launch>
