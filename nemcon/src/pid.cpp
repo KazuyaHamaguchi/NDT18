@@ -90,10 +90,10 @@ void pid_enc(const geometry_msgs::PoseStamped& msg)
 
 void mySigintHandler(int sig)
 {
-	msg_m.motor_FR = 0;
-	msg_m.motor_FL = 0;
-	msg_m.motor_RR = 0;
-	msg_m.motor_RL = 0;
+	msg_m.motor_FR = 8080;
+	msg_m.motor_FL = 8080;
+	msg_m.motor_RR = 8080;
+	msg_m.motor_RL = 8080;
 	pub.publish(msg_m);
 	ros::shutdown();
 }
