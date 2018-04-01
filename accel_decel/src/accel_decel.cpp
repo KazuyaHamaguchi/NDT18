@@ -105,7 +105,7 @@ int main(int argc, char **argv)
 				{
 					ROS_INFO("time: %f\t V: %f\t X2", t, Vmax);
 				}
-				if(t2 <= t && t <= (t1 + t2 + t3))
+				if((t1 + t2) <= t && t <= (t1 + t2 + t3))
 				{
 					ROS_INFO("time: %f\t V: %f\t X3", t, decel(t));
 				}
