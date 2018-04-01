@@ -89,7 +89,6 @@ int main(int argc, char **argv)
 
 	while(ros::ok())
 	{
-		current_time = ros::Time::now();
 
 		if(first)
 		{
