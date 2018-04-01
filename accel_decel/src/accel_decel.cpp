@@ -37,13 +37,6 @@ float decel(float now_t)
 
 void param_cb(const accel_decel::param& msg)
 {
-	Vs = 0.0f;
-	Vmax = 0.0f;
-	Ve = 0.0f;
-	Amax = 0.0f;
-	Xall = 0.0f;
-	t = 0.0f;
-
 	if(!cb_flag)
 	{
 		Vs = msg.Vs;
@@ -63,8 +56,8 @@ void param_cb(const accel_decel::param& msg)
 		t3 = (M_PI * (Vmax - Ve)) / (2 * Amax);
 		X3 = (((Vmax * Vmax) - (Ve * Ve)) * M_PI) / (4 * Amax);
 
-		X2 = Xall - X1 - X2;
-		t2 = X2 / Vmax;
+		X2 = Xall - (X1 + X2);
+		t2 = Xall - (X1 + X2) / Vmax;
 
 
 
