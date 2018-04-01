@@ -36,6 +36,7 @@ void param_cb(const accel_decel::param& msg)
 	{
 		if(end)
 		{
+			first = false;
 			cb_flag = false;
 			first = true;
 		}
