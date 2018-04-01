@@ -18,7 +18,7 @@ float now_t = 0.0f;
 
 bool cb_flag = false;
 bool first = false;
-bool end;
+bool end = false;
 
 void param_cb(const accel_decel::param& msg)
 {
