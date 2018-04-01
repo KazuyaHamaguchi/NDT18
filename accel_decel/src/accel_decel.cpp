@@ -65,7 +65,7 @@ int main(int argc, char **argv)
 			while(t < 1.0)
 			{
 				t += (current_time - last_time).toSec();
-				ROS_INFO("time: %f\t Vs: %f\n", t, Vs);
+				ROS_INFO("time: %f\t Vs: %f", t, Vs);
 			}
 
 			first = false;
