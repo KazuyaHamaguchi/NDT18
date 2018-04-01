@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 
 		if(first)
 		{
-			while(t < /*(*/t1 /*+ t2 + t3)*/)
+			while(t <= (t1 + t2 /*+ t3)*/)
 			{
 				t += (current_time - last_time).toSec();
 
@@ -101,11 +101,11 @@ int main(int argc, char **argv)
 				{
 					ROS_INFO("time: %f\t V: %f", t, accel(t));
 				}
-				/*if(t1 <= t && t < t2)
+				if(t1 <= t && t <= t2)
 				{
 					ROS_INFO("time: %f\t V: %f", t, Vmax);
 				}
-				if(t2 <= t && t < t3)
+				/*if(t2 <= t && t < t3)
 				{
 					ROS_INFO("time: %f\t V: %f", t, decel(t));
 				}*/
