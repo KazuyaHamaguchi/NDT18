@@ -5,15 +5,15 @@
 #include <math.h>
 
 ros::Publisher pub;
-geometry_msgs::PoseStamped pose_msg;
 
-ros::time current_time, last_time, time;
+ros::time current_time, last_time;
 
 float Vs = 0.0f;
 float Vmax = 0.0f;
 float Ve = 0.0f;
 float Amax = 0.0f;
 float Xall = 0.0f
+float time = 0.0f;
 
 bool cb_flag = false;
 bool first;
@@ -50,8 +50,6 @@ int main(int argc, char **argv)
 
 	ros::Subscriber sub = nh.subscribe("/accel_decel", 1000, param_cb);
 
-	pub = nh.advertise<nemcon::motor>("motor", 100);
-
 	while(ros::ok())
 	{
 		if(first)
@@ -70,4 +68,3 @@ int main(int argc, char **argv)
 		ros::spinOnce();
 	}
 }
-
