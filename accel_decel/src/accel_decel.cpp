@@ -3,7 +3,6 @@
 #include <sensor_msgs/Imu.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <math.h>
-#include <cmath> //絶対値
 
 ros::Publisher pub;
 
@@ -33,7 +32,7 @@ float accel(float now_t)
 }
 float decel(float now_t)
 {
-	return ((Vmax - Ve) * (1 - cos(((2 * Amax)  * (now_t - ((t1 + t2) + (t3-t1)) - t1)) / (Vmax - Ve))) / 2) + Ve;
+	return ((Vmax - Ve) * (1 - cos(((2 * Amax)  * (now_t - ((t1 + t2) + (t3 - t1)) - t1)) / (Vmax - Ve))) / 2) + Ve;
 }
 
 void param_cb(const accel_decel::param& msg)
@@ -121,7 +120,7 @@ int main(int argc, char **argv)
 				if(t1 <= t && t <= (t1 + t2))
 				{
 					//ROS_INFO("time: %f\t V: %f\t X2", t, Vmax);
-					ptintf("%f\t %f\n", t, Vmax);
+					printf("%f\t %f\n", t, Vmax);
 				}
 				if((t1 + t2) <= t && t <= (t1 + t2 + t3))
 				{
