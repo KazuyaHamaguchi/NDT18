@@ -96,7 +96,6 @@ int main(int argc, char **argv)
 			while(t <= (t1 + t2 + t3))
 			{
 				t += (current_time - last_time).toSec();
-				ROS_INFO("time: %f\t V: %f\t X3", t, decel(t));
 
 				if(t <= t1)
 				{
