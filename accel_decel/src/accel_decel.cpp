@@ -32,6 +32,8 @@ void param_cb(const accel_decel::param& msg)
 
 		cb_flag = true;
 		first = true;
+		now_t = 0.0f;
+
 	}
 	else
 	{
@@ -58,7 +60,6 @@ int main(int argc, char **argv)
 	{
 		if(first)
 		{
-			now_t = 0.0f;
 			current_time = ros::Time::now();
 			t = (current_time - last_time).toSec();
 
@@ -69,6 +70,7 @@ int main(int argc, char **argv)
 
 			first = false;
 			end = true;
+			cb_flag = false
 		}
 		else
 		{
