@@ -58,6 +58,7 @@ int main(int argc, char **argv)
 	{
 		if(first)
 		{
+			now_t = 0.0f;
 			current_time = ros::Time::now();
 			t = (current_time - last_time).toSec();
 
@@ -67,6 +68,7 @@ int main(int argc, char **argv)
 			ROS_INFO("time: %f\t Vs: %f\n", now_t, Vs);
 
 			first = false;
+			end = true;
 		}
 		else
 		{
