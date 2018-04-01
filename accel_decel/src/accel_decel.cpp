@@ -6,14 +6,15 @@
 
 ros::Publisher pub;
 
-ros::time current_time, last_time;
+ros:Time current_time, last_time;
 
 float Vs = 0.0f;
 float Vmax = 0.0f;
 float Ve = 0.0f;
 float Amax = 0.0f;
 float Xall = 0.0f
-float time = 0.0f;
+float t = 0.0f;
+float now_t = 0.0f;
 
 bool cb_flag = false;
 bool first;
@@ -54,13 +55,13 @@ int main(int argc, char **argv)
 	{
 		if(first)
 		{
-			time = 0.0f;
+			now_t = 0.0f;
 		}
 		current_time = ros::Time::now();
 		t = (current_time - last_time).toSec();
 
 		last_time = current_time;
-		time += current_time;
+		now_t += current_time;
 
 		ROS_INFO("Vs");
 
