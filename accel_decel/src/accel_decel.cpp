@@ -32,7 +32,7 @@ float accel(float naw_t)
 }
 float decel(float naw_t)
 {
-	return ((Vmax - Ve) * (1 - cos(((2 * Amax)  * (naw_t - t1)) / (Vmax - Ve))) / 2) + Ve;
+	return ((Vmax - Ve) * (1 - cos(((2 * Amax)  * (now_t - t1)) / (Vmax - Ve))) / 2) + Ve;
 }
 
 void param_cb(const accel_decel::param& msg)
