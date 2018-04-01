@@ -66,13 +66,13 @@ int main(int argc, char **argv)
 
 			ROS_INFO("time: %f\t Vs: %f\n", t, Vs);
 
-			last_time = current_time;
 			first = false;
 			end = true;
 			cb_flag = false;
 
 		}
 
+		last_time = current_time;
 		loop_rate.sleep();
 		ros::spinOnce();
 	}
