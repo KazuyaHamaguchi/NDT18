@@ -67,7 +67,7 @@ int main(int argc, char **argv)
 
 		if(first)
 		{
-			while()
+			while(t < 1)
 			{
 				t += (current_time - last_time).toSec();
 
