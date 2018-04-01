@@ -37,6 +37,13 @@ float decel(float now_t)
 
 void param_cb(const accel_decel::param& msg)
 {
+	Vs = 0.0f;
+	Vmax = 0.0f;
+	Ve = 0.0f;
+	Amax = 0.0f;
+	Xall = 0.0f;
+	t = 0.0f;
+
 	if(!cb_flag)
 	{
 		Vs = msg.Vs;
@@ -78,6 +85,13 @@ void param_cb(const accel_decel::param& msg)
 			Amax = 0.0f;
 			Xall = 0.0f;
 			t = 0.0f;
+			float t1 = 0.0f;
+			float X1 = 0.0f;
+			float t2 = 0.0f;
+			float X2 = 0.0f;
+			float t3 = 0.0f;
+			float X3 = 0.0f;
+			float V = 0.0f;
 			first = false;
 			cb_flag = false;
 		}
