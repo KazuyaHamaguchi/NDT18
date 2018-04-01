@@ -67,7 +67,7 @@ void param_cb(const accel_decel::param& msg)
 		}
 		else
 		{
-			decel_time = t - t1 - t2 - t3
+			decel_time = t - t1 - t2 - t3;
 		}
 
 
