@@ -99,17 +99,15 @@ int main(int argc, char **argv)
 
 				if(t <= t1)
 				{
-					ROS_INFO("time: %f\t V: %f", t, accel(t));
+					ROS_INFO("time: %f\t V: %f\t X1", t, accel(t));
 				}
-				ROS_INFO("\n");
 				if(t1 <= t && t <= (t1 + t2))
 				{
-					ROS_INFO("time: %f\t V: %f", t, Vmax);
+					ROS_INFO("time: %f\t V: %f\t X2", t, Vmax);
 				}
-				ROS_INFO("\n");
 				if(t2 <= t && t <= (t1 + t2 + t3))
 				{
-					ROS_INFO("time: %f\t V: %f", t, decel(t));
+					ROS_INFO("time: %f\t V: %f\t X3", t, decel(t));
 				}
 			}
 
