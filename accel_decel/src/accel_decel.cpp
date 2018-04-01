@@ -97,7 +97,7 @@ int main(int argc, char **argv)
 			{
 				t += (current_time - last_time).toSec();
 
-				if(t < t1)
+				if(t <= t1)
 				{
 					ROS_INFO("time: %f\t V: %f", t, accel(t));
 				}
