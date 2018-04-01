@@ -115,7 +115,7 @@ int main(int argc, char **argv)
 				if(t <= t1)
 				{
 					//ROS_INFO("time: %f\t V: %f\t X1", t, accel(t));
-					printf("%f\t, %f\n", t, accel(t));
+					printf("%f\t %f\n", t, accel(t));
 				}
 				if(t1 <= t && t <= (t1 + t2))
 				{
@@ -124,7 +124,7 @@ int main(int argc, char **argv)
 				if((t1 + t2) <= t && t <= (t1 + t2 + t3))
 				{
 					//ROS_INFO("time: %f\t V: %f\t X3", t, decel(t - (t1 + t2));
-					printf("%f\t, %f\n", t, decel(t - (t1 + t2)));
+					printf("%f\t %f\n", t, decel(t - (t1 + t2)));
 				}
 			}
 
