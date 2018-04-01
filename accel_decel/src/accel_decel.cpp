@@ -32,7 +32,7 @@ float accel(float naw_t)
 }
 float decel(float naw_t)
 {
-	return ((Vmax - Ve) * (1 - cos(((2 * Amax) / (Vmax - Ve)) * (naw_t - t1)) / 2) + Ve;
+	return ((Vmax - Ve) * (1 - cos(((2 * Amax) / (Vmax - Ve))) * (naw_t - t1)) / 2) + Ve;
 }
 
 void param_cb(const accel_decel::param& msg)
@@ -99,15 +99,15 @@ int main(int argc, char **argv)
 
 				while(t < t1)
 				{
-					ROS_INFO("time: %f\t V: %f", t, accel();
+					ROS_INFO("time: %f\t V: %f", t, accel());
 				}
 				while(t < t2)
 				{
-					ROS_INFO("time: %f\t V: %f", t, accel();
+					ROS_INFO("time: %f\t V: %f", t, accel());
 				}
 				while(t < t3)
 				{
-					ROS_INFO("time: %f\t V: %f", t, decel();
+					ROS_INFO("time: %f\t V: %f", t, decel());
 				}
 
 			}
