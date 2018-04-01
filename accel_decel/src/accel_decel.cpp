@@ -3,6 +3,7 @@
 #include <sensor_msgs/Imu.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <math.h>
+#include <cmath> //絶対値
 
 ros::Publisher pub;
 
@@ -124,7 +125,7 @@ int main(int argc, char **argv)
 				if((t1 + t2) <= t && t <= (t1 + t2 + t3))
 				{
 					//ROS_INFO("time: %f\t V: %f\t X3", t, decel(t - (t1 + t2));
-					printf("%f\t %f\n", t, decel(t - ((t1 + t2) - (t1-t3))));
+					printf("%f\t %f\n", t, decel(t - ((t1 + t2) - abs(t1-t3))));
 				}
 			}
 
