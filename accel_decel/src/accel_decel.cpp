@@ -22,7 +22,7 @@ bool end = false;
 
 float accel(float naw_t)
 {
-	return f1 = (Vmax - Vs) * (1 - cos((2 * Amax) / (Vmax - Vs)) * naw_t) / 2 + Vs;
+	return f1 = ((Vmax - Vs) * (1 - cos((2 * Amax) / (Vmax - Vs)) * naw_t)) / 2 + Vs;
 }
 
 void param_cb(const accel_decel::param& msg)
