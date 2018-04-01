@@ -32,7 +32,7 @@ void param_cb(const accel_decel::param& msg)
 
 		cb_flag = true;
 		first = true;
-		now_t = 0.0f;
+		t = 0.0f;
 
 	}
 	else
@@ -66,11 +66,11 @@ int main(int argc, char **argv)
 
 			ROS_INFO("time: %f\t Vs: %f\n", t, Vs);
 
+			last_time = current_time;
 			first = false;
 			end = true;
 			cb_flag = false;
 
-			last_time = current_time;
 		}
 
 		loop_rate.sleep();
