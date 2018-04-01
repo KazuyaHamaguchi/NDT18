@@ -60,7 +60,7 @@ int main(int argc, char **argv)
 	{
 		if(first)
 		{
-			while(t > 1.0)
+			while(t < 1.0)
 			{
 				current_time = ros::Time::now();
 				t += (current_time - last_time).toSec();
