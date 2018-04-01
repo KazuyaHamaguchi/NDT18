@@ -47,8 +47,7 @@ void param_cb(const accel_decel::param& msg)
 
 		if(!(Xall > (M_PI * (((Vmax * Vmax) - ((Vs * Vs) - (Ve * Ve) / 2))) / (2 * Amax))))
 		{
-			//Vmax = sqrt(((2 * Amax) / M_PI) + ((Vs * Vs) + (Ve * Ve)) / 2);
-			Vmax = sqrt((((Xall / 2) * (4 * Amax)) / M_PI) + (Vs * Vs));
+			Vmax = sqrt((((2 * Amax) / M_PI) * Xall)+ ((Vs * Vs) + (Ve * Ve)) / 2);
 		}
 
 		t1 = (M_PI * (Vmax - Vs)) / (2 * Amax);
