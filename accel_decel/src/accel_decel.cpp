@@ -12,12 +12,13 @@ float Vs = 0.0f;
 float Vmax = 0.0f;
 float Ve = 0.0f;
 float Amax = 0.0f;
-float Xall = 0.0f
+float Xall = 0.0f;
 float t = 0.0f;
 float now_t = 0.0f;
 
 bool cb_flag = false;
-bool first;
+bool first = false;
+bool end;
 
 void param_cb(const accel_decel::param& msg)
 {
@@ -30,6 +31,7 @@ void param_cb(const accel_decel::param& msg)
 		Xall = msg.Xall;
 
 		cb_flag = true;
+		first = true;
 	}
 	else
 	{
