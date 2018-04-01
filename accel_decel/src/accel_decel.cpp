@@ -78,13 +78,13 @@ void param_cb(const accel_decel::param& msg)
 			Amax = 0.0f;
 			Xall = 0.0f;
 			t = 0.0f;
-			float t1 = 0.0f;
-			float X1 = 0.0f;
-			float t2 = 0.0f;
-			float X2 = 0.0f;
-			float t3 = 0.0f;
-			float X3 = 0.0f;
-			float V = 0.0f;
+			t1 = 0.0f;
+			X1 = 0.0f;
+			t2 = 0.0f;
+			X2 = 0.0f;
+			t3 = 0.0f;
+			X3 = 0.0f;
+			V = 0.0f;
 			first = false;
 			cb_flag = false;
 		}
@@ -122,7 +122,7 @@ int main(int argc, char **argv)
 				}
 				if((t1 + t2) <= t && t <= (t1 + t2 + t3))
 				{
-					ROS_INFO("time: %f\t V: %f\t X3", t, decel(t - t1 - t2));
+					ROS_INFO("time: %f\t V: %f\t X3", t, decel(t /*- t1 - t2*/));
 				}
 			}
 
