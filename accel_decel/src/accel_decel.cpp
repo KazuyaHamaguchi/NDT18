@@ -33,7 +33,7 @@ float accel(float now_t)
 }
 float decel(float now_t)
 {
-	return ((Vmax - Ve) * (1 - cos(((2 * Amax)  * (now_t - t1)) / (Vmax - Ve))) / 2) + Ve;
+	return ((Vmax - Ve) * (1 - cos(((2 * Amax)  * (now_t - ((t1 + t2) + (t3-t1)) - t1)) / (Vmax - Ve))) / 2) + Ve;
 }
 
 void param_cb(const accel_decel::param& msg)
@@ -125,7 +125,7 @@ int main(int argc, char **argv)
 				if((t1 + t2) <= t && t <= (t1 + t2 + t3))
 				{
 					//ROS_INFO("time: %f\t V: %f\t X3", t, decel(t - (t1 + t2));
-					printf("%f\t %f\n", t, decel(t - ((t1 + t2) + (t3-t1))));
+					printf("%f\t %f\n", t, decel(t));
 				}
 			}
 
