@@ -31,6 +31,7 @@ void param_cb(const accel_decel::param& msg)
 		Xall = msg.Xall;
 
 		cb_flag = true;
+		first = true;
 	}
 	else
 	{
@@ -38,7 +39,6 @@ void param_cb(const accel_decel::param& msg)
 		{
 			first = false;
 			cb_flag = false;
-			first = true;
 		}
 	}
 }
@@ -66,6 +66,7 @@ int main(int argc, char **argv)
 
 			ROS_INFO("time: %f\t Vs: %f\n", now_t, Vs);
 
+			first = false;
 		}
 		else
 		{
