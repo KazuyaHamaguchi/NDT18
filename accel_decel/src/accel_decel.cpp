@@ -58,13 +58,15 @@ int main(int argc, char **argv)
 
 	while(ros::ok())
 	{
-		current_time = ros::Time::now();
-
 		if(first)
 		{
-			t += (current_time - last_time).toSec();
-
-			ROS_INFO("time: %f\t Vs: %f\n", t, Vs);
+			while(t > 1.0)
+			{
+				current_time = ros::Time::now();
+				t += (current_time - last_time).toSec();
+				ROS_INFO("time: %f\t Vs: %f\n", t, Vs);
+				last_time = current_time;
+			}
 
 			first = false;
 			end = true;
@@ -72,7 +74,6 @@ int main(int argc, char **argv)
 
 		}
 
-		last_time = current_time;
 		loop_rate.sleep();
 		ros::spinOnce();
 	}
