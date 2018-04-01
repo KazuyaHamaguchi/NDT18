@@ -56,8 +56,8 @@ void param_cb(const accel_decel::param& msg)
 		t3 = (M_PI * (Vmax - Ve)) / (2 * Amax);
 		X3 = (((Vmax * Vmax) - (Ve * Ve)) * M_PI) / (4 * Amax);
 
-		X2 = Xall - (X1 + X2);
-		t2 = Xall - (X1 + X2) / Vmax;
+		X2 = Xall - (X1 + X3);
+		t2 = X2 / Vmax;
 
 
 
