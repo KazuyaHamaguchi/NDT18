@@ -26,11 +26,11 @@ bool cb_flag = false;
 bool first = false;
 bool end = false;
 
-float accel(float naw_t)
+float accel(float now_t)
 {
 	return ((Vmax - Vs) * (1 - cos(((2 * Amax) * now_t) / (Vmax - Vs))) / 2) + Vs;
 }
-float decel(float naw_t)
+float decel(float now_t)
 {
 	return ((Vmax - Ve) * (1 - cos(((2 * Amax)  * (now_t - t1)) / (Vmax - Ve))) / 2) + Ve;
 }
