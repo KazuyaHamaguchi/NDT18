@@ -35,7 +35,7 @@ void param_cb(const accel_decel::param& msg)
 		Amax = msg.Amax;
 		Xall = msg.Xall;
 
-		ROS_INFO("Vs: %f\t Vmax: %f\t Ve: %f\t Amax: %f\t Xall: %f\t", Vs, Vmax, Ve, Amax, Xall);
+		ROS_INFO("Vs: %f\t Vmax: %f\t Ve: %f\t Amax: %f\t Xall: %f", Vs, Vmax, Ve, Amax, Xall);
 
 		cb_flag = true;
 		first = true;
