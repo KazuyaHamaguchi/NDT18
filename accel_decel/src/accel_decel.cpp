@@ -28,11 +28,11 @@ bool end = false;
 
 float accel(float naw_t)
 {
-	return ((Vmax - Vs) * (1 - cos(((2 * Amax) / (Vmax - Vs)) * naw_t)) / 2) + Vs;
+	return ((Vmax - Vs) * (1 - cos(((2 * Amax) * now_t) / (Vmax - Vs))) / 2) + Vs;
 }
 float decel(float naw_t)
 {
-	return ((Vmax - Ve) * (1 - cos(((2 * Amax) / (Vmax - Ve))) * (naw_t - t1)) / 2) + Ve;
+	return ((Vmax - Ve) * (1 - cos(((2 * Amax)  * (naw_t - t1)) / (Vmax - Ve))) / 2) + Ve;
 }
 
 void param_cb(const accel_decel::param& msg)
