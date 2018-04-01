@@ -6,7 +6,7 @@
 
 ros::Publisher pub;
 
-ros:Time current_time, last_time;
+ros::Time current_time, last_time;
 
 float Vs = 0.0f;
 float Vmax = 0.0f;
@@ -63,9 +63,9 @@ int main(int argc, char **argv)
 		t = (current_time - last_time).toSec();
 
 		last_time = current_time;
-		now_t += current_time;
+		now_t += t;
 
-		ROS_INFO("Vs");
+		ROS_INFO("time: %f\t Vs: %f\n", now_t, Vs);
 
 		loop_rate.sleep();
 		ros::spinOnce();
