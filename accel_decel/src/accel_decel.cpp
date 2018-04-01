@@ -103,11 +103,11 @@ int main(int argc, char **argv)
 				}
 				if(t1 <= t && t <= (t1 + t2))
 				{
-					ROS_INFO("time: %f\t V: %f\t X2", t - t1, Vmax);
+					ROS_INFO("time: %f\t V: %f\t X2", t, Vmax);
 				}
 				if((t1 + t2) <= t && t <= (t1 + t2 + t3))
 				{
-					ROS_INFO("time: %f\t V: %f\t X3", t - t1 - t2, decel(t));
+					ROS_INFO("time: %f\t V: %f\t X3", t, decel(t - t1 - t2));
 				}
 			}
 
