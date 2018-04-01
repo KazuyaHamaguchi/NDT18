@@ -14,7 +14,13 @@ float Ve = 0.0f;
 float Amax = 0.0f;
 float Xall = 0.0f;
 float t = 0.0f;
-float f1 = 0.0f;
+float t1 = 0.0f;
+float X1 = 0.0f;
+float t2 = 0.0f;
+float x2 = 0.0f;
+float t3 = 0.0f;
+float x3 = 0.0f;
+float V = 0.0f;
 
 bool cb_flag = false;
 bool first = false;
@@ -22,7 +28,7 @@ bool end = false;
 
 float accel(float naw_t)
 {
-	return f1 = ((Vmax - Vs) * (1 - cos((2 * Amax) / (Vmax - Vs)) * naw_t)) / 2 + Vs;
+	return ((Vmax - Vs) * (1 - cos(((2 * Amax) / (Vmax - Vs)) * naw_t)) / 2) + Vs;
 }
 
 void param_cb(const accel_decel::param& msg)
@@ -35,12 +41,22 @@ void param_cb(const accel_decel::param& msg)
 		Amax = msg.Amax;
 		Xall = msg.Xall;
 
-		ROS_INFO("Vs: %f\t Vmax: %f\t Ve: %f\t Amax: %f\t Xall: %f", Vs, Vmax, Ve, Amax, Xall);
+		if(Xall > (M_PI * ((Vmax * Vmax) - ((Vs * Vs) - (Ve * Ve) / 2)) / 2 * Amax))
+		{
+			Vmax = ((2 * Amax) / M_PI) + ((Vs * Vs) + (Ve +* Ve));
+		}
+
+		t1 = (M_PI * (Vmax - Vs)) / (2 * Amax);
+		x1 = (((Vmax * Vmax) - (Vs * Vs)) * M_PI) / (4 * Amax);
+
+		t3 = (M_PI * (Vmax - Ve)) / (2 * Amax);
+		x3 = (((Vmax * Vmax) - (Ve * Ve)) * M_PI) / (4 * Amax);
+
+		ROS_INFO("Vs: %f\t Vmax: %f\t Ve: %f\t Amax: %f\t Xall: %f\t t1: %f\t x1: %f\t t3: %f\t x3: %f", Vs, Vmax, Ve, Amax, Xall, t1, x1, t3, x3);
 
 		cb_flag = true;
 		first = true;
 		t = 0.0f;
-
 	}
 	else
 	{
@@ -69,7 +85,7 @@ int main(int argc, char **argv)
 
 		if(first)
 		{
-			while(t < 1)
+			while(t1 < t)
 			{
 				t += (current_time - last_time).toSec();
 
