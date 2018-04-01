@@ -55,17 +55,21 @@ int main(int argc, char **argv)
 
 	while(ros::ok())
 	{
-		if(first)
+		if(!first)
+		{
+			current_time = ros::Time::now();
+			t = (current_time - last_time).toSec();
+
+			last_time = current_time;
+			now_t += t;
+
+			ROS_INFO("time: %f\t Vs: %f\n", now_t, Vs);
+
+		}
+		else
 		{
 			now_t = 0.0f;
 		}
-		current_time = ros::Time::now();
-		t = (current_time - last_time).toSec();
-
-		last_time = current_time;
-		now_t += t;
-
-		ROS_INFO("time: %f\t Vs: %f\n", now_t, Vs);
 
 		loop_rate.sleep();
 		ros::spinOnce();
