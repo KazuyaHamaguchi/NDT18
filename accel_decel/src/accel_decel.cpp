@@ -19,7 +19,7 @@ float X1 = 0.0f;
 float t2 = 0.0f;
 float x2 = 0.0f;
 float t3 = 0.0f;
-float x3 = 0.0f;
+float X3 = 0.0f;
 float V = 0.0f;
 
 bool cb_flag = false;
@@ -43,7 +43,7 @@ void param_cb(const accel_decel::param& msg)
 
 		if(Xall > (M_PI * ((Vmax * Vmax) - ((Vs * Vs) - (Ve * Ve) / 2)) / 2 * Amax))
 		{
-			Vmax = ((2 * Amax) / M_PI) + ((Vs * Vs) + (Ve +* Ve));
+			Vmax = ((2 * Amax) / M_PI) + ((Vs * Vs) + (Ve * Ve));
 		}
 
 		t1 = (M_PI * (Vmax - Vs)) / (2 * Amax);
@@ -52,7 +52,7 @@ void param_cb(const accel_decel::param& msg)
 		t3 = (M_PI * (Vmax - Ve)) / (2 * Amax);
 		x3 = (((Vmax * Vmax) - (Ve * Ve)) * M_PI) / (4 * Amax);
 
-		ROS_INFO("Vs: %f\t Vmax: %f\t Ve: %f\t Amax: %f\t Xall: %f\t t1: %f\t x1: %f\t t3: %f\t x3: %f", Vs, Vmax, Ve, Amax, Xall, t1, x1, t3, x3);
+		ROS_INFO("Vs: %f\t Vmax: %f\t Ve: %f\t Amax: %f\t Xall: %f\t t1: %f\t X1: %f\t t3: %f\t X3: %f\n", Vs, Vmax, Ve, Amax, Xall, t1, X1, t3, X3);
 
 		cb_flag = true;
 		first = true;
