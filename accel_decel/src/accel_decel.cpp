@@ -120,7 +120,8 @@ int main(int argc, char **argv)
 				}
 				if(t1 <= t && t <= (t1 + t2))
 				{
-					ROS_INFO("time: %f\t V: %f\t X2", t, Vmax);
+					//ROS_INFO("time: %f\t V: %f\t X2", t, Vmax);
+					ptintf("%f\t %f\n", t, Vmax);
 				}
 				if((t1 + t2) <= t && t <= (t1 + t2 + t3))
 				{
