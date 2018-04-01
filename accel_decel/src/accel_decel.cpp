@@ -14,11 +14,16 @@ float Ve = 0.0f;
 float Amax = 0.0f;
 float Xall = 0.0f;
 float t = 0.0f;
-float now_t = 0.0f;
+float f1 = 0.0f;
 
 bool cb_flag = false;
 bool first = false;
 bool end = false;
+
+float accel(float naw_t)
+{
+	return f1 = (Vmax - Vs) * (1 - cos((2 * Amax) / (Vmax - Vs)) * naw_t) / 2 + Vs;
+}
 
 void param_cb(const accel_decel::param& msg)
 {
@@ -62,10 +67,11 @@ int main(int argc, char **argv)
 
 		if(first)
 		{
-			while(t < 1.0)
+			while()
 			{
 				t += (current_time - last_time).toSec();
-				ROS_INFO("time: %f\t Vs: %f", t, Vs);
+
+				ROS_INFO("time: %f\t V: %f", t, accel(t));
 			}
 
 			first = false;
