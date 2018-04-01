@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 
 		if(first)
 		{
-			while(t <= (t1 + t2 /*+ t3)*/)
+			while(t <= (t1 + t2 /*+ t3*/))
 			{
 				t += (current_time - last_time).toSec();
 
