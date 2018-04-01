@@ -59,6 +59,8 @@ void param_cb(const accel_decel::param& msg)
 		X2 = Xall - X1 - X2;
 		t2 = X2 / Vmax;
 
+
+
 		ROS_INFO("Vs: %f\t Vmax: %f\t Ve: %f\t Amax: %f\t Xall: %f", Vs, Vmax, Ve, Amax, Xall);
 		ROS_INFO("t1: %f\t X1: %f\t t2: %f\t X2: %f\t t3: %f\t X3: %f\n", t1, X1, t2, X2, t3, X3);
 
@@ -70,6 +72,12 @@ void param_cb(const accel_decel::param& msg)
 	{
 		if(end)
 		{
+			Vs = 0.0f;
+			Vmax = 0.0f;
+			Ve = 0.0f;
+			Amax = 0.0f;
+			Xall = 0.0f;
+			t = 0.0f;
 			first = false;
 			cb_flag = false;
 		}
