@@ -47,10 +47,10 @@ void param_cb(const accel_decel::param& msg)
 		}
 
 		t1 = (M_PI * (Vmax - Vs)) / (2 * Amax);
-		x1 = (((Vmax * Vmax) - (Vs * Vs)) * M_PI) / (4 * Amax);
+		X1 = (((Vmax * Vmax) - (Vs * Vs)) * M_PI) / (4 * Amax);
 
 		t3 = (M_PI * (Vmax - Ve)) / (2 * Amax);
-		x3 = (((Vmax * Vmax) - (Ve * Ve)) * M_PI) / (4 * Amax);
+		X3 = (((Vmax * Vmax) - (Ve * Ve)) * M_PI) / (4 * Amax);
 
 		ROS_INFO("Vs: %f\t Vmax: %f\t Ve: %f\t Amax: %f\t Xall: %f\t t1: %f\t X1: %f\t t3: %f\t X3: %f\n", Vs, Vmax, Ve, Amax, Xall, t1, X1, t3, X3);
 
