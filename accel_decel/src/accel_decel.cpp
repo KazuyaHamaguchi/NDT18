@@ -63,11 +63,11 @@ void param_cb(const accel_decel::param& msg)
 
 		if(t1 < t3)
 		{
-			decel_time = t - (3 * t1) - t2 + t3;
+			decel_time = (3 * t1) - t2 + t3;
 		}
 		else
 		{
-			decel_time = t - t1 - t2 - t3;
+			decel_time = t1 - t2 - t3;
 		}
 
 
@@ -134,7 +134,7 @@ int main(int argc, char **argv)
 				if((t1 + t2) <= t && t <= (t1 + t2 + t3))
 				{
 					//ROS_INFO("time: %f\t V: %f\t X3", t, decel(t - (t1 + t2));
-					printf("%f\t %f\n", t, decel(decel_time));
+					printf("%f\t %f\n", t, decel(t - decel_time));
 				}
 			}
 
