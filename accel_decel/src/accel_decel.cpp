@@ -93,24 +93,15 @@ int main(int argc, char **argv)
 
 		if(first)
 		{
+			t += (current_time - last_time).toSec();
 			while(t < t1)
 			{
-				t += (current_time - last_time).toSec();
-
-				while(t < t1)
-				{
-					ROS_INFO("time: %f\t V: %f", t, accel(t));
-				}
+				ROS_INFO("time: %f\t V: %f", t, accel(t));
 				ROS_INFO("\n");
-				while(t < t2 + t1)
-				{
-					ROS_INFO("time: %f\t V: %f", t, Vmax);
-				}
-				ROS_INFO("\n");
-				while(t < t3 + t1 + t2)
-				{
-					ROS_INFO("time: %f\t V: %f", t, decel(t));
-				}
+			}
+			while(t < t1 && t < t1)
+			{
+				ROS_INFO("time: %f\t V: %f", t, accel(t));
 				ROS_INFO("\n");
 			}
 
