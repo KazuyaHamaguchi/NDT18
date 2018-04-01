@@ -31,13 +31,13 @@ void param_cb(const accel_decel::param& msg)
 		Xall = msg.Xall;
 
 		cb_flag = true;
-		first = true;
 	}
 	else
 	{
 		if(end)
 		{
 			cb_flag = false;
+			first = true;
 		}
 	}
 }
