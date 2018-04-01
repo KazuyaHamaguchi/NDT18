@@ -89,6 +89,7 @@ int main(int argc, char **argv)
 
 	while(ros::ok())
 	{
+		current_time = ros::Time::now();
 
 		if(first)
 		{
@@ -100,7 +101,7 @@ int main(int argc, char **argv)
 				{
 					ROS_INFO("time: %f\t V: %f", t, accel(t));
 				}
-				if(t1 < t && t <= t2)
+				if(t1 <= t && t <= (t1 + t2))
 				{
 					ROS_INFO("time: %f\t V: %f", t, Vmax);
 				}
