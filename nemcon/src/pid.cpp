@@ -250,7 +250,7 @@ int main(int argc, char **argv)
 	if(!local_nh.hasParam("v_P"))
 	{
 		ROS_INFO("Parameter v_P is not defind. Now, it is set default value.");
-		local_nh.setParam("v_P", 20);
+		local_nh.setParam("v_P", 0);
 	}
 	if(!local_nh.getParam("v_P", v_P))
 	{
@@ -262,7 +262,7 @@ int main(int argc, char **argv)
 	if(!local_nh.hasParam("v_I"))
 	{
 		ROS_INFO("Parameter v_I is not defind. Now, it is set default value.");
-		local_nh.setParam("v_I", 2.00);
+		local_nh.setParam("v_I", 0);
 	}
 	if(!local_nh.getParam("v_I", v_I))
 	{
@@ -274,7 +274,7 @@ int main(int argc, char **argv)
 	if(!local_nh.hasParam("v_D"))
 	{
 		ROS_INFO("Parameter v_D is not defind. Now, it is set default value.");
-		local_nh.setParam("v_D", 0.05);
+		local_nh.setParam("v_D", 0);
 	}
 	if(!local_nh.getParam("v_D", v_D))
 	{
@@ -300,7 +300,7 @@ int main(int argc, char **argv)
 		current_time = ros::Time::now();
 		dt = (current_time - last_time).toSec();
 
-		if(speed_X == 0 && speed_Y == 0)
+		if(speed_X == 0 || speed_Y == 0)
 		{
 			speedFR = clamp(nearbyint( - turn_imu), -20, 20);
 			speedFL = clamp(nearbyint( + turn_imu), -20, 20);
