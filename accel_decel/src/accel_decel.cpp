@@ -106,13 +106,14 @@ int main(int argc, char **argv)
 	while(ros::ok())
 	{
 		current_time = ros::Time::now();
+		t += (current_time - last_time).toSec();
 
-		if(first)
+		/*if(first)
 		{
 			ROS_INFO("%f\n", current_time.toSec());
 			while(t <= (t1 + t2 + t3))
 			{
-				t += (current_time - last_time).toSec();
+				t += (current_time - last_time).toSec();*/
 
 				if(t <= t1)
 				{
@@ -138,14 +139,14 @@ int main(int argc, char **argv)
 					pub.publish(msg);
 					ros::spinOnce();
 				}
-				ROS_INFO("%f\n", current_time.toSec());
+				/*ROS_INFO("%f\n", current_time.toSec());
 			}
 
 			first = false;
 			end = true;
 			cb_flag = false;
 
-		}
+		}*/
 
 		//pub.publish(msg);
 
