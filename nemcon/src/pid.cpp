@@ -159,7 +159,7 @@ int main(int argc, char **argv)
 	if(!local_nh.hasParam("front"))
 	{
 		ROS_INFO("Parameter front is not defind. Now, it is set default value.");
-		local_nh.setParam("front", 10);
+		local_nh.setParam("front", 1);
 	}
 	if(!local_nh.getParam("front", front))
 	{
