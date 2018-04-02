@@ -98,7 +98,7 @@ int main(int argc, char **argv)
 	ros::NodeHandle nh;
 	current_time = ros::Time::now();
 	last_time = ros::Time::now();
-	ros::Rate loop_rate(10);
+	ros::Rate loop_rate(30);
 
 	ros::Subscriber sub = nh.subscribe("/accel_decel/param", 1000, param_cb);
 	pub = nh.advertise<accel_decel::result>("/accel_decel/result", 1000);
@@ -115,21 +115,21 @@ int main(int argc, char **argv)
 
 				if(t <= t1)
 				{
-					//ROS_INFO("time: %f\t V: %f\t X1", t, accel(t));
+					ROS_INFO("time: %f\t V: %f\t X1", t, accel(t));
 					//printf("%f\t %f\n", t, accel(t));
 					msg.V = accel(t);
 					pub.publish(msg);
 				}
 				if(t1 <= t && t <= (t1 + t2))
 				{
-					//ROS_INFO("time: %f\t V: %f\t X2", t, Vmax);
+					ROS_INFO("time: %f\t V: %f\t X2", t, Vmax);
 					//printf("%f\t %f\n", t, Vmax);
 					msg.V = Vmax;
 					pub.publish(msg);
 				}
 				if((t1 + t2) <= t && t <= (t1 + t2 + t3))
 				{
-					//ROS_INFO("time: %f\t V: %f\t X3", t, decel(t - (t1 + t2));
+					ROS_INFO("time: %f\t V: %f\t X3", t, decel(t));
 					//printf("%f\t %f\n", t, decel(t));
 					msg.V = decel(t);
 					pub.publish(msg);
