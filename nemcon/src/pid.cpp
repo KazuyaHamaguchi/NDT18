@@ -14,7 +14,7 @@
 
 using namespace std;
 
-int speed_X = 0, speed_Y = 0;
+float speed_X = 0.0f, speed_Y = 0.0f;
 int front;	//前：1，右：2，後：3，左：4
 
 float imu_P;
@@ -263,10 +263,10 @@ int main(int argc, char **argv)
 
 		if(speed_X == 0 && speed_Y == 0)
 		{
-			speedFR = clamp(nearbyint(speed - turn_imu), -20, 20);
-			speedFL = clamp(nearbyint(speed + turn_imu), -20, 20);
-			speedRL = clamp(nearbyint(speed + turn_imu), -20, 20);
-			speedRR = clamp(nearbyint(speed - turn_imu), -20, 20);
+			speedFR = clamp(nearbyint( - turn_imu), -20, 20);
+			speedFL = clamp(nearbyint( + turn_imu), -20, 20);
+			speedRL = clamp(nearbyint( + turn_imu), -20, 20);
+			speedRR = clamp(nearbyint( - turn_imu), -20, 20);
 		}
 		if(speed_X > 0 && speed_Y > 0)
 		{
