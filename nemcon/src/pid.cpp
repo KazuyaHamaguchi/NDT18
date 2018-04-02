@@ -25,9 +25,9 @@ float enc_P;
 float enc_I;
 float enc_D;
 
-float v_P;
-float v_I;
-float v_D;
+float v_P = 10.0;
+float v_I = 0.01;
+float v_D = 0.5;
 
 
 float speedFR = 0.0f, speedRL = 0.0f, speedFL = 0.0f, speedRR = 0.0f;
@@ -39,6 +39,7 @@ double dt = 0.0;
 
 ros::Publisher pub;
 nemcon::motor msg_m;
+deadreckoning::enc speed_msg;
 
 float clamp(float input, float min, float max)
 {
@@ -99,6 +100,7 @@ void enc_cv(const deadreckoning::enc& msg)
 {
 	enc_vx = msg.speed_X;
 	enc_vy = msg.speed_Y;
+  printf("%f\n", enc_vy);
 
 }
 
@@ -106,8 +108,10 @@ void pid_v(const accel_decel::result& msg)
 {
 	float lasterror_x = 0, lasterror_y = 0, integral_x = 0, integral_y = 0, error_x = 0, error_y = 0;
 
-	error_x = abs(enc_vx) - msg.V;
-	error_y = abs(enc_vy) - msg.V;
+	error_x = msg.V - abs(speed_msg.speed_X);
+	error_y = msg.V - abs(speed_msg.speed_Y);
+
+  //printf("%f\n",error_y);
 
 	integral_x += (error_x + lasterror_x) / 2.0 * dt;
 	integral_y += (error_y + lasterror_y) / 2.0 * dt;
@@ -243,6 +247,45 @@ int main(int argc, char **argv)
 		return -1;
 	}
 	ROS_INFO("enc_D: %f", enc_D);
+
+  		/************************************************************************/
+/*
+	if(!local_nh.hasParam("v_P"))
+	{
+		ROS_INFO("Parameter v_P is not defind. Now, it is set default value.");
+		local_nh.setParam("v_P", 0.5);
+	}
+	if(!local_nh.getParam("v_P", v_P))
+	{
+		ROS_ERROR("parameter front is invalid.");
+		return -1;
+	}
+	ROS_INFO("v_P: %f", v_P);
+
+	if(!local_nh.hasParam("v_I"))
+	{
+		ROS_INFO("Parameter v_I is not defind. Now, it is set default value.");
+		local_nh.setParam("v_I", 0);
+	}
+	if(!local_nh.getParam("v_I", v_I))
+	{
+		ROS_ERROR("parameter front is invalid.");
+		return -1;
+	}
+	ROS_INFO("v_I: %f", v_I);
+
+	if(!local_nh.hasParam("v_D"))
+	{
+		ROS_INFO("Parameter v_D is not defind. Now, it is set default value.");
+		local_nh.setParam("v_D", 0);
+	}
+	if(!local_nh.getParam("v_D", v_D))
+	{
+		ROS_ERROR("parameter front is invalid.");
+		return -1;
+	}
+	ROS_INFO("v_D: %f", v_D);*/
+
 
 	/**************************************************************************/
 

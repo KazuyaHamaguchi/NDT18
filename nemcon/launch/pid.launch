@@ -8,5 +8,8 @@
     <param name="enc_P" value="4.00" />
     <param name="enc_I" value="2.00" />
     <param name="enc_D" value="0.02" />
+    <param name="v_p" value="50.00" />
+    <param name="v_I" value="0.00" />
+    <param name="v_D" value="0.00" />
   </node>
 </launch>
