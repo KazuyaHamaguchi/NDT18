@@ -25,6 +25,7 @@ float V = 0.0f;
 bool cb_flag = false;
 bool first = false;
 bool end = false;
+bool end_2 = false;
 
 float accel(float now_t)
 {
@@ -141,18 +142,27 @@ int main(int argc, char **argv)
 				}
 				//ROS_INFO("%f\n", current_time.toSec());
 			//}
+				if(t >= (t1 + t2 + t3))
+				{
+					first = false;
+					end = true;
+					cb_flag = false;
+				}
 
 			/*first = false;
 			end = true;
 			cb_flag = false;*/
 
 		}
-		else
+		/*else
 		{
+			if(end_2)
+			{
 				first = false;
 				end = true;
 				cb_flag = false;
-		}
+			}
+		}*/
 
 		//pub.publish(msg);
 
