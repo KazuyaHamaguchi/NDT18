@@ -125,9 +125,8 @@ int main(int argc, char **argv)
 				end = true;
 				cb_flag = false;
 			}
+			pub.publish(msg);
 		}
-
-		pub.publish(msg);
 
 		last_time = current_time;
 		loop_rate.sleep();
