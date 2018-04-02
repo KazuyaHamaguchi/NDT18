@@ -109,6 +109,7 @@ int main(int argc, char **argv)
 
 		if(first)
 		{
+			ROS_INFO("%f\n", current_time.toSec());
 			while(t <= (t1 + t2 + t3))
 			{
 				t += (current_time - last_time).toSec();
@@ -137,6 +138,7 @@ int main(int argc, char **argv)
 					pub.publish(msg);
 					ros::spinOnce();
 				}
+				ROS_INFO("%f\n", current_time.toSec());
 			}
 
 			first = false;
