@@ -39,7 +39,6 @@ double dt = 0.0;
 
 ros::Publisher pub;
 nemcon::motor msg_m;
-deadreckoning::enc speed_msg;
 
 float clamp(float input, float min, float max)
 {
@@ -100,16 +99,15 @@ void enc_cv(const deadreckoning::enc& msg)
 {
 	enc_vx = msg.speed_X;
 	enc_vy = msg.speed_Y;
-  printf("%f\n", enc_vy);
-
+	printf("%f\n", enc_vy);
 }
 
 void pid_v(const accel_decel::result& msg)
 {
 	float lasterror_x = 0, lasterror_y = 0, integral_x = 0, integral_y = 0, error_x = 0, error_y = 0;
 
-	error_x = msg.V - abs(speed_msg.speed_X);
-	error_y = msg.V - abs(speed_msg.speed_Y);
+	error_x = msg.V - abs(enc_vx);
+	error_y = msg.V - abs(enc_vy);
 
   //printf("%f\n",error_y);
 
