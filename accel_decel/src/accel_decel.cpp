@@ -107,10 +107,10 @@ int main(int argc, char **argv)
 	{
 		current_time = ros::Time::now();
 
-		if(first)
+		if(first && t <= (t1 + t2 + t3))
 		{
-			while(t <= (t1 + t2 + t3))
-			{
+			/*while(t <= (t1 + t2 + t3))
+			{*/
 				t += (current_time - last_time).toSec();
 
 				if(t <= t1)
@@ -134,7 +134,7 @@ int main(int argc, char **argv)
 					msg.V = decel(t);
 					pub.publish(msg);
 				}
-			}
+			//}
 
 			first = false;
 			end = true;
