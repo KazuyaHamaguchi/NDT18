@@ -106,12 +106,13 @@ int main(int argc, char **argv)
 	while(ros::ok())
 	{
 		current_time = ros::Time::now();
+		t += (current_time - last_time).toSec();
 
 		if(first && t <= (t1 + t2 + t3))
 		{
 			/*while(t <= (t1 + t2 + t3))
 			{*/
-				t += (current_time - last_time).toSec();
+				//t += (current_time - last_time).toSec();
 
 				if(t <= t1)
 				{
