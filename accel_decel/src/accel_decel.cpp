@@ -100,8 +100,8 @@ int main(int argc, char **argv)
 	last_time = ros::Time::now();
 	ros::Rate loop_rate(30);
 
-	ros::Subscriber sub = nh.subscribe("/accel_decel", 1000, param_cb);
-	pub = nh.advertise<accel_decel::result>("/accel_decel", 1000);
+	ros::Subscriber sub = nh.subscribe("/accel_decel/param", 1000, param_cb);
+	pub = nh.advertise<accel_decel::result>("/accel_decel/result", 1000);
 
 	while(ros::ok())
 	{
