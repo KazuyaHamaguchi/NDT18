@@ -151,7 +151,7 @@ int main(int argc, char **argv)
 		{
 				first = false;
 				end = true;
-				cb_flag = false
+				cb_flag = false;
 		}
 
 		//pub.publish(msg);
