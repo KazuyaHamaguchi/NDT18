@@ -118,6 +118,16 @@ void pid_v(const accel_decel::result& msg)
 
 	lasterror_x = error_x;
 	lasterror_y = error_y;
+
+  if(msg.V < 0.01)
+  {
+    speed_X = 0.000;
+    speed_Y = 0.000;
+    speedFR = 0;
+    speedFL = 0;
+    speedRR = 0;
+    speedRL = 0;
+  }
 }
 
 
@@ -300,22 +310,22 @@ int main(int argc, char **argv)
 		current_time = ros::Time::now();
 		dt = (current_time - last_time).toSec();
 
-		if(speed_X == 0 || speed_Y == 0)
+		/*if(speed_X == 0 && speed_Y == 0)
 		{
 			speedFR = clamp(nearbyint( - turn_imu), -20, 20);
 			speedFL = clamp(nearbyint( + turn_imu), -20, 20);
 			speedRL = clamp(nearbyint( + turn_imu), -20, 20);
 			speedRR = clamp(nearbyint( - turn_imu), -20, 20);
-		}
+		}*/
 		if(speed_X > 0 && speed_Y > 0)
 		{
 			switch(front)
 			{
 				case 1:	//前
-					speedFR = clamp(nearbyint( speed_Y - turn_imu + turn_enc_x), 0, 20);
-					speedFL = clamp(nearbyint( speed_Y + turn_imu - turn_enc_x), 0, 20);
-					speedRL = clamp(nearbyint( speed_Y + turn_imu + turn_enc_x), 0, 20);
-					speedRR = clamp(nearbyint( speed_Y - turn_imu - turn_enc_x), 0, 20);
+					speedFR = clamp(nearbyint( speed_Y - turn_imu /*+ turn_enc_x*/), 0, 20);
+					speedFL = clamp(nearbyint( speed_Y + turn_imu /*- turn_enc_x*/), 0, 20);
+					speedRL = clamp(nearbyint( speed_Y + turn_imu /*+ turn_enc_x*/), 0, 20);
+					speedRR = clamp(nearbyint( speed_Y - turn_imu /*- turn_enc_x*/), 0, 20);
 					break;
 
 				case 2:	//右
@@ -326,10 +336,10 @@ int main(int argc, char **argv)
 					break;
 
 				case 3:	//後
-					speedFR = clamp(nearbyint( -(speed_Y + turn_imu + turn_enc_x)), -20, 0);
-					speedFL = clamp(nearbyint( -(speed_Y - turn_imu - turn_enc_x)), -20, 0);
-					speedRL = clamp(nearbyint( -(speed_Y - turn_imu + turn_enc_x)), -20, 0);
-					speedRR = clamp(nearbyint( -(speed_Y + turn_imu - turn_enc_x)), -20, 0);
+					speedFR = clamp(nearbyint( -(speed_Y + turn_imu /*+ turn_enc_x*/)), -20, 0);
+					speedFL = clamp(nearbyint( -(speed_Y - turn_imu /*- turn_enc_x*/)), -20, 0);
+					speedRL = clamp(nearbyint( -(speed_Y - turn_imu /*+ turn_enc_x*/)), -20, 0);
+					speedRR = clamp(nearbyint( -(speed_Y + turn_imu /*- turn_enc_x*/)), -20, 0);
 					break;
 
 				case 4:	//左
