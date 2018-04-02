@@ -118,21 +118,21 @@ int main(int argc, char **argv)
 					ROS_INFO("time: %f\t V: %f\t X1", t, accel(t));
 					//printf("%f\t %f\n", t, accel(t));
 					msg.V = accel(t);
-					pub.publish(msg);
+					//pub.publish(msg);
 				}
 				if(t1 <= t && t <= (t1 + t2))
 				{
 					ROS_INFO("time: %f\t V: %f\t X2", t, Vmax);
 					//printf("%f\t %f\n", t, Vmax);
 					msg.V = Vmax;
-					pub.publish(msg);
+					//pub.publish(msg);
 				}
 				if((t1 + t2) <= t && t <= (t1 + t2 + t3))
 				{
 					ROS_INFO("time: %f\t V: %f\t X3", t, decel(t));
 					//printf("%f\t %f\n", t, decel(t));
 					msg.V = decel(t);
-					pub.publish(msg);
+					//pub.publish(msg);
 				}
 			}
 
@@ -141,6 +141,8 @@ int main(int argc, char **argv)
 			cb_flag = false;
 
 		}
+
+		pub.publish(msg);
 
 		last_time = current_time;
 		loop_rate.sleep();
