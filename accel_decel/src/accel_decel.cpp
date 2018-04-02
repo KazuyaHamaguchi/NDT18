@@ -1,10 +1,10 @@
 #include <ros/ros.h>
 #include <accel_decel/param.h>
-#include <sensor_msgs/Imu.h>
-#include <geometry_msgs/PoseStamped.h>
+#include <accel_decel/result.h>
 #include <math.h>
 
 ros::Publisher pub;
+accel_decel::result msg;
 
 ros::Time current_time, last_time;
 
@@ -101,6 +101,7 @@ int main(int argc, char **argv)
 	ros::Rate loop_rate(30);
 
 	ros::Subscriber sub = nh.subscribe("/accel_decel", 1000, param_cb);
+	pub = nh.advertise<mpu9250::motor>("/accel_decel", 1000);
 
 	while(ros::ok())
 	{
@@ -115,17 +116,20 @@ int main(int argc, char **argv)
 				if(t <= t1)
 				{
 					//ROS_INFO("time: %f\t V: %f\t X1", t, accel(t));
-					printf("%f\t %f\n", t, accel(t));
+					//printf("%f\t %f\n", t, accel(t));
+					msg.V = accel(t);
 				}
 				if(t1 <= t && t <= (t1 + t2))
 				{
 					//ROS_INFO("time: %f\t V: %f\t X2", t, Vmax);
-					printf("%f\t %f\n", t, Vmax);
+					//printf("%f\t %f\n", t, Vmax);
+					msg.V = Vmax;
 				}
 				if((t1 + t2) <= t && t <= (t1 + t2 + t3))
 				{
 					//ROS_INFO("time: %f\t V: %f\t X3", t, decel(t - (t1 + t2));
-					printf("%f\t %f\n", t, decel(t));
+					//printf("%f\t %f\n", t, decel(t));
+					msg.V = decel(t);
 				}
 			}
 
@@ -135,6 +139,7 @@ int main(int argc, char **argv)
 
 		}
 
+		pub.publish(msg);
 		last_time = current_time;
 		loop_rate.sleep();
 		ros::spinOnce();
