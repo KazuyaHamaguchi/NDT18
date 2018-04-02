@@ -142,10 +142,16 @@ int main(int argc, char **argv)
 				//ROS_INFO("%f\n", current_time.toSec());
 			//}
 
-			first = false;
+			/*first = false;
 			end = true;
-			cb_flag = false;
+			cb_flag = false;*/
 
+		}
+		else
+		{
+				first = false;
+				end = true;
+				cb_flag = false
 		}
 
 		//pub.publish(msg);
