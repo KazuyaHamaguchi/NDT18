@@ -98,7 +98,7 @@ int main(int argc, char **argv)
 	ros::NodeHandle nh;
 	current_time = ros::Time::now();
 	last_time = ros::Time::now();
-	ros::Rate loop_rate(30);
+	ros::Rate loop_rate(10);
 
 	ros::Subscriber sub = nh.subscribe("/accel_decel/param", 1000, param_cb);
 	pub = nh.advertise<accel_decel::result>("/accel_decel/result", 1000);
@@ -106,13 +106,12 @@ int main(int argc, char **argv)
 	while(ros::ok())
 	{
 		current_time = ros::Time::now();
-		t += (current_time - last_time).toSec();
 
-		if(first && t <= (t1 + t2 + t3))
+		if(first)
 		{
-			/*while(t <= (t1 + t2 + t3))
-			{*/
-				//t += (current_time - last_time).toSec();
+			while(t <= (t1 + t2 + t3))
+			{
+				t += (current_time - last_time).toSec();
 
 				if(t <= t1)
 				{
@@ -135,7 +134,7 @@ int main(int argc, char **argv)
 					msg.V = decel(t);
 					pub.publish(msg);
 				}
-			//}
+			}
 
 			first = false;
 			end = true;
