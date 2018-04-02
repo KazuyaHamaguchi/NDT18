@@ -25,9 +25,9 @@ float enc_P;
 float enc_I;
 float enc_D;
 
-float v_P = 10.0;
-float v_I = 0.01;
-float v_D = 0.5;
+float v_P;
+float v_I;
+float v_D;
 
 
 float speedFR = 0.0f, speedRL = 0.0f, speedFL = 0.0f, speedRR = 0.0f;
@@ -210,7 +210,7 @@ int main(int argc, char **argv)
 	}
 	ROS_INFO("imu_D: %f", imu_D);
 
-		/************************************************************************/
+	/************************************************************************/
 
 	if(!local_nh.hasParam("enc_P"))
 	{
@@ -248,12 +248,12 @@ int main(int argc, char **argv)
 	}
 	ROS_INFO("enc_D: %f", enc_D);
 
-  		/************************************************************************/
-/*
+	/************************************************************************/
+
 	if(!local_nh.hasParam("v_P"))
 	{
 		ROS_INFO("Parameter v_P is not defind. Now, it is set default value.");
-		local_nh.setParam("v_P", 0.5);
+		local_nh.setParam("v_P", 20);
 	}
 	if(!local_nh.getParam("v_P", v_P))
 	{
@@ -265,7 +265,7 @@ int main(int argc, char **argv)
 	if(!local_nh.hasParam("v_I"))
 	{
 		ROS_INFO("Parameter v_I is not defind. Now, it is set default value.");
-		local_nh.setParam("v_I", 0);
+		local_nh.setParam("v_I", 2.00);
 	}
 	if(!local_nh.getParam("v_I", v_I))
 	{
@@ -277,15 +277,14 @@ int main(int argc, char **argv)
 	if(!local_nh.hasParam("v_D"))
 	{
 		ROS_INFO("Parameter v_D is not defind. Now, it is set default value.");
-		local_nh.setParam("v_D", 0);
+		local_nh.setParam("v_D", 0.05);
 	}
 	if(!local_nh.getParam("v_D", v_D))
 	{
 		ROS_ERROR("parameter front is invalid.");
 		return -1;
 	}
-	ROS_INFO("v_D: %f", v_D);*/
-
+	ROS_INFO("v_D: %f", v_D);
 
 	/**************************************************************************/
 
