@@ -144,7 +144,7 @@ int main(int argc, char **argv)
 
 	/*****************************************************************************/
 
-	if(!local_nh.hasParam("speed"))
+	/*if(!local_nh.hasParam("speed"))
 	{
 		ROS_INFO("Parameter speed is not defind. Now, it is set default value.");
 		local_nh.setParam("speed", 0);
@@ -154,7 +154,7 @@ int main(int argc, char **argv)
 		ROS_ERROR("parameter speed is invalid.");
 		return -1;
 	}
-	ROS_INFO("speed: %d", speed);
+	ROS_INFO("speed: %d", speed);*/
 
 	if(!local_nh.hasParam("front"))
 	{
@@ -248,8 +248,8 @@ int main(int argc, char **argv)
 
 	ros::Subscriber sub_imu = nh.subscribe("/imu/data_raw", 1000, pid_acc);
 	ros::Subscriber sub_enc = nh.subscribe("/robot/pose", 1000, pid_enc);
-	ros::Subscriber sub_enc = nh.subscribe("/accel_decel/result", 1000, pid_v);
-	ros::Subscriber sub_enc = nh.subscribe("/deadreckoning/enc", 1000, enc_cv);
+	ros::Subscriber sub_accel = nh.subscribe("/accel_decel/result", 1000, pid_v);
+	ros::Subscriber sub_speed = nh.subscribe("/deadreckoning/enc", 1000, enc_cv);
 
 	pub = nh.advertise<nemcon::motor>("motor", 100);
 
