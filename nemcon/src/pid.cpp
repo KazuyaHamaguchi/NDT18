@@ -108,7 +108,7 @@ void pid_v(const accel_decel::result& msg)
 	error_x = msg.V - abs(enc_vx);
 	error_y = msg.V - abs(enc_vy);
 
-	printf("%f\n",error_y);
+	printf("%f\t %f\n", msg.V, abs(enc_vy));
 
 	integral_x += (error_x + lasterror_x) / 2.0 * dt;
 	integral_y += (error_y + lasterror_y) / 2.0 * dt;
@@ -154,18 +154,6 @@ int main(int argc, char **argv)
 	ros::NodeHandle local_nh("~");
 
 	/*****************************************************************************/
-
-	/*if(!local_nh.hasParam("speed"))
-	{
-		ROS_INFO("Parameter speed is not defind. Now, it is set default value.");
-		local_nh.setParam("speed", 0);
-	}
-	if(!local_nh.getParam("speed", speed))
-	{
-		ROS_ERROR("parameter speed is invalid.");
-		return -1;
-	}
-	ROS_INFO("speed: %d", speed);*/
 
 	if(!local_nh.hasParam("front"))
 	{
@@ -310,52 +298,42 @@ int main(int argc, char **argv)
 		current_time = ros::Time::now();
 		dt = (current_time - last_time).toSec();
 
-		/*if(speed_X == 0 && speed_Y == 0)
+		switch(front)
 		{
-			speedFR = clamp(nearbyint( - turn_imu), -20, 20);
-			speedFL = clamp(nearbyint( + turn_imu), -20, 20);
-			speedRL = clamp(nearbyint( + turn_imu), -20, 20);
-			speedRR = clamp(nearbyint( - turn_imu), -20, 20);
-		}*/
-		if(speed_X > 0 && speed_Y > 0)
-		{
-			switch(front)
-			{
-				case 1:	//前
-					speedFR = clamp(nearbyint( speed_Y - turn_imu /*+ turn_enc_x*/), 0, 20);
-					speedFL = clamp(nearbyint( speed_Y + turn_imu /*- turn_enc_x*/), 0, 20);
-					speedRL = clamp(nearbyint( speed_Y + turn_imu /*+ turn_enc_x*/), 0, 20);
-					speedRR = clamp(nearbyint( speed_Y - turn_imu /*- turn_enc_x*/), 0, 20);
-					break;
+			case 1:	//前
+				speedFR = clamp(nearbyint( speed_Y - turn_imu + turn_enc_x), 0, 20);
+				speedFL = clamp(nearbyint( speed_Y + turn_imu - turn_enc_x), 0, 20);
+				speedRL = clamp(nearbyint( speed_Y + turn_imu + turn_enc_x), 0, 20);
+				speedRR = clamp(nearbyint( speed_Y - turn_imu - turn_enc_x), 0, 20);
+				break;
 
-				case 2:	//右
-					speedFR = clamp(nearbyint(-(speed_X + turn_imu + turn_enc_y )), -20, 0);
-					speedFL = clamp(nearbyint( speed_X + turn_imu - turn_enc_y), 0, 20);
-					speedRL = clamp(nearbyint(-(speed_X - turn_imu + turn_enc_y)), -20, 0);
-					speedRR = clamp(nearbyint( speed_X - turn_imu - turn_enc_y), 0, 20);
-					break;
+			case 2:	//右
+				speedFR = clamp(nearbyint(-(speed_X + turn_imu + turn_enc_y )), -20, 0);
+				speedFL = clamp(nearbyint( speed_X + turn_imu - turn_enc_y), 0, 20);
+				speedRL = clamp(nearbyint(-(speed_X - turn_imu + turn_enc_y)), -20, 0);
+				speedRR = clamp(nearbyint( speed_X - turn_imu - turn_enc_y), 0, 20);
+				break;
 
-				case 3:	//後
-					speedFR = clamp(nearbyint( -(speed_Y + turn_imu /*+ turn_enc_x*/)), -20, 0);
-					speedFL = clamp(nearbyint( -(speed_Y - turn_imu /*- turn_enc_x*/)), -20, 0);
-					speedRL = clamp(nearbyint( -(speed_Y - turn_imu /*+ turn_enc_x*/)), -20, 0);
-					speedRR = clamp(nearbyint( -(speed_Y + turn_imu /*- turn_enc_x*/)), -20, 0);
-					break;
+			case 3:	//後
+				speedFR = clamp(nearbyint( -(speed_Y + turn_imu + turn_enc_x)), -20, 0);
+				speedFL = clamp(nearbyint( -(speed_Y - turn_imu - turn_enc_x)), -20, 0);
+				speedRL = clamp(nearbyint( -(speed_Y - turn_imu + turn_enc_x)), -20, 0);
+				speedRR = clamp(nearbyint( -(speed_Y + turn_imu - turn_enc_x)), -20, 0);
+				break;
 
-				case 4:	//左
-					speedFR = clamp(nearbyint( speed_X - turn_imu + turn_enc_y ), 0, 20);
-					speedFL = clamp(nearbyint(-(speed_X - turn_imu - turn_enc_y)), -20, 0);
-					speedRL = clamp(nearbyint( speed_X + turn_imu + turn_enc_y), 0, 20);
-					speedRR = clamp(nearbyint(-(speed_X + turn_imu - turn_enc_y)), -20, 0);
-					break;
+			case 4:	//左
+				speedFR = clamp(nearbyint( speed_X - turn_imu + turn_enc_y ), 0, 20);
+				speedFL = clamp(nearbyint(-(speed_X - turn_imu - turn_enc_y)), -20, 0);
+				speedRL = clamp(nearbyint( speed_X + turn_imu + turn_enc_y), 0, 20);
+				speedRR = clamp(nearbyint(-(speed_X + turn_imu - turn_enc_y)), -20, 0);
+				break;
 
-				default:
-					speedFR = 0;
-					speedFL = 0;
-					speedRL = 0;
-					speedRR = 0;
-					break;
-			}
+			default:
+				speedFR = 0;
+				speedFL = 0;
+				speedRL = 0;
+				speedRR = 0;
+				break;
 		}
 
 		msg_m.motor_FR = speedFR;
