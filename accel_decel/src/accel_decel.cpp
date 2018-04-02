@@ -101,7 +101,7 @@ int main(int argc, char **argv)
 	ros::Rate loop_rate(30);
 
 	ros::Subscriber sub = nh.subscribe("/accel_decel", 1000, param_cb);
-	pub = nh.advertise<mpu9250::motor>("/accel_decel", 1000);
+	pub = nh.advertise<accel_decel::result>("/accel_decel", 1000);
 
 	while(ros::ok())
 	{
