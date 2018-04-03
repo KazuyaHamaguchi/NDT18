@@ -11,5 +11,8 @@
     <param name="v_P" value="45.00" />
     <param name="v_I" value="20.0" />
     <param name="v_D" value="0.05" />
+    <param name="vs_P" value="45.0" />
+    <param name="vs_I" value="20.0" />
+    <param name="vs_D" value="0.05" />
   </node>
 </launch>
