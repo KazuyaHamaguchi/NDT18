@@ -110,6 +110,7 @@ int main(int argc, char **argv)
 			{
 				//ROS_INFO("time: %f\t V: %f\t X2", t, Vmax);
 				msg.V = Vmax;
+				msg.Vmax = Vmax;
 			}
 			if((t1 + t2) <= t && t <= (t1 + t2 + t3))
 			{
