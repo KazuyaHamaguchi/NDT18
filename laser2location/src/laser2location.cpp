@@ -19,10 +19,10 @@ int threshold;
 double dist_lrf;
 bool backward;
 
-#define FIELD_WIDTH 8.420
+#define FIELD_WIDTH 1.970
 
 
-#define FENCE_WIDTH				0.04	//[m]
+#define FENCE_WIDTH				0.00	//[m]
 #define FENCE_DEPTH				8.2
 
 pthread_mutex_t	mutex;  // MUTEX
@@ -322,10 +322,10 @@ void thread_main(){
 		}
 
 		if(left!=NULL){
-			pose.pose.position.y = /*-FIELD_WIDTH/2 +*/ left->dist;
+			pose.pose.position.y = -FIELD_WIDTH/2 + left->dist;
 		}
 		else if(right!=NULL){
-			pose.pose.position.y = /*FIELD_WIDTH/2 -*/ right->dist;
+			pose.pose.position.y = FIELD_WIDTH/2 - right->dist;
 		}
 #if false
 		if(left!=NULL)	std::cout << "L";
@@ -342,7 +342,7 @@ void thread_main(){
 		pose.pose.position.x += dist_lrf*sin(yaw-M_PI/2);
 		pose.pose.position.y += dist_lrf*cos(yaw-M_PI/2);
 
-		pose.pose.position.y += FENCE_WIDTH / 2;
+		//pose.pose.position.y += FENCE_WIDTH / 2;
 
 		//pose.pose.position.x += dist_lrf*cos(yaw+M_PI/2);
 		//pose.pose.position.y -= dist_lrf*sin(yaw+M_PI/2);

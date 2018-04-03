@@ -55,14 +55,14 @@ float clamp(float input, float min, float max)
 	{
 		output = max;
 	}
-	if(1 <= input && input < 3)
+	/*if(1 <= input && input < 3)
 	{
 		output = 2;
 	}
 	if(-3 < input && input <= -1 && min < 0)
 	{
 		output = -2;
-	}
+	}*/
 	return output;
 }
 
@@ -150,7 +150,7 @@ int main(int argc, char **argv)
 	ros::NodeHandle nh;
 	current_time = ros::Time::now();
 	last_time = ros::Time::now();
-	ros::Rate loop_rate(20);
+	ros::Rate loop_rate(40);
 	ros::NodeHandle local_nh("~");
 
 	/*****************************************************************************/

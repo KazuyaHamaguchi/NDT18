@@ -1,15 +1,15 @@
 <launch>
   <!--<node name="accel_decel" pkg="accel_decel" type="accel_decel" output="screen" />-->
   <node name="pid_control" pkg="nemcon" type="pid_control" output="screen">
-    <param name="front" value="3" /> <!-- 前：1，右：2，後：3，左：4 -->
-    <param name="imu_P" value="20.0" />
-    <param name="imu_I" value="2.00" />
-    <param name="imu_D" value="0.05" />
-    <param name="enc_P" value="4.00" />
-    <param name="enc_I" value="2.00" />
-    <param name="enc_D" value="0.02" />
-    <param name="v_P" value="20.00" />
-    <param name="v_I" value="50.50" />
-    <param name="v_D" value="1.00" />
+    <param name="front" value="1" /> <!-- 前：1，右：2，後：3，左：4 -->
+    <param name="imu_P" value= "10"/> <!-- "20.0" />-->
+    <param name="imu_I" value= "0.5"/><!--"2.00" />-->
+    <param name="imu_D" value="0.01" /><!--"0.05" />-->
+    <param name="enc_P" value="2.5" /><!--"3.00" />-->
+    <param name="enc_I" value="1.00"/><!--"1.00" />-->
+    <param name="enc_D" value= "0.01" /><!--"0.01" />-->
+    <param name="v_P" value="45.00" />
+    <param name="v_I" value="20.0" />
+    <param name="v_D" value="0.05" />
   </node>
 </launch>
