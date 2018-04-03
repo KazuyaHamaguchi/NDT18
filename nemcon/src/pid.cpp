@@ -29,6 +29,9 @@ float v_P;
 float v_I;
 float v_D;
 
+float vs_P;
+float vs_I;
+float vs_D;
 
 float speedFR = 0.0f, speedRL = 0.0f, speedFL = 0.0f, speedRR = 0.0f;
 float turn_imu = 0.0f, turn_enc_x = 0.0f, turn_enc_y = 0.0f;
@@ -55,14 +58,6 @@ float clamp(float input, float min, float max)
 	{
 		output = max;
 	}
-	/*if(1 <= input && input < 3)
-	{
-		output = 2;
-	}
-	if(-3 < input && input <= -1 && min < 0)
-	{
-		output = -2;
-	}*/
 	return output;
 }
 
@@ -113,21 +108,29 @@ void pid_v(const accel_decel::result& msg)
 	integral_x += (error_x + lasterror_x) / 2.0 * dt;
 	integral_y += (error_y + lasterror_y) / 2.0 * dt;
 
-	speed_X= v_P * error_x + v_I * integral_x + v_D * (error_x - lasterror_x) / dt;
-	speed_Y = v_P * error_y + v_I * integral_y + v_D * (error_y - lasterror_y) / dt;
+	if(!msg.Vmax)	//加減速用
+	{
+		speed_X= v_P * error_x + v_I * integral_x + v_D * (error_x - lasterror_x) / dt;
+		speed_Y = v_P * error_y + v_I * integral_y + v_D * (error_y - lasterror_y) / dt;
+	}
+	else			//等速直進用
+	{
+		speed_X= vs_P * error_x + vs_I * integral_x + vs_D * (error_x - lasterror_x) / dt;
+		speed_Y = vs_P * error_y + vs_I * integral_y + vs_D * (error_y - lasterror_y) / dt;
+	}
 
 	lasterror_x = error_x;
 	lasterror_y = error_y;
 
-  if(msg.V < 0.01)
-  {
-    speed_X = 0.000;
-    speed_Y = 0.000;
-    speedFR = 0;
-    speedFL = 0;
-    speedRR = 0;
-    speedRL = 0;
-  }
+	/*if(msg.V < 0.01)
+	{
+	speed_X = 0.000;
+	speed_Y = 0.000;
+	speedFR = 0;
+	speedFL = 0;
+	speedRR = 0;
+	speedRL = 0;
+	}*/
 }
 
 
@@ -280,6 +283,44 @@ int main(int argc, char **argv)
 		return -1;
 	}
 	ROS_INFO("v_D: %f", v_D);
+
+	/************************************************************************/
+
+	if(!local_nh.hasParam("vs_P"))
+	{
+		ROS_INFO("Parameter vs_P is not defind. Now, it is set default value.");
+		local_nh.setParam("vs_P", 0);
+	}
+	if(!local_nh.getParam("vs_P", vs_P))
+	{
+		ROS_ERROR("parameter front is invalid.");
+		return -1;
+	}
+	ROS_INFO("vs_P: %f", vs_P);
+
+	if(!local_nh.hasParam("vs_I"))
+	{
+		ROS_INFO("Parameter vs_I is not defind. Now, it is set default value.");
+		local_nh.setParam("vs_I", 0);
+	}
+	if(!local_nh.getParam("vs_I", vs_I))
+	{
+		ROS_ERROR("parameter front is invalid.");
+		return -1;
+	}
+	ROS_INFO("vs_I: %f", vs_I);
+
+	if(!local_nh.hasParam("vs_D"))
+	{
+		ROS_INFO("Parameter vs_D is not defind. Now, it is set default value.");
+		local_nh.setParam("vs_D", 0);
+	}
+	if(!local_nh.getParam("vs_D", v_D))
+	{
+		ROS_ERROR("parameter front is invalid.");
+		return -1;
+	}
+	ROS_INFO("vs_D: %f", vs_D);
 
 	/**************************************************************************/
 
