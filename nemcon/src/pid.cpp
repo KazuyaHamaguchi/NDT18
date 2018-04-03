@@ -117,7 +117,7 @@ void pid_v(const accel_decel::result& msg)
 	{
 		speed_X= vs_P * error_x + vs_I * integral_x + vs_D * (error_x - lasterror_x) / dt;
 		speed_Y = vs_P * error_y + vs_I * integral_y + vs_D * (error_y - lasterror_y) / dt;
-		printf(Vmax);
+		printf("Vmax\n");
 	}
 
 	lasterror_x = error_x;
