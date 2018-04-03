@@ -205,7 +205,7 @@ find_library(LIBPIGPIOD_IF2_LIBRARIES NAMES pigpiod_if2)
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
-add_executable(pid_control src/pid.cpp)
-target_link_libraries(pid_control ${catkin_LIBRARIES})
-add_executable(emergency_stop src/emergency_stop.cpp)
-target_link_libraries(emergency_stop ${catkin_LIBRARIES} ${LIBPIGPIOD_IF2_LIBRARIES})
+#add_executable(pid_control src/pid.cpp)
+#target_link_libraries(pid_control ${catkin_LIBRARIES})
+#add_executable(emergency_stop src/emergency_stop.cpp)
+#target_link_libraries(emergency_stop ${catkin_LIBRARIES} ${LIBPIGPIOD_IF2_LIBRARIES})
