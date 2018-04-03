@@ -105,17 +105,19 @@ int main(int argc, char **argv)
 			{
 				//ROS_INFO("time: %f\t V: %f\t X1", t, accel(t));
 				msg.V = ((Vmax - Vs) * (1 - cos(((2 * Amax) * t) / (Vmax - Vs))) / 2) + Vs;
+				msg.Vmax = false;
 			}
 			if(t1 <= t && t <= (t1 + t2))
 			{
 				//ROS_INFO("time: %f\t V: %f\t X2", t, Vmax);
 				msg.V = Vmax;
-				msg.Vmax = Vmax;
+				msg.Vmax = true;
 			}
 			if((t1 + t2) <= t && t <= (t1 + t2 + t3))
 			{
 				//ROS_INFO("time: %f\t V: %f\t X3", t, decel(t));
-				msg.V = ((Vmax - Ve) * (1 - cos(((2 * Amax)  * (t - ((t1 + t2) + (t3 - t1)) - t1)) / (Vmax - Ve))) / 2) + Ve;;
+				msg.V = ((Vmax - Ve) * (1 - cos(((2 * Amax)  * (t - ((t1 + t2) + (t3 - t1)) - t1)) / (Vmax - Ve))) / 2) + Ve;
+				msg.Vmax = false;
 			}
 			if(t >= (t1 + t2 + t3))
 			{
