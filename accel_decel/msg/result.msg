@@ -1,2 +1,2 @@
 float64 V
-float32 Ve
+float32 Vmax
