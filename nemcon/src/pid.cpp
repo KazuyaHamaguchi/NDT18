@@ -36,6 +36,7 @@ float vs_D;
 float speedFR = 0.0f, speedRL = 0.0f, speedFL = 0.0f, speedRR = 0.0f;
 float turn_imu = 0.0f, turn_enc_x = 0.0f, turn_enc_y = 0.0f;
 float enc_vx = 0.0f, enc_vy = 0.0f;
+float tar_x = 0.0f, tar_y = 0.0f;
 
 ros::Time current_time , last_time;
 double dt = 0.0;
@@ -77,8 +78,8 @@ void pid_enc(const geometry_msgs::PoseStamped& msg)
 {
 	float lasterror_x = 0, lasterror_y = 0, integral_x = 0, integral_y = 0, error_x = 0, error_y = 0;
 
-	error_x = msg.pose.position.x - 0.00000f;
-	error_y = msg.pose.position.y - 0.00000f;
+	error_x = msg.pose.position.x - abs(tar_x);
+	error_y = msg.pose.position.y - abs(tar_y);
 
 	integral_x += (error_x + lasterror_x) / 2.0 * dt;
 	integral_y += (error_y + lasterror_y) / 2.0 * dt;
@@ -117,7 +118,6 @@ void pid_v(const accel_decel::result& msg)
 	{
 		speed_X= vs_P * error_x + vs_I * integral_x + vs_D * (error_x - lasterror_x) / dt;
 		speed_Y = vs_P * error_y + vs_I * integral_y + vs_D * (error_y - lasterror_y) / dt;
-		printf("Vmax\n");
 	}
 
 	lasterror_x = error_x;
@@ -322,6 +322,32 @@ int main(int argc, char **argv)
 		return -1;
 	}
 	ROS_INFO("vs_D: %f", vs_D);
+
+	/************************************************************************/
+
+	if(!local_nh.hasParam("tar_x"))
+	{
+		ROS_INFO("Parameter tar_x is not defind. Now, it is set default value.");
+		local_nh.setParam("tar_x", 0);
+	}
+	if(!local_nh.getParam("tar_x", tar_x))
+	{
+		ROS_ERROR("parameter front is invalid.");
+		return -1;
+	}
+	ROS_INFO("tar_x: %f", tar_x);
+
+	if(!local_nh.hasParam("tar_y"))
+	{
+		ROS_INFO("Parameter tar_y is not defind. Now, it is set default value.");
+		local_nh.setParam("tar_y", 0);
+	}
+	if(!local_nh.getParam("tar_y", tar_y))
+	{
+		ROS_ERROR("parameter front is invalid.");
+		return -1;
+	}
+	ROS_INFO("tar_y: %f", tar_y);
 
 	/**************************************************************************/
 
