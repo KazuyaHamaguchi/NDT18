@@ -108,7 +108,7 @@ void pid_v(const accel_decel::result& msg)
 	error_x = msg.V - abs(enc_vx);
 	error_y = msg.V - abs(enc_vy);
 
-	printf("%f\t %f\n", msg.V, abs(enc_vy));
+	printf("%f\n", abs(enc_vy));
 
 	integral_x += (error_x + lasterror_x) / 2.0 * dt;
 	integral_y += (error_y + lasterror_y) / 2.0 * dt;
