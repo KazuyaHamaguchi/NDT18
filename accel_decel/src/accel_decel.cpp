@@ -104,19 +104,16 @@ int main(int argc, char **argv)
 			if(t <= t1)
 			{
 				//ROS_INFO("time: %f\t V: %f\t X1", t, accel(t));
-				printf("%f\t %f\n", t, accel(t));
-				msg.V = ((Vmax - Vs) * (1 - cos(((2 * Amax) * t) / (Vmax - Vs))) / 2) + Vs;;
+				msg.V = ((Vmax - Vs) * (1 - cos(((2 * Amax) * t) / (Vmax - Vs))) / 2) + Vs;
 			}
 			if(t1 <= t && t <= (t1 + t2))
 			{
 				//ROS_INFO("time: %f\t V: %f\t X2", t, Vmax);
-				printf("%f\t %f\n", t, Vmax);
 				msg.V = Vmax;
 			}
 			if((t1 + t2) <= t && t <= (t1 + t2 + t3))
 			{
 				//ROS_INFO("time: %f\t V: %f\t X3", t, decel(t));
-				printf("%f\t %f\n", t, decel(t));
 				msg.V = ((Vmax - Ve) * (1 - cos(((2 * Amax)  * (t - ((t1 + t2) + (t3 - t1)) - t1)) / (Vmax - Ve))) / 2) + Ve;;
 			}
 			if(t >= (t1 + t2 + t3))
@@ -125,6 +122,7 @@ int main(int argc, char **argv)
 				end = true;
 				cb_flag = false;
 			}
+			printf("%f\t %f\n", t, msg.V);
 			pub.publish(msg);
 		}
 
