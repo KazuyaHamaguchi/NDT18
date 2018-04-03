@@ -117,6 +117,7 @@ void pid_v(const accel_decel::result& msg)
 	{
 		speed_X= vs_P * error_x + vs_I * integral_x + vs_D * (error_x - lasterror_x) / dt;
 		speed_Y = vs_P * error_y + vs_I * integral_y + vs_D * (error_y - lasterror_y) / dt;
+		printf(Vmax);
 	}
 
 	lasterror_x = error_x;
@@ -315,7 +316,7 @@ int main(int argc, char **argv)
 		ROS_INFO("Parameter vs_D is not defind. Now, it is set default value.");
 		local_nh.setParam("vs_D", 0);
 	}
-	if(!local_nh.getParam("vs_D", v_D))
+	if(!local_nh.getParam("vs_D", vs_D))
 	{
 		ROS_ERROR("parameter front is invalid.");
 		return -1;
