@@ -1,6 +1,6 @@
 <launch>
+  <!--<node name="accel_decel" pkg="accel_decel" type="accel_decel" output="screen" />-->
   <node name="pid_control" pkg="nemcon" type="pid_control" output="screen">
-    <!--<param name="speed" value="10" />-->
     <param name="front" value="3" /> <!-- 前：1，右：2，後：3，左：4 -->
     <param name="imu_P" value="20.0" />
     <param name="imu_I" value="2.00" />
