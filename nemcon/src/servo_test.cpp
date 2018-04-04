@@ -9,12 +9,12 @@ int main(int argc, char **argv)
 	ros::init(argc, argv, "servo_test");
 	ros::NodeHandle nh;
 
-	set_mode(pi, 18, PI_OUTPUT);
+	set_mode(pi, 24, PI_OUTPUT);
 	while(ros::ok())
 	{
-		set_servo_pulsewidth(pi, 18, 0);
+		set_servo_pulsewidth(pi, 24, 0);
 		ros::Duration(2).sleep();
-		set_servo_pulsewidth(pi, 18, 2000);
+		set_servo_pulsewidth(pi, 24, 2000);
 		ros::Duration(2).sleep();
 		ros::spinOnce();
 	}
