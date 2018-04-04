@@ -7,7 +7,7 @@
 int pi = pigpio_start(0, 0);
 
 ros::Publisher pub;
-mpu9250::motor msg_m;
+nemcon::motor msg_m;
 
 #define e_pin 22
 bool motor = false;
