@@ -10,12 +10,12 @@ int main(int argc, char **argv)
 	ros::NodeHandle nh;
 
 	set_mode(pi, 24, PI_OUTPUT);
-	set_PWM_frequency(pi, 24, 400);
-	set_PWM_range(pi, 24, 0);
-
 
 	while(ros::ok())
 	{
+		set_PWM_frequency(pi, 24, 400);
+		set_PWM_range(pi, 24, 0);
+
 		set_PWM_dutycycle(pi, 24, 1500);
 
 		/*ros::Duration(2).sleep();
