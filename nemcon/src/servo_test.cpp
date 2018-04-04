@@ -8,7 +8,7 @@ int main(int argc, char **argv)
 	ros::NodeHandle nh;
 	int pi = pigpio_start(0, 0);
 	set_mode(pi, 24, PI_OUTPUT);
-	set_servo_pulsewidth(pi, 24, 490/*1495*/);	//0度
+	set_servo_pulsewidth(pi, 24, 450/*1495*/);	//0度
 	//ros::Rate loop_rate(1);
 
 
