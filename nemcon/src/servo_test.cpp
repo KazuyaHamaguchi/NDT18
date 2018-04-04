@@ -13,22 +13,14 @@ int main(int argc, char **argv)
 
 	while(ros::ok())
 	{
-		set_PWM_frequency(pi, 24, 400);
+		/*set_PWM_frequency(pi, 24, 400);
 		set_PWM_range(pi, 24, 0);
 
-		set_PWM_dutycycle(pi, 24, 500);
-/*
-		ros::Duration(2).sleep();
-
-		set_PWM_dutycycle(pi, 24, 500);
-
-		ros::Duration(2).sleep();
-*/
+		set_PWM_dutycycle(pi, 24, 500);*/
 
 
-
-		/*set_servo_pulsewidth(pi, 24, 0);
-		ros::Duration(2).sleep();
+		set_servo_pulsewidth(pi, 24, 500);
+		/*ros::Duration(2).sleep();
 		set_servo_pulsewidth(pi, 24, 2000);
 		ros::Duration(2).sleep();
 		ros::spinOnce();*/
