@@ -19,6 +19,7 @@ int threshold;
 double dist_lrf;
 bool backward;
 
+#define FIELD_LENGTH 1.970
 #define FIELD_WIDTH 1.970
 
 
@@ -285,7 +286,7 @@ void thread_main(){
 			}
 			else if( (line_yaw < -CV_PI*3/4 || line_yaw > CV_PI*3/4) && right == NULL ){
 				right = &(lines[i]);
-				//ROS_INFO("right[%f][%f]", right->theta, right->dist);
+				ROS_INFO("right[%f][%f]", right->theta, right->dist);
 			}
 		}
 		if( front != NULL || right != NULL || left != NULL ){
@@ -318,14 +319,14 @@ void thread_main(){
 		}
 
 		if(front!=NULL){
-			pose.pose.position.x = front->dist;
+			pose.pose.position.x = -FIELD_WIDTH + front->dist;
 		}
 
 		if(left!=NULL){
-			pose.pose.position.y = -FIELD_WIDTH/2 + left->dist;
+			pose.pose.position.y = -FIELD_LENGTH/2 + left->dist;
 		}
 		else if(right!=NULL){
-			pose.pose.position.y = FIELD_WIDTH/2 - right->dist;
+			pose.pose.position.y = FIELD_LENGTH/2 - right->dist;
 		}
 #if false
 		if(left!=NULL)	std::cout << "L";
