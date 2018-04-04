@@ -12,31 +12,43 @@ nemcon::motor msg_m;
 #define e_pin 22
 bool motor = false;
 bool accel = false;
+bool flag_acc = false;
+bool flag_motor = false;
 bool flag = false;
 
 void callback_m(const nemcon::motor& msg)
 {
-	if(msg.motor_FR == 0 && msg.motor_FL == 0 && msg.motor_RL == 0 && msg.motor_RR == 0)
+	if(msg.motor_FR == 0 && msg.motor_FL == 0 && msg.motor_RL == 0 && msg.motor_RR == 0 && !flag_motor)
 	{
+		flag_motor = true;
 		ROS_INFO("M_OK");
 		motor = true;
 	}
 	else
 	{
-		motor = false;
+		if(flag_motor)
+		{
+			flag_motor = false;
+			motor = false;
+		}
 	}
 }
 
 void callback_a(const sensor_msgs::Imu& msg)
 {
-	if(msg.linear_acceleration.x > 2 || msg.linear_acceleration.x < -2 || msg.linear_acceleration.y > 2 || msg.linear_acceleration.y < -2)
+	if((msg.linear_acceleration.x > 2 || msg.linear_acceleration.x < -2 || msg.linear_acceleration.y > 2 || msg.linear_acceleration.y < -2) && !flag_acc)
 	{
+		flag_acc = true;
 		ROS_INFO("A_OK");
 		accel = true;
 	}
 	else
 	{
-		accel = false;
+		if(flag_acc)
+		{
+			flag_acc = false;
+			accel = false;
+		}
 	}
 }
 
