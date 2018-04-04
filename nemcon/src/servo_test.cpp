@@ -20,7 +20,6 @@ int main(int argc, char **argv)
 		set_PWM_dutycycle(pi, 24, 500);*/
 
 
-		set_servo_pulsewidth(pi, 24, 0);
 		set_servo_pulsewidth(pi, 24, 1500);
 		/*ros::Duration(2).sleep();
 		set_servo_pulsewidth(pi, 24, 2000);
