@@ -12,9 +12,9 @@ int main(int argc, char **argv)
 	while(ros::ok())
 	{
 		set_servo_pulsewidth(pi, 25, 0);
-		ros::Duration(2).sleep();
+		/*ros::Duration(2).sleep();
 		set_servo_pulsewidth(pi, 25, 2000);
-		ros::Duration(2).sleep();
+		ros::Duration(2).sleep();*/
 		ros::spinOnce();
 	}
 	return 0;
