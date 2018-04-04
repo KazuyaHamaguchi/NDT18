@@ -8,16 +8,16 @@ int main(int argc, char **argv)
 	ros::NodeHandle nh;
 	int pi = pigpio_start(0, 0);
 	set_mode(pi, 24, PI_OUTPUT);
-	set_servo_pulsewidth(pi, 24, 750/*1495*/);	//0度
+	set_servo_pulsewidth(pi, 24, 1495);	//0度
 	//ros::Rate loop_rate(1);
 
 
 	while(ros::ok())
 	{
-		/*set_servo_pulsewidth(pi, 24, 1485);
+		set_servo_pulsewidth(pi, 24, 1485);
 		time_sleep(1);
-		set_servo_pulsewidth(pi, 24, 540);
-		time_sleep(1);*/
+		set_servo_pulsewidth(pi, 24, 750);
+		time_sleep(1);
 		/*set_PWM_frequency(pi, 24, 400);
 		set_PWM_range(pi, 24, 0);
 
