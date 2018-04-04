@@ -9,8 +9,7 @@ int main(int argc, char **argv)
 	ros::init(argc, argv, "servo_test");
 	ros::NodeHandle nh;
 
-	gpioSetMode(25, PI_OUTPUT);
-
+	set_mode(pi, 25, PI_OUTPUT);
 	while(ros::ok())
 	{
 		set_servo_pulsewidth(pi, 25, 0);
