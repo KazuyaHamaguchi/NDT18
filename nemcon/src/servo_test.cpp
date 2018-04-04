@@ -13,7 +13,7 @@ int main(int argc, char **argv)
 	{
 		set_servo_pulsewidth(pi, 25, 0);
 		ros::Duration(2).sleep();
-		set_servo_pulsewidth(pi, 25, 1500);
+		set_servo_pulsewidth(pi, 25, 2000);
 		ros::Duration(2).sleep();
 		ros::spinOnce();
 	}
