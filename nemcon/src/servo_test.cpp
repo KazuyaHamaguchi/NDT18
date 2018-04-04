@@ -13,8 +13,8 @@ int main(int argc, char **argv)
 
 	while(ros::ok())
 	{
-		set_PWM_frequency(24, 400);
-		set_PWM_range(24, 2500);
+		set_PWM_frequency(pi, 24, 400);
+		set_PWM_range(pi, 24, 2500);
 
 		/*set_servo_pulsewidth(pi, 24, 0);
 		ros::Duration(2).sleep();
