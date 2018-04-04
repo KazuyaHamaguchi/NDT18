@@ -10,6 +10,7 @@ int main(int argc, char **argv)
 	ros::NodeHandle nh;
 
 	set_mode(pi, 24, PI_OUTPUT);
+	ros::Rate loop_rate(1);
 
 	while(ros::ok())
 	{
@@ -23,8 +24,9 @@ int main(int argc, char **argv)
 		set_servo_pulsewidth(pi, 24, 1500);
 		/*ros::Duration(2).sleep();
 		set_servo_pulsewidth(pi, 24, 2000);
-		ros::Duration(2).sleep();
-		ros::spinOnce();*/
+		ros::Duration(2).sleep();*/
+		loop_rate.sleep();
+		ros::spinOnce();
 	}
 	return 0;
 }
