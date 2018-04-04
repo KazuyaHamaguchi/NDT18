@@ -16,7 +16,7 @@ int main(int argc, char **argv)
 	{
 		set_servo_pulsewidth(pi, 24, 1485);
 		time_sleep(1);
-		set_servo_pulsewidth(pi, 24, 750);
+		set_servo_pulsewidth(pi, 24, 650);
 		time_sleep(1);
 		/*set_PWM_frequency(pi, 24, 400);
 		set_PWM_range(pi, 24, 0);
