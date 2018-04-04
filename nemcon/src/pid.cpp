@@ -37,6 +37,7 @@ float speedFR = 0.0f, speedRL = 0.0f, speedFL = 0.0f, speedRR = 0.0f;
 float turn_imu = 0.0f, turn_enc_x = 0.0f, turn_enc_y = 0.0f;
 float enc_vx = 0.0f, enc_vy = 0.0f;
 float tar_x = 0.0f, tar_y = 0.0f;
+float enc_x = 0.0f;
 
 ros::Time current_time , last_time;
 double dt = 0.0;
@@ -87,6 +88,8 @@ void pid_enc(const geometry_msgs::PoseStamped& msg)
 	turn_enc_x = enc_P * error_x + enc_I * integral_x + enc_D * (error_x - lasterror_x) / dt;
 	turn_enc_y = enc_P * error_y + enc_I * integral_y + enc_D * (error_y - lasterror_y) / dt;
 
+  enc_x = msg.pose.position.y;
+
 	lasterror_x = error_x;
 	lasterror_y = error_y;
 }
@@ -104,7 +107,8 @@ void pid_v(const accel_decel::result& msg)
 	error_x = msg.V - abs(enc_vx);
 	error_y = msg.V - abs(enc_vy);
 
-	printf("%f\n", abs(enc_vy));
+	//printf("%f\n", abs(enc_vy));
+  printf("%f\n", enc_x);
 
 	integral_x += (error_x + lasterror_x) / 2.0 * dt;
 	integral_y += (error_y + lasterror_y) / 2.0 * dt;
