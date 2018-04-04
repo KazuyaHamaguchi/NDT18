@@ -14,7 +14,7 @@ int main(int argc, char **argv)
 
 	while(ros::ok())
 	{
-		set_servo_pulsewidth(pi, 24, 1495);
+		set_servo_pulsewidth(pi, 24, 1485);
 		time_sleep(1);
 		set_servo_pulsewidth(pi, 24, 540);
 		time_sleep(1);
