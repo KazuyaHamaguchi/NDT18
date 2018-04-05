@@ -64,11 +64,11 @@ float clamp(float input, float min, float max)
 	return output;
 }
 
-void enc_cv(const deadreckoning::enc& msg)
+void param_cv(const nemcon::pid_param& msg)
 {
 	front = msg.front;
-	enc_vx = msg.speed_X;
-	enc_vy = msg.speed_Y;
+	tar_x = msg.tar_x;
+	tar_y = msg.tar_y;
 }
 
 void pid_acc(const sensor_msgs::Imu& msg)
@@ -83,10 +83,10 @@ void pid_acc(const sensor_msgs::Imu& msg)
 	lasterror = error;
 }
 
-void dis_cv(const nemcon::pid_param& msg)
+void enc_cv(const deadreckoning::enc& msg)
 {
-	tar_x = msg.tar_x;
-	tar_y = msg.tar_y;
+	enc_vx = msg.speed_X;
+	enc_vy = msg.speed_Y;
 }
 
 void pid_enc(const geometry_msgs::PoseStamped& msg)
@@ -318,7 +318,7 @@ int main(int argc, char **argv)
 
 	/************************************************************************/
 
-	ros::Subscriber sub_dis = nh.subscribe("/pid_param", 1000, dis_cv);
+	ros::Subscriber sub_dis = nh.subscribe("/pid_param", 1000, param_cv);
 	ros::Subscriber sub_imu = nh.subscribe("/imu/data_raw", 1000, pid_acc);
 	ros::Subscriber sub_enc = nh.subscribe("/robot/pose", 1000, pid_enc);
 	ros::Subscriber sub_accel = nh.subscribe("/accel_decel/result", 1000, pid_v);
