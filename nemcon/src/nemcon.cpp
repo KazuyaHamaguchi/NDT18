@@ -24,9 +24,10 @@ ros::Publisher pub_move_param;
 
 void switch_cb(const nemcon::switch_in& msg)
 {
-	if(msg.START && !msg.START && msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
+	if(!msg.START && !msg.START && msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
 	{
-		led_flash(3, 0.5, 0);
+		ROS_INFO("OK");
+		/*led_flash(3, 0.5, 0);
 		led_flash(0, 0, 0);
 
 		movement(0, 1, 0, 0.5, 0.56, 0, 0, 4);
@@ -35,17 +36,18 @@ void switch_cb(const nemcon::switch_in& msg)
 		ros::Duration(2).sleep();
 
 		cb_flag = true;
-		end = true;
+		end = true;*/
 
 	}
 	else
 	{
-		led_flash(5, 0.25, 1);
+		ROS_INFO("NG");
+		/*led_flash(5, 0.25, 1);
 		led_flash(0, 0, 1);
 		if(end)
 		{
 			cb_flag = false;
-		}
+		}*/
 	}
 }
 
@@ -64,7 +66,6 @@ int main(int argc, char **argv)
 	pub_move_param = nh.advertise<accel_decel::param>("accel_decel/param", 1000);
 
 	/*ros::Rate loop_rate(1);
-
 	while(ros::ok())
 	{
 		set_servo_pulsewidth(pi, pin_servo, 2450);
@@ -114,7 +115,7 @@ void movement(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_
 	msg_acc_param.Xall = Xall;
 	msg_pid_param.tar_x = tar_x;
 	msg_pid_param.tar_y = tar_y;
-  msg_pid_param.front = front;
+ 	msg_pid_param.front = front;
 
 	pub_move_param.publish(msg_acc_param);
 	pub_tar_dis.publish(msg_pid_param);
