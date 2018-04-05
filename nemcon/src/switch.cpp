@@ -17,6 +17,8 @@ bool flag_TZ2 = false;
 bool flag_TZ3 = false;
 bool flag_SC = false;
 
+int pin_START_count = 0;
+
 nemcon::switch_in msg;
 
 
@@ -42,17 +44,24 @@ int main(int argc, char **argv)
 		if(gpio_read(pi, pin_START) == 1 && !flag_START)
 		{
 			flag_START = true;
-			msg.START = true;
-			pub.publish(msg);
+			pin_START_count ++;
 		}
 		else
 		{
 			if(flag_START)
 			{
-				msg.START = false;
-				pub.publish(msg);
 				flag_START = false;
 			}
+		}
+		if(pin_START_count % 2 == 1)
+		{
+			msg.START = true;
+			pub.publish(msg);
+		}
+		else
+		{
+			msg.START = false;
+			pub.publish(msg);
 		}
 
 		if(gpio_read(pi, pin_SZ) == 1 && !flag_SZ)
