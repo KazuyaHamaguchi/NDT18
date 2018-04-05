@@ -1,5 +1,5 @@
 #include <ros/ros.h>
-#include <nemcon/switch.h>
+#include <nemcon/switch_in.h>
 
 #include <pigpiod_if2.h>
 
@@ -17,7 +17,7 @@ bool flag_TZ2 = false;
 bool flag_TZ3 = false;
 bool flag_SC = false;
 
-nemcon::switch msg;
+nemcon::switch_in msg;
 
 
 int main(int argc, char **argv)
@@ -25,7 +25,7 @@ int main(int argc, char **argv)
 	ros::init(argc, argv, "switch");
 	ros::NodeHandle nh;
 
-	ros::Publisher pub = nh.advertise<nemcon::switch>("switch", 1000);
+	ros::Publisher pub = nh.advertise<nemcon::switch_in>("switch", 1000);
 
 	int pi = pigpio_start(0, 0);
 	set_mode(pi, pin_START, PI_INPUT);
