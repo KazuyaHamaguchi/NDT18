@@ -1,386 +1,120 @@
 #include <ros/ros.h>
-#include <sensor_msgs/Imu.h>
-#include <geometry_msgs/PoseStamped.h>
-#include <deadreckoning/enc.h>
-#include <accel_decel/result.h>
+#include <nemcon/switch_in.h>
 #include <nemcon/pid_param.h>
+#include <accel_decel/param.h>
 
-#include <signal.h>
+#include <pigpiod_if2.h>
 
-#include <nemcon/motor.h>
+static const int pin_blue = 16;
+static const int pin_yellow = 12;
+static const int pin_servo = 24;
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <cmath>	// http://faithandbrave.hateblo.jp/entry/2016/12/12/181115
+int pi = pigpio_start(0, 0);
+bool cb_flag = false;
+bool end = false;
 
-using namespace std;
+void led_flash(int num, float time, int color);	//color：blue = 0, yellow = 1
+void movement(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_x, float tar_y);
 
-float speed_X = 0.0f, speed_Y = 0.0f;
-int front;	//前：1，右：2，後：3，左：4
+nemcon::pid_param msg_pid_param;
+accel_decel::param msg_acc_param;
+ros::Publisher pub_tar_dis;
+ros::Publisher pub_move_param;
 
-float imu_P;
-float imu_I;
-float imu_D;
 
-float enc_P;
-float enc_I;
-float enc_D;
-
-float v_P;
-float v_I;
-float v_D;
-
-float vs_P;
-float vs_I;
-float vs_D;
-
-float speedFR = 0.0f, speedRL = 0.0f, speedFL = 0.0f, speedRR = 0.0f;
-float turn_imu = 0.0f, turn_enc_x = 0.0f, turn_enc_y = 0.0f;
-float enc_vx = 0.0f, enc_vy = 0.0f;
-float tar_x = 0.0f, tar_y = 0.0f;
-float enc_x = 0.0f;
-
-ros::Time current_time , last_time;
-double dt = 0.0;
-
-ros::Publisher pub;
-nemcon::motor msg_m;
-
-float clamp(float input, float min, float max)
+void switch_cb(const nemcon::switch_in& msg)
 {
-	float output = 0.00000f;
-	if(input <= min)
+	if(msg.START && !msg.START && msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
 	{
-		output = min;
+		led_flash(3, 0.5, 0);
+		led_flash(0, 0, 0);
+
+		movement(0, 1, 0, 0.5, 0.56, 0, 0);
+
+		led_flash(0, 0, 1);
+		ros::Duration(2).sleep();
+
+		cb_flag = true;
+		end = true;
+
 	}
-	if(min < input && input < max)
+	else
 	{
-		output = input;
+		led_flash(5, 0.25, 1);
+		led_flash(0, 0, 1);
+		if(end)
+		{
+			cb_flag = false;
+		}
 	}
-	if(input >= max)
-	{
-		output = max;
-	}
-	return output;
 }
-
-void param_cv(const nemcon::pid_param& msg)
-{
-	front = msg.front;
-	tar_x = msg.tar_x;
-	tar_y = msg.tar_y;
-}
-
-void pid_acc(const sensor_msgs::Imu& msg)
-{
-	float lasterror = 0, integral = 0, error = 0;
-	error = msg.orientation.z - 0.00000f;
-
-	integral += (error + lasterror) / 2.0 * dt;
-
-	turn_imu = imu_P * error + imu_I * integral + imu_D * (error - lasterror) / dt;
-
-	lasterror = error;
-}
-
-void enc_cv(const deadreckoning::enc& msg)
-{
-	enc_vx = msg.speed_X;
-	enc_vy = msg.speed_Y;
-}
-
-void pid_enc(const geometry_msgs::PoseStamped& msg)
-{
-	float lasterror_x = 0, lasterror_y = 0, integral_x = 0, integral_y = 0, error_x = 0, error_y = 0;
-
-	error_x = msg.pose.position.x - tar_x;
-	error_y = msg.pose.position.y - tar_y;
-
-	integral_x += (error_x + lasterror_x) / 2.0 * dt;
-	integral_y += (error_y + lasterror_y) / 2.0 * dt;
-
-	turn_enc_x = enc_P * error_x + enc_I * integral_x + enc_D * (error_x - lasterror_x) / dt;
-	turn_enc_y = enc_P * error_y + enc_I * integral_y + enc_D * (error_y - lasterror_y) / dt;
-
-	lasterror_x = error_x;
-	lasterror_y = error_y;
-}
-
-void pid_v(const accel_decel::result& msg)
-{
-	float lasterror_x = 0, lasterror_y = 0, integral_x = 0, integral_y = 0, error_x = 0, error_y = 0;
-
-	error_x = msg.V - abs(enc_vx);
-	error_y = msg.V - abs(enc_vy);
-
-	integral_x += (error_x + lasterror_x) / 2.0 * dt;
-	integral_y += (error_y + lasterror_y) / 2.0 * dt;
-
-	if(!msg.Vmax)	//加減速用
-	{
-		speed_X= v_P * error_x + v_I * integral_x + v_D * (error_x - lasterror_x) / dt;
-		speed_Y = v_P * error_y + v_I * integral_y + v_D * (error_y - lasterror_y) / dt;
-	}
-	else			//等速直進用
-	{
-		speed_X= vs_P * error_x + vs_I * integral_x + vs_D * (error_x - lasterror_x) / dt;
-		speed_Y = vs_P * error_y + vs_I * integral_y + vs_D * (error_y - lasterror_y) / dt;
-	}
-
-	lasterror_x = error_x;
-	lasterror_y = error_y;
-
-	/*if(msg.V < 0.01)
-	{
-	speed_X = 0.000;
-	speed_Y = 0.000;
-	speedFR = 0;
-	speedFL = 0;
-	speedRR = 0;
-	speedRL = 0;
-	}*/
-}
-
-
-
-void mySigintHandler(int sig)
-{
-	msg_m.motor_FR = 0;
-	msg_m.motor_FL = 0;
-	msg_m.motor_RR = 0;
-	msg_m.motor_RL = 0;
-	pub.publish(msg_m);
-	ros::shutdown();
-}
-
-/*****************************************************************************************************/
 
 int main(int argc, char **argv)
 {
-	ros::init(argc, argv, "pid_control", ros::init_options::NoSigintHandler);
+	ros::init(argc, argv, "servo_test");
 	ros::NodeHandle nh;
-	current_time = ros::Time::now();
-	last_time = ros::Time::now();
-	ros::Rate loop_rate(40);
-	ros::NodeHandle local_nh("~");
 
-	/*****************************************************************************/
+	set_mode(pi, pin_blue, PI_OUTPUT);
+	set_mode(pi, pin_yellow, PI_OUTPUT);
+	set_servo_pulsewidth(pi, pin_servo, 1520);	//0度
 
-	if(!local_nh.hasParam("imu_P"))
-	{
-		ROS_INFO("Parameter imu_P is not defind. Now, it is set default value.");
-		local_nh.setParam("imu_P", 20);
-	}
-	if(!local_nh.getParam("imu_P", imu_P))
-	{
-		ROS_ERROR("parameter front is invalid.");
-		return -1;
-	}
-	ROS_INFO("imu_P: %f", imu_P);
+	ros::Subscriber subSwitch = nh.subscribe("/switch", 1000, switch_cb);
 
-	if(!local_nh.hasParam("imu_I"))
-	{
-		ROS_INFO("Parameter imu_I is not defind. Now, it is set default value.");
-		local_nh.setParam("imu_I", 2.00);
-	}
-	if(!local_nh.getParam("imu_I", imu_I))
-	{
-		ROS_ERROR("parameter front is invalid.");
-		return -1;
-	}
-	ROS_INFO("imu_I: %f", imu_I);
+	pub_tar_dis = nh.advertise<nemcon::pid_param>("pid_param", 1000);
+	pub_move_param = nh.advertise<accel_decel::param>("accel_decel/param", 1000);
 
-	if(!local_nh.hasParam("imu_D"))
-	{
-		ROS_INFO("Parameter imu_D is not defind. Now, it is set default value.");
-		local_nh.setParam("imu_D", 0.05);
-	}
-	if(!local_nh.getParam("imu_D", imu_D))
-	{
-		ROS_ERROR("parameter front is invalid.");
-		return -1;
-	}
-	ROS_INFO("imu_D: %f", imu_D);
-
-	/************************************************************************/
-
-	if(!local_nh.hasParam("enc_P"))
-	{
-		ROS_INFO("Parameter enc_P is not defind. Now, it is set default value.");
-		local_nh.setParam("enc_P", 0);
-	}
-	if(!local_nh.getParam("enc_P", enc_P))
-	{
-		ROS_ERROR("parameter front is invalid.");
-		return -1;
-	}
-	ROS_INFO("enc_P: %f", enc_P);
-
-	if(!local_nh.hasParam("enc_I"))
-	{
-		ROS_INFO("Parameter enc_I is not defind. Now, it is set default value.");
-		local_nh.setParam("enc_I", 0);
-	}
-	if(!local_nh.getParam("enc_I", enc_I))
-	{
-		ROS_ERROR("parameter front is invalid.");
-		return -1;
-	}
-	ROS_INFO("enc_I: %f", enc_I);
-
-	if(!local_nh.hasParam("enc_D"))
-	{
-		ROS_INFO("Parameter enc_D is not defind. Now, it is set default value.");
-		local_nh.setParam("enc_D", 0);
-	}
-	if(!local_nh.getParam("enc_D", enc_D))
-	{
-		ROS_ERROR("parameter front is invalid.");
-		return -1;
-	}
-	ROS_INFO("enc_D: %f", enc_D);
-
-	/************************************************************************/
-
-	if(!local_nh.hasParam("v_P"))
-	{
-		ROS_INFO("Parameter v_P is not defind. Now, it is set default value.");
-		local_nh.setParam("v_P", 0);
-	}
-	if(!local_nh.getParam("v_P", v_P))
-	{
-		ROS_ERROR("parameter front is invalid.");
-		return -1;
-	}
-	ROS_INFO("v_P: %f", v_P);
-
-	if(!local_nh.hasParam("v_I"))
-	{
-		ROS_INFO("Parameter v_I is not defind. Now, it is set default value.");
-		local_nh.setParam("v_I", 0);
-	}
-	if(!local_nh.getParam("v_I", v_I))
-	{
-		ROS_ERROR("parameter front is invalid.");
-		return -1;
-	}
-	ROS_INFO("v_I: %f", v_I);
-
-	if(!local_nh.hasParam("v_D"))
-	{
-		ROS_INFO("Parameter v_D is not defind. Now, it is set default value.");
-		local_nh.setParam("v_D", 0);
-	}
-	if(!local_nh.getParam("v_D", v_D))
-	{
-		ROS_ERROR("parameter front is invalid.");
-		return -1;
-	}
-	ROS_INFO("v_D: %f", v_D);
-
-	/************************************************************************/
-
-	if(!local_nh.hasParam("vs_P"))
-	{
-		ROS_INFO("Parameter vs_P is not defind. Now, it is set default value.");
-		local_nh.setParam("vs_P", 0);
-	}
-	if(!local_nh.getParam("vs_P", vs_P))
-	{
-		ROS_ERROR("parameter front is invalid.");
-		return -1;
-	}
-	ROS_INFO("vs_P: %f", vs_P);
-
-	if(!local_nh.hasParam("vs_I"))
-	{
-		ROS_INFO("Parameter vs_I is not defind. Now, it is set default value.");
-		local_nh.setParam("vs_I", 0);
-	}
-	if(!local_nh.getParam("vs_I", vs_I))
-	{
-		ROS_ERROR("parameter front is invalid.");
-		return -1;
-	}
-	ROS_INFO("vs_I: %f", vs_I);
-
-	if(!local_nh.hasParam("vs_D"))
-	{
-		ROS_INFO("Parameter vs_D is not defind. Now, it is set default value.");
-		local_nh.setParam("vs_D", 0);
-	}
-	if(!local_nh.getParam("vs_D", vs_D))
-	{
-		ROS_ERROR("parameter front is invalid.");
-		return -1;
-	}
-	ROS_INFO("vs_D: %f", vs_D);
-
-	/************************************************************************/
-
-	ros::Subscriber sub_dis = nh.subscribe("/pid_param", 1000, param_cv);
-	ros::Subscriber sub_imu = nh.subscribe("/imu/data_raw", 1000, pid_acc);
-	ros::Subscriber sub_enc = nh.subscribe("/robot/pose", 1000, pid_enc);
-	ros::Subscriber sub_accel = nh.subscribe("/accel_decel/result", 1000, pid_v);
-	ros::Subscriber sub_speed = nh.subscribe("/enc", 1000, enc_cv);
-
-	pub = nh.advertise<nemcon::motor>("motor", 100);
-
-
+	/*ros::Rate loop_rate(1);
 
 	while(ros::ok())
 	{
-		signal(SIGINT, mySigintHandler);
-		current_time = ros::Time::now();
-		dt = (current_time - last_time).toSec();
-
-		switch(front)
-		{
-			case 1:	//前
-				speedFR = clamp(nearbyint( speed_Y - turn_imu + turn_enc_x), 0, 20);
-				speedFL = clamp(nearbyint( speed_Y + turn_imu - turn_enc_x), 0, 20);
-				speedRL = clamp(nearbyint( speed_Y + turn_imu + turn_enc_x), 0, 20);
-				speedRR = clamp(nearbyint( speed_Y - turn_imu - turn_enc_x), 0, 20);
-				break;
-
-			case 2:	//右
-				speedFR = clamp(nearbyint(-(speed_X + turn_imu + turn_enc_y )), -20, 0);
-				speedFL = clamp(nearbyint( speed_X + turn_imu - turn_enc_y), 0, 20);
-				speedRL = clamp(nearbyint(-(speed_X - turn_imu + turn_enc_y)), -20, 0);
-				speedRR = clamp(nearbyint( speed_X - turn_imu - turn_enc_y), 0, 20);
-				break;
-
-			case 3:	//後
-				speedFR = clamp(nearbyint( -(speed_Y + turn_imu + turn_enc_x)), -20, 0);
-				speedFL = clamp(nearbyint( -(speed_Y - turn_imu - turn_enc_x)), -20, 0);
-				speedRL = clamp(nearbyint( -(speed_Y - turn_imu + turn_enc_x)), -20, 0);
-				speedRR = clamp(nearbyint( -(speed_Y + turn_imu - turn_enc_x)), -20, 0);
-				break;
-
-			case 4:	//左
-				speedFR = clamp(nearbyint( speed_X - turn_imu - turn_enc_y ), 0, 20);
-				speedFL = clamp(nearbyint( -(speed_X - turn_imu + turn_enc_y)), -20, 0);
-				speedRL = clamp(nearbyint( speed_X + turn_imu - turn_enc_y), 0, 20);
-				speedRR = clamp(nearbyint( -(speed_X + turn_imu + turn_enc_y)), -20, 0);
-				break;
-
-			default:
-				speedFR = 0;
-				speedFL = 0;
-				speedRL = 0;
-				speedRR = 0;
-				break;
-		}
-
-		msg_m.motor_FR = speedFR;
-		msg_m.motor_FL = speedFL;
-		msg_m.motor_RR = speedRR;
-		msg_m.motor_RL = speedRL;
-		pub.publish(msg_m);
-
-		last_time = current_time;
-
-		loop_rate.sleep();
-		ros::spinOnce();
+		set_servo_pulsewidth(pi, pin_servo, 2450);
+		time_sleep(1);
+		set_servo_pulsewidth(pi, pin_servo, 650);
+		time_sleep(1);
 	}
+	return 0;*/
+	ros::spin();
+}
+
+void led_flash(int num, float time, int color)
+{
+	if(num > 0)
+	{
+		for(int i = 0; i < num; i++)
+		{
+			if(color == 0)
+			{
+				gpio_write(pi, pin_blue, 1);
+				ros::Duration(time).sleep();
+				gpio_write(pi, pin_blue, 0);
+				ros::Duration(time).sleep();
+			}
+			if(color == 0)
+			{
+				gpio_write(pi, pin_yellow, 1);
+				ros::Duration(time).sleep();
+				gpio_write(pi, pin_yellow, 0);
+				ros::Duration(time).sleep();
+			}
+		}
+	}
+	if(num == 0)
+	{
+		gpio_write(pi, pin_blue, 1);
+	}
+}
+
+
+void movement(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_x, float tar_y)
+{
+	msg_acc_param.Vs = Vs;
+	msg_acc_param.Vmax = Vmax;
+	msg_acc_param.Ve = Ve;
+	msg_acc_param.Amax = Amax;
+	msg_acc_param.Xall = Xall;
+	msg_pid_param.tar_x = tar_x;
+	msg_pid_param.tar_y = tar_y;
+
+	pub_move_param.publish(msg_acc_param);
+	pub_tar_dis.publish(msg_pid_param);
 }
