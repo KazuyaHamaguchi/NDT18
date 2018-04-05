@@ -10,20 +10,39 @@ static const int pin_yellow = 12;
 static const int pin_servo = 24;
 
 int pi = pigpio_start(0, 0);
+bool cb_flag = false;
+bool end = false;
 
 void led_flash(int num, float time, int color);	//color：blue = 0, yellow = 1
+void movement(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_x, float tar_y);
+
+nemcon::tar_dis msg_tar_dis;
+accel_decel::param msg_acc_param;
 
 void switch_cb(const nemcon::switch_in& msg)
 {
-	if(msg.START && !msg.START && msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC)
+	if(msg.START && !msg.START && msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
 	{
-		led_flash(3, 0.5, 1);
+		led_flash(3, 0.5, 0);
+		led_flash(0, 0, 0);
+
+		movement(0, 1, 0, 0.5, 0.56, 0, 0);
+
+		led_flash(0, 0, 1);
+		ros::Duration(2).sleep();
+
+		cb_flag = true;
+		end = true;
+
 	}
 	else
 	{
-		gpio_write(pi, pin_blue, 0);
-		gpio_write(pi, pin_yellow, 0);
-		ROS_INFO("NO");
+		led_flash(5, 0.25, 1);
+		led_flash(0, 0, 1);
+		if(end)
+		{
+			cb_flag = false;
+		}
 	}
 }
 
@@ -37,6 +56,9 @@ int main(int argc, char **argv)
 	set_servo_pulsewidth(pi, pin_servo, 1520);	//0度
 
 	ros::Subscriber subSwitch = nh.subscribe("/switch", 1000, switch_cb);
+
+	pub_tar_dis = nh.advertise<nemcon::tar_dis>("tar_dis", 1000);
+	pub_move_param = nh.advertise<accel_decel::param>("accel_decel/param", 1000);
 
 	/*ros::Rate loop_rate(1);
 
@@ -53,21 +75,43 @@ int main(int argc, char **argv)
 
 void led_flash(int num, float time, int color)
 {
-	for(int i = 0; i < num; i++)
+	if(num > 0)
 	{
-		if(color == 0)
+		for(int i = 0; i < num; i++)
 		{
-			gpio_write(pi, pin_blue, 1);
-			ros::Duration(time).sleep();
-			gpio_write(pi, pin_blue, 0);
-			ros::Duration(time).sleep();
-		}
-		if(color == 0)
-		{
-			gpio_write(pi, pin_yellow, 1);
-			ros::Duration(time).sleep();
-			gpio_write(pi, pin_yellow, 0);
-			ros::Duration(time).sleep();
+			if(color == 0)
+			{
+				gpio_write(pi, pin_blue, 1);
+				ros::Duration(time).sleep();
+				gpio_write(pi, pin_blue, 0);
+				ros::Duration(time).sleep();
+			}
+			if(color == 0)
+			{
+				gpio_write(pi, pin_yellow, 1);
+				ros::Duration(time).sleep();
+				gpio_write(pi, pin_yellow, 0);
+				ros::Duration(time).sleep();
+			}
 		}
 	}
+	if(num == 0)
+	{
+		gpio_write(pi, pin_blue, 1);
+	}
+}
+
+
+void movement(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_x, float tar_y)
+{
+	msg_acc_param.Vs = VS;
+	msg_acc_param.Vmax = Vmax;
+	msg_acc_param.Ve = Ve;
+	msg_acc_param.Amax = Amax;
+	msg_acc_param.Xall = Xall;
+	msg_tar_dis.tar_x = tar_x;
+	msg_tar_dis.tar_y = tar_y;
+
+	pub_move_param.publish(msg_acc_param);
+	pub_tar_dis.publish(msg_tar_dis);
 }
