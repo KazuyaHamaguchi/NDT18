@@ -47,10 +47,10 @@ int main(int argc, char **argv)
 		}
 		else
 		{
-			msg.START = false;
-			pub.publish(msg);
 			if(flag_START)
 			{
+				msg.START = false;
+				pub.publish(msg);
 				flag_START = false;
 			}
 		}
@@ -63,10 +63,10 @@ int main(int argc, char **argv)
 		}
 		else
 		{
-			msg.SZ = false;
-			pub.publish(msg);
 			if(flag_SZ)
 			{
+				msg.SZ = false;
+				pub.publish(msg);
 				flag_SZ = false;
 			}
 		}
@@ -79,10 +79,10 @@ int main(int argc, char **argv)
 		}
 		else
 		{
-			msg.TZ1 = false;
-			pub.publish(msg);
 			if(flag_TZ1)
 			{
+				msg.TZ1 = false;
+				pub.publish(msg);
 				flag_TZ1 = false;
 			}
 		}
@@ -95,10 +95,10 @@ int main(int argc, char **argv)
 		}
 		else
 		{
-			msg.TZ2 = false;
-			pub.publish(msg);
 			if(flag_TZ2)
 			{
+				msg.TZ2 = false;
+				pub.publish(msg);
 				flag_TZ2 = false;
 			}
 		}
@@ -111,10 +111,10 @@ int main(int argc, char **argv)
 		}
 		else
 		{
-			msg.TZ3 = false;
-			pub.publish(msg);
 			if(flag_TZ3)
 			{
+				msg.TZ3 = false;
+				pub.publish(msg);
 				flag_TZ3 = false;
 			}
 		}
@@ -127,10 +127,10 @@ int main(int argc, char **argv)
 		}
 		else
 		{
-			msg.SC = false;
-			pub.publish(msg);
 			if(flag_SC)
 			{
+				msg.SC = false;
+				pub.publish(msg);
 				flag_SC = false;
 			}
 		}
