@@ -45,6 +45,7 @@ int main(int argc, char **argv)
 		{
 			flag_START = true;
 			pin_START_count ++;
+      ROS_INFO("%d\n", pin_START_count);
 		}
 		else
 		{
