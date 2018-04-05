@@ -3,7 +3,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <deadreckoning/enc.h>
 #include <accel_decel/result.h>
-#include <nemcon/tar_dis.h>
+#include <nemcon/pid_param.h>
 
 #include <signal.h>
 
@@ -64,6 +64,13 @@ float clamp(float input, float min, float max)
 	return output;
 }
 
+void enc_cv(const deadreckoning::enc& msg)
+{
+	front = msg.front;
+	enc_vx = msg.speed_X;
+	enc_vy = msg.speed_Y;
+}
+
 void pid_acc(const sensor_msgs::Imu& msg)
 {
 	float lasterror = 0, integral = 0, error = 0;
@@ -76,7 +83,7 @@ void pid_acc(const sensor_msgs::Imu& msg)
 	lasterror = error;
 }
 
-void dis_cv(const nemcon::tar_dis& msg)
+void dis_cv(const nemcon::pid_param& msg)
 {
 	tar_x = msg.tar_x;
 	tar_y = msg.tar_y;
@@ -97,12 +104,6 @@ void pid_enc(const geometry_msgs::PoseStamped& msg)
 
 	lasterror_x = error_x;
 	lasterror_y = error_y;
-}
-
-void enc_cv(const deadreckoning::enc& msg)
-{
-	enc_vx = msg.speed_X;
-	enc_vy = msg.speed_Y;
 }
 
 void pid_v(const accel_decel::result& msg)
@@ -162,20 +163,6 @@ int main(int argc, char **argv)
 	last_time = ros::Time::now();
 	ros::Rate loop_rate(40);
 	ros::NodeHandle local_nh("~");
-
-	/*****************************************************************************/
-
-	if(!local_nh.hasParam("front"))
-	{
-		ROS_INFO("Parameter front is not defind. Now, it is set default value.");
-		local_nh.setParam("front", 1);
-	}
-	if(!local_nh.getParam("front", front))
-	{
-		ROS_ERROR("parameter front is invalid.");
-		return -1;
-	}
-	ROS_INFO("front: %d", front);
 
 	/*****************************************************************************/
 
@@ -331,11 +318,11 @@ int main(int argc, char **argv)
 
 	/************************************************************************/
 
+	ros::Subscriber sub_dis = nh.subscribe("/pid_param", 1000, dis_cv);
 	ros::Subscriber sub_imu = nh.subscribe("/imu/data_raw", 1000, pid_acc);
 	ros::Subscriber sub_enc = nh.subscribe("/robot/pose", 1000, pid_enc);
 	ros::Subscriber sub_accel = nh.subscribe("/accel_decel/result", 1000, pid_v);
 	ros::Subscriber sub_speed = nh.subscribe("/enc", 1000, enc_cv);
-	ros::Subscriber sub_dis = nh.subscribe("/tar_dis", 1000, dis_cv);
 
 	pub = nh.advertise<nemcon::motor>("motor", 100);
 
