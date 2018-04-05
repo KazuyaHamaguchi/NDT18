@@ -79,7 +79,7 @@ void pid_acc(const sensor_msgs::Imu& msg)
 void dis_cv(const nemcon::tar_dis& msg)
 {
 	tar_x = msg.tar_x;
-	tar_y = msg.tsr_y;
+	tar_y = msg.tr_y;
 }
 
 void pid_enc(const geometry_msgs::PoseStamped& msg)
