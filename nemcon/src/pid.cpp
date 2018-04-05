@@ -3,6 +3,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <deadreckoning/enc.h>
 #include <accel_decel/result.h>
+#include <nemcon/tar_dis.h>
 
 #include <signal.h>
 
@@ -75,20 +76,24 @@ void pid_acc(const sensor_msgs::Imu& msg)
 	lasterror = error;
 }
 
+void dis_cv(const nemcon::tar_dis& msg)
+{
+	tar_x = msg.tar_x;
+	tar_y = msg.tsr_y;
+}
+
 void pid_enc(const geometry_msgs::PoseStamped& msg)
 {
 	float lasterror_x = 0, lasterror_y = 0, integral_x = 0, integral_y = 0, error_x = 0, error_y = 0;
 
 	error_x = msg.pose.position.x - tar_x;
 	error_y = msg.pose.position.y - tar_y;
-  
+
 	integral_x += (error_x + lasterror_x) / 2.0 * dt;
 	integral_y += (error_y + lasterror_y) / 2.0 * dt;
 
 	turn_enc_x = enc_P * error_x + enc_I * integral_x + enc_D * (error_x - lasterror_x) / dt;
 	turn_enc_y = enc_P * error_y + enc_I * integral_y + enc_D * (error_y - lasterror_y) / dt;
-  printf("%f\t %f\n",error_y, turn_enc_y);
-  enc_x = msg.pose.position.y;
 
 	lasterror_x = error_x;
 	lasterror_y = error_y;
@@ -326,36 +331,11 @@ int main(int argc, char **argv)
 
 	/************************************************************************/
 
-	if(!local_nh.hasParam("tar_x"))
-	{
-		ROS_INFO("Parameter tar_x is not defind. Now, it is set default value.");
-		local_nh.setParam("tar_x", 0);
-	}
-	if(!local_nh.getParam("tar_x", tar_x))
-	{
-		ROS_ERROR("parameter front is invalid.");
-		return -1;
-	}
-	ROS_INFO("tar_x: %f", tar_x);
-
-	if(!local_nh.hasParam("tar_y"))
-	{
-		ROS_INFO("Parameter tar_y is not defind. Now, it is set default value.");
-		local_nh.setParam("tar_y", 0);
-	}
-	if(!local_nh.getParam("tar_y", tar_y))
-	{
-		ROS_ERROR("parameter front is invalid.");
-		return -1;
-	}
-	ROS_INFO("tar_y: %f", tar_y);
-
-	/**************************************************************************/
-
 	ros::Subscriber sub_imu = nh.subscribe("/imu/data_raw", 1000, pid_acc);
 	ros::Subscriber sub_enc = nh.subscribe("/robot/pose", 1000, pid_enc);
 	ros::Subscriber sub_accel = nh.subscribe("/accel_decel/result", 1000, pid_v);
 	ros::Subscriber sub_speed = nh.subscribe("/enc", 1000, enc_cv);
+	ros::Subscriber sub_dis = nh.subscribe("/tar_dis", 1000, dis_cv);
 
 	pub = nh.advertise<nemcon::motor>("motor", 100);
 
