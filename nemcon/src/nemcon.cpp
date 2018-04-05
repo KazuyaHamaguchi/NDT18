@@ -33,7 +33,7 @@ int main(int argc, char **argv)
 	ros::NodeHandle nh;
 
 	set_mode(pi, pin_blue, PI_OUTPUT);
-	set_mode(pi, pin_orange, PI_OUTPUT);
+	set_mode(pi, pin_yellow, PI_OUTPUT);
 	set_servo_pulsewidth(pi, pin_servo, 1520);	//0度
 
 	ros::Subscriber subSwitch = nh.subscribe("/switch", 1000, switch_cb);
