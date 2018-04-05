@@ -42,11 +42,11 @@ void switch_cb(const nemcon::switch_in& msg)
 	{
 		led_flash(5, 0.25, 1);
 		led_flash(0, 0, 1);
-		if(end)
+		ROS_INFO("NG");
+		/*if(end)
 		{
 			//cb_flag = false;
-			ROS_INFO("NG");
-		}
+		}*/
 	}
 }
 
