@@ -7,6 +7,8 @@ static const int pin_blue = 16;
 static const int pin_orange = 12;
 static const int pin_servo = 24;
 
+int pi = pigpio_start(0, 0);
+
 void switch_cb(const nemcon::switch_in& msg)
 {
 	if(msg.START && msg.TZ1 && msg.TZ2 && msg.TZ3 && !msg.SC)
@@ -28,7 +30,6 @@ int main(int argc, char **argv)
 	ros::init(argc, argv, "servo_test");
 	ros::NodeHandle nh;
 
-	int pi = pigpio_start(0, 0);
 	set_mode(pi, pin_blue, PI_OUTPUT);
 	set_mode(pi, pin_orange, PI_OUTPUT);
 	set_servo_pulsewidth(pi, pin_servo, 1520);	//0度
