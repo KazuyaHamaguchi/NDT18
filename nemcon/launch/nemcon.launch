@@ -1,0 +1,8 @@
+<launch>
+
+  <include file="$(find nemcon)/launch/arduino.launch"/>
+  <include file="$(find nemcon)/launch/pid.launch"/>
+  
+  <node name="nemcon" pkg="nemcon" type="nemcon" />
+
+</launch>
