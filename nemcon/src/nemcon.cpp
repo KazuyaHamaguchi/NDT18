@@ -26,28 +26,27 @@ void switch_cb(const nemcon::switch_in& msg)
 {
 	if(msg.START && !msg.SZ && !msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
 	{
-		ROS_INFO("OK");
-		/*led_flash(3, 0.5, 0);
+		led_flash(3, 0.5, 0);
 		led_flash(0, 0, 0);
 
 		movement(0, 1, 0, 0.5, 0.56, 0, 0, 4);
-
+		ROS_INFO("OK");
 		led_flash(0, 0, 1);
 		ros::Duration(2).sleep();
 
 		cb_flag = true;
-		end = true;*/
+		end = true;
 
 	}
 	else
 	{
-		ROS_INFO("NG");
-		/*led_flash(5, 0.25, 1);
+		led_flash(5, 0.25, 1);
 		led_flash(0, 0, 1);
 		if(end)
 		{
 			cb_flag = false;
-		}*/
+			ROS_INFO("NG");
+		}
 	}
 }
 
