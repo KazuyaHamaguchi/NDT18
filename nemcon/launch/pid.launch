@@ -3,8 +3,8 @@
   <node name="pid_control" pkg="nemcon" type="pid_control" output="screen">
     <!-- 前：1，右：2，後：3，左：4 -->
     <param name="front" value="4" />
-    <param name="tar_x" value="0.00" />
-    <param name="tar_y" value="0.00" />
+    <param name="tar_x" value="-0.56" />
+    <param name="tar_y" value="4.064" />
     <param name="imu_P" value= "10"/>
     <param name="imu_I" value= "0.5"/>
     <param name="imu_D" value="0.01" />

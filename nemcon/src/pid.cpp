@@ -79,15 +79,15 @@ void pid_enc(const geometry_msgs::PoseStamped& msg)
 {
 	float lasterror_x = 0, lasterror_y = 0, integral_x = 0, integral_y = 0, error_x = 0, error_y = 0;
 
-	error_x = msg.pose.position.x - abs(tar_x);
-	error_y = msg.pose.position.y - abs(tar_y);
-
+	error_x = msg.pose.position.x - tar_x;
+	error_y = msg.pose.position.y - tar_y;
+  
 	integral_x += (error_x + lasterror_x) / 2.0 * dt;
 	integral_y += (error_y + lasterror_y) / 2.0 * dt;
 
 	turn_enc_x = enc_P * error_x + enc_I * integral_x + enc_D * (error_x - lasterror_x) / dt;
 	turn_enc_y = enc_P * error_y + enc_I * integral_y + enc_D * (error_y - lasterror_y) / dt;
-
+  printf("%f\t %f\n",error_y, turn_enc_y);
   enc_x = msg.pose.position.y;
 
 	lasterror_x = error_x;
@@ -106,9 +106,6 @@ void pid_v(const accel_decel::result& msg)
 
 	error_x = msg.V - abs(enc_vx);
 	error_y = msg.V - abs(enc_vy);
-
-	//printf("%f\n", abs(enc_vy));
-  printf("%f\n", enc_x);
 
 	integral_x += (error_x + lasterror_x) / 2.0 * dt;
 	integral_y += (error_y + lasterror_y) / 2.0 * dt;
@@ -142,10 +139,10 @@ void pid_v(const accel_decel::result& msg)
 
 void mySigintHandler(int sig)
 {
-	msg_m.motor_FR = 8080;
-	msg_m.motor_FL = 8080;
-	msg_m.motor_RR = 8080;
-	msg_m.motor_RL = 8080;
+	msg_m.motor_FR = 0;
+	msg_m.motor_FL = 0;
+	msg_m.motor_RR = 0;
+	msg_m.motor_RL = 0;
 	pub.publish(msg_m);
 	ros::shutdown();
 }
@@ -394,10 +391,10 @@ int main(int argc, char **argv)
 				break;
 
 			case 4:	//左
-				speedFR = clamp(nearbyint( speed_X - turn_imu + turn_enc_y ), 0, 20);
-				speedFL = clamp(nearbyint(-(speed_X - turn_imu - turn_enc_y)), -20, 0);
-				speedRL = clamp(nearbyint( speed_X + turn_imu + turn_enc_y), 0, 20);
-				speedRR = clamp(nearbyint(-(speed_X + turn_imu - turn_enc_y)), -20, 0);
+				speedFR = clamp(nearbyint( speed_X - turn_imu - turn_enc_y ), 0, 20);
+				speedFL = clamp(nearbyint( -(speed_X - turn_imu + turn_enc_y)), -20, 0);
+				speedRL = clamp(nearbyint( speed_X + turn_imu - turn_enc_y), 0, 20);
+				speedRR = clamp(nearbyint( -(speed_X + turn_imu + turn_enc_y)), -20, 0);
 				break;
 
 			default:
