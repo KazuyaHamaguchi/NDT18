@@ -3,12 +3,12 @@
 
 #include <pigpiod_if2.h>
 
-static const int pin_START = 29;
-static const int pin_SZ = 35;
-static const int pin_TZ1 = 37;
-static const int pin_TZ2 = 29;
-static const int pin_TZ3 = 29;
-static const int pin_SC = 29;
+static const int pin_START = 5;
+static const int pin_SZ = 19;
+static const int pin_TZ1 = 26;
+static const int pin_TZ2 = 21;
+static const int pin_TZ3 = 20;
+static const int pin_SC = 13;
 
 bool flag_START = false;
 bool flag_SZ = false;
