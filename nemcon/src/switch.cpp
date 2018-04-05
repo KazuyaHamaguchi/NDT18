@@ -80,12 +80,15 @@ int main(int argc, char **argv)
 			}
 		}
 
-		if(gpio_read(pi, pin_TZ1) == 1 && !flag_TZ1)
+		if(gpio_read(pi, pin_TZ1) == 1)
 		{
-			flag_TZ1 = true;
-			msg.TZ1 = true;
-			pub.publish(msg);
-			ROS_INFO("if%d\n", flag_TZ1);
+			if(!flag_TZ1)
+			{
+				flag_TZ1 = true;
+				msg.TZ1 = true;
+				pub.publish(msg);
+				ROS_INFO("if%d\n", flag_TZ1);
+			}
 		}
 		else
 		{
