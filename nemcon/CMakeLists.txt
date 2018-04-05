@@ -52,6 +52,7 @@ add_message_files(
   FILES
   motor.msg
   switch_in.msg
+  tar_dis.msg
 #   Message1.msg
 #   Message2.msg
 )
