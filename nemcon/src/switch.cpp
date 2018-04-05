@@ -41,10 +41,13 @@ int main(int argc, char **argv)
 
 	while(ros::ok())
 	{
-		if(gpio_read(pi, pin_START) == 1 && !flag_START)
+		if(gpio_read(pi, pin_START) == 1)
 		{
-			flag_START = true;
-			pin_START_count ++;
+			if(!flag_START)
+			{
+				flag_START = true;
+				pin_START_count ++;
+			}
 		}
 		else
 		{
@@ -64,11 +67,14 @@ int main(int argc, char **argv)
 			pub.publish(msg);
 		}
 
-		if(gpio_read(pi, pin_SZ) == 1 && !flag_SZ)
+		if(gpio_read(pi, pin_SZ) == 1)
 		{
-			flag_SZ = true;
-			msg.SZ = true;
-			pub.publish(msg);
+			if(!flag_SZ)
+			{
+				flag_SZ = true;
+				msg.SZ = true;
+				pub.publish(msg);
+			}
 		}
 		else
 		{
@@ -87,7 +93,6 @@ int main(int argc, char **argv)
 				flag_TZ1 = true;
 				msg.TZ1 = true;
 				pub.publish(msg);
-				ROS_INFO("if%d\n", flag_TZ1);
 			}
 		}
 		else
@@ -97,15 +102,17 @@ int main(int argc, char **argv)
 				msg.TZ1 = false;
 				pub.publish(msg);
 				flag_TZ1 = false;
-				ROS_INFO("else%d\n", flag_TZ1);
 			}
 		}
 
-		if(gpio_read(pi, pin_TZ2) == 1 && !flag_TZ2)
+		if(gpio_read(pi, pin_TZ2) == 1)
 		{
-			flag_TZ2 = true;
-			msg.TZ2 = true;
-			pub.publish(msg);
+			if(!flag_TZ2)
+			{
+				flag_TZ2 = true;
+				msg.TZ2 = true;
+				pub.publish(msg);
+			}
 		}
 		else
 		{
@@ -117,11 +124,14 @@ int main(int argc, char **argv)
 			}
 		}
 
-		if(gpio_read(pi, pin_TZ3) == 1 && !flag_TZ3)
+		if(gpio_read(pi, pin_TZ3) == 1)
 		{
-			flag_TZ3 = true;
-			msg.TZ3 = true;
-			pub.publish(msg);
+			if(!flag_TZ3)
+			{
+				flag_TZ3 = true;
+				msg.TZ3 = true;
+				pub.publish(msg);
+			}
 		}
 		else
 		{
@@ -133,11 +143,14 @@ int main(int argc, char **argv)
 			}
 		}
 
-		if(gpio_read(pi, pin_SC) == 1 && !flag_SC)
+		if(gpio_read(pi, pin_SC) == 1)
 		{
-			flag_SC = true;
-			msg.SC = true;
-			pub.publish(msg);
+			if(!flag_SC)
+			{
+				flag_SC = true;
+				msg.SC = true;
+				pub.publish(msg);
+			}
 		}
 		else
 		{
