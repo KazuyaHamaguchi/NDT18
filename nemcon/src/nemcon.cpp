@@ -24,7 +24,7 @@ ros::Publisher pub_move_param;
 
 void switch_cb(const nemcon::switch_in& msg)
 {
-	if(!msg.START && !msg.START && msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
+	if(msg.START && !msg.START && msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
 	{
 		ROS_INFO("OK");
 		/*led_flash(3, 0.5, 0);
