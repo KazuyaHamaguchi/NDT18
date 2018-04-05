@@ -14,7 +14,7 @@ bool cb_flag = false;
 bool end = false;
 
 void led_flash(int num, float time, int color);	//color：blue = 0, yellow = 1
-void movement(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_x, float tar_y);
+void movement(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_x, float tar_y, int front); //front：1前 2右 3後 4左
 
 nemcon::pid_param msg_pid_param;
 accel_decel::param msg_acc_param;
@@ -29,7 +29,7 @@ void switch_cb(const nemcon::switch_in& msg)
 		led_flash(3, 0.5, 0);
 		led_flash(0, 0, 0);
 
-		movement(0, 1, 0, 0.5, 0.56, 0, 0);
+		movement(0, 1, 0, 0.5, 0.56, 0, 0, 4);
 
 		led_flash(0, 0, 1);
 		ros::Duration(2).sleep();
@@ -89,7 +89,7 @@ void led_flash(int num, float time, int color)
 				gpio_write(pi, pin_blue, 0);
 				ros::Duration(time).sleep();
 			}
-			if(color == 0)
+			if(color == 1)
 			{
 				gpio_write(pi, pin_yellow, 1);
 				ros::Duration(time).sleep();
@@ -105,7 +105,7 @@ void led_flash(int num, float time, int color)
 }
 
 
-void movement(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_x, float tar_y)
+void movement(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_x, float tar_y, int front)
 {
 	msg_acc_param.Vs = Vs;
 	msg_acc_param.Vmax = Vmax;
@@ -114,6 +114,7 @@ void movement(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_
 	msg_acc_param.Xall = Xall;
 	msg_pid_param.tar_x = tar_x;
 	msg_pid_param.tar_y = tar_y;
+  msg_pid_param.front = front;
 
 	pub_move_param.publish(msg_acc_param);
 	pub_tar_dis.publish(msg_pid_param);
