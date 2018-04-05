@@ -18,6 +18,9 @@ void movement(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_
 
 nemcon::tar_dis msg_tar_dis;
 accel_decel::param msg_acc_param;
+ros::Publisher pub_tar_dis;
+ros::Publisher pub_move_param;
+
 
 void switch_cb(const nemcon::switch_in& msg)
 {
@@ -104,7 +107,7 @@ void led_flash(int num, float time, int color)
 
 void movement(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_x, float tar_y)
 {
-	msg_acc_param.Vs = VS;
+	msg_acc_param.Vs = Vs;
 	msg_acc_param.Vmax = Vmax;
 	msg_acc_param.Ve = Ve;
 	msg_acc_param.Amax = Amax;
