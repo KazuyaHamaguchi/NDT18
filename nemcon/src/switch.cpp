@@ -3,7 +3,7 @@
 
 #include <pigpiod_if2.h>
 
-static const int pin_START = 5;
+static const int pin_START = 05;
 static const int pin_SZ = 19;
 static const int pin_TZ1 = 26;
 static const int pin_TZ2 = 21;
