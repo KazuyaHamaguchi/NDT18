@@ -4,6 +4,6 @@
   <include file="$(find nemcon)/launch/pid.launch"/>
   <node name="switch" pkg="nemcon" type="switch" />
   
-  <node name="nemcon" pkg="nemcon" type="nemcon" />
+  <node name="nemcon" pkg="nemcon" type="nemcon" output="screen" />
 
 </launch>
