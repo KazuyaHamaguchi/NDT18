@@ -12,7 +12,6 @@ static const int pin_servo = 24;
 int pi = pigpio_start(0, 0);
 
 void led_flash(int num, float time, int color);	//color：blue = 0, yellow = 1
-void switch_cb(const nemcon::switch_in& msg)
 
 void switch_cb(const nemcon::switch_in& msg)
 {
