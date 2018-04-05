@@ -45,7 +45,6 @@ int main(int argc, char **argv)
 		{
 			flag_START = true;
 			pin_START_count ++;
-      ROS_INFO("%d\n", pin_START_count);
 		}
 		else
 		{
@@ -86,6 +85,7 @@ int main(int argc, char **argv)
 			flag_TZ1 = true;
 			msg.TZ1 = true;
 			pub.publish(msg);
+			ROS_INFO("if%d\n", flag_TZ1);
 		}
 		else
 		{
@@ -94,6 +94,7 @@ int main(int argc, char **argv)
 				msg.TZ1 = false;
 				pub.publish(msg);
 				flag_TZ1 = false;
+				ROS_INFO("else%d\n", flag_TZ1);
 			}
 		}
 
