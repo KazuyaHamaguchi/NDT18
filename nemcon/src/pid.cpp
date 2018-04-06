@@ -390,6 +390,7 @@ int main(int argc, char **argv)
 					speedRR = 0;
 					break;
 			}
+		}
 
 		if(pattern = 1)	//等速
 		{
