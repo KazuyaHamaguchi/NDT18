@@ -46,6 +46,7 @@ void switch_cb(const nemcon::switch_in& msg)
 
 			acc_move(0, 1, 0, 0.5, 1.05, 0, 0, 4);	//SZ横
 			ros::Duration(acc_t).sleep();
+      //ROS_INFO("%f", acc_t);
 			acc_move(0, 1, 0, 0.5, 4.8, -1.15, 0, 1);	//TZ1横
 			ros::Duration(acc_t).sleep();
 			acc_move(0, 1, 0, 0.3, 1, -1.15, 4.5, 4);	//TZ1受け渡しポイント
@@ -60,7 +61,7 @@ void switch_cb(const nemcon::switch_in& msg)
 		}
 		if(!msg.SZ && msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
 		{
-			lrf_move(3);
+			lrf_move(2);
 			led_flash(3, 0.25, 1);
 
 			cb_flag = true;
@@ -197,6 +198,7 @@ void lrf_move(float V)
 		{
 			if(lrf_x > 0)
 			{
+        ROS_INFO("%f\n", lrf_x);
 				msg_pid_param.front = 4;
 				pub_tar_dis.publish(msg_pid_param);
 			}
@@ -255,6 +257,7 @@ void lrf_move(float V)
 void acc_t_cb(const accel_decel::result& msg)
 {
 	acc_t = msg.t;
+  ROS_INFO("%f", acc_t);
 }
 
 void lrf_cb(const geometry_msgs::PoseStamped& msg)
