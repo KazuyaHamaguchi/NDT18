@@ -22,11 +22,9 @@ float lrf_y = 0.0f;
 float lrf_z = 0.0f;
 
 void acc_t_cb(const accel_decel::result& msg);
-void lrf_cb(const geometry_msgs::PoseStamped& msg);
 
 void led_flash(int num, float time, int color);	//color：blue = 0, yellow = 1
 void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_x, float tar_y, int front); //front：1前 2右 3後 4左
-void lrf_move(float V);
 
 nemcon::pid_param msg_pid_param;
 accel_decel::param msg_acc_param;
@@ -85,7 +83,6 @@ int main(int argc, char **argv)
 
 	ros::Subscriber subSwitch = nh.subscribe("/switch", 1000, switch_cb);
 	ros::Subscriber sub_accel = nh.subscribe("/accel_decel/result", 1000, acc_t_cb);
-	ros::Subscriber sub_lrf = nh.subscribe("/lrf_pose", 1000, lrf_cb);
 
 
 	pub_tar_dis = nh.advertise<nemcon::pid_param>("pid_param", 1000);
@@ -182,86 +179,8 @@ void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_
 	pub_tar_dis.publish(msg_pid_param);
 }
 
-void lrf_move(float V)
-{
-	bool flag_x = false;
-	bool flag_y = false;
-	bool flag_z = false;
-
-	msg_pid_param.pattern = 1;
-	msg_pid_param.speed = V;
-
-	while(1)
-	{
-		while(1)
-		{
-			if(lrf_x > 0)
-			{
-        ROS_INFO("%f\n", lrf_x);
-				msg_pid_param.front = 4;
-				pub_tar_dis.publish(msg_pid_param);
-			}
-			if(lrf_x < 0)
-			{
-				msg_pid_param.front = 2;
-				pub_tar_dis.publish(msg_pid_param);
-			}
-			if(-0.01 < lrf_x && lrf_x < 0.01)
-			{
-				msg_pid_param.speed = 0;
-				pub_tar_dis.publish(msg_pid_param);
-				flag_x = true;
-				break;
-			}
-		}
-		while(1)
-		{
-			if(lrf_y > 0)
-			{
-				msg_pid_param.front = 3;
-				pub_tar_dis.publish(msg_pid_param);
-			}
-			if(lrf_y < 0)
-			{
-				msg_pid_param.front = 1;
-				pub_tar_dis.publish(msg_pid_param);
-			}
-			if(-0.01 < lrf_y && lrf_y < 0.01)
-			{
-				msg_pid_param.speed = 0;
-				pub_tar_dis.publish(msg_pid_param);
-				flag_y = true;
-				break;
-			}
-		}
-		while(1)
-		{
-			msg_pid_param.speed = -1;
-			pub_tar_dis.publish(msg_pid_param);
-			if(-0.01 < lrf_z && lrf_z < 0.01)
-			{
-				msg_pid_param.speed = 0;
-				pub_tar_dis.publish(msg_pid_param);
-				flag_z = true;
-				break;
-			}
-		}
-		if(flag_x && flag_y && flag_z)
-		{
-			break;
-		}
-	}
-}
-
 void acc_t_cb(const accel_decel::result& msg)
 {
 	acc_t = msg.t;
  	ROS_INFO("%f", acc_t);
-}
-
-void lrf_cb(const geometry_msgs::PoseStamped& msg)
-{
-	lrf_x = msg.pose.position.x;
-	lrf_y = msg.pose.position.y;
-	lrf_y = msg.pose.orientation.z;
 }
