@@ -15,8 +15,9 @@
 
 using namespace std;
 
-float speed_X = 0.0f, speed_Y = 0.0f;
-int front;	//前：1，右：2，後：3，左：4
+float speed_X = 0.0f, speed_Y = 0.0f, speed = 0.0f;
+int front;	//旋回：0，前：1，右：2，後：3，左：4
+int pattern; //0：加減速，1：等速
 
 float imu_P;
 float imu_I;
@@ -92,6 +93,8 @@ float clamp2(float input, float min, float max)
 
 void param_cv(const nemcon::pid_param& msg)
 {
+	speed = msg.speed;
+	pattern = msg.pattern;
 	front = msg.front;
 	tar_x = msg.tar_x;
 	tar_y = msg.tar_y;
@@ -142,27 +145,19 @@ void pid_v(const accel_decel::result& msg)
 	integral_x += (error_x + lasterror_x) / 2.0 * dt;
 	integral_y += (error_y + lasterror_y) / 2.0 * dt;
 
-	if(!msg.V < 0.01)
+	if(!msg.Vmax)	//加減速用
 	{
-		if(!msg.Vmax)	//加減速用
-		{
-			speed_X= v_P * error_x + v_I * integral_x + v_D * (error_x - lasterror_x) / dt;
-			speed_Y = v_P * error_y + v_I * integral_y + v_D * (error_y - lasterror_y) / dt;
-		}
-		else			//等速直進用
-		{
-			speed_X= vs_P * error_x + vs_I * integral_x + vs_D * (error_x - lasterror_x) / dt;
-			speed_Y = vs_P * error_y + vs_I * integral_y + vs_D * (error_y - lasterror_y) / dt;
-		}
+		speed_X= v_P * error_x + v_I * integral_x + v_D * (error_x - lasterror_x) / dt;
+		speed_Y = v_P * error_y + v_I * integral_y + v_D * (error_y - lasterror_y) / dt;
+	}
+	else			//等速直進用
+	{
+		speed_X= vs_P * error_x + vs_I * integral_x + vs_D * (error_x - lasterror_x) / dt;
+		speed_Y = vs_P * error_y + vs_I * integral_y + vs_D * (error_y - lasterror_y) / dt;
+	}
 
-		lasterror_x = error_x;
-		lasterror_y = error_y;
-	}
-	else
-	{
-		speed_X = 0.000;
-		speed_Y = 0.000;
-	}
+	lasterror_x = error_x;
+	lasterror_y = error_y;
 }
 
 void mySigintHandler(int sig)
@@ -356,15 +351,7 @@ int main(int argc, char **argv)
 		current_time = ros::Time::now();
 		dt = (current_time - last_time).toSec();
 
-		if(speed_X == 0 || speed_Y == 0)
-		{
-			speedFR = clamp2(nearbyint( - turn_imu), -20, 20);
-			speedFL = clamp2(nearbyint( + turn_imu), -20, 20);
-			speedRL = clamp2(nearbyint( + turn_imu), -20, 20);
-			speedRR = clamp2(nearbyint( - turn_imu), -20, 20);
-		}
-
-		if(speed_X > 0 || speed_Y > 0)
+		if(pattern == 0) //加減速
 		{
 			switch(front)
 			{
@@ -402,6 +389,56 @@ int main(int argc, char **argv)
 					speedRL = 0;
 					speedRR = 0;
 					break;
+			}
+
+		if(pattern = 1)	//等速
+		{
+			if(speed == 0)
+			{
+				speedFR = clamp(nearbyint(speed + turn), -20, 20);
+				speedRL = clamp(nearbyint(speed - turn), -20, 20);
+				speedFL = clamp(nearbyint(speed - turn), -20, 20);
+				speedRR = clamp(nearbyint(speed + turn), -20, 20);
+			}
+			if(speed > 0)
+			{
+				switch(front)
+				{
+					case 1:	//前
+						speedFR = clamp(nearbyint( speed - turn_imu + turn_enc_x), 0, 20);
+						speedFL = clamp(nearbyint( speed + turn_imu - turn_enc_x), 0, 20);
+						speedRL = clamp(nearbyint( speed + turn_imu + turn_enc_x), 0, 20);
+						speedRR = clamp(nearbyint( speed - turn_imu - turn_enc_x), 0, 20);
+						break;
+
+					case 2:	//右
+						speedFR = clamp(nearbyint(-(speed + turn_imu + turn_enc_y )), -20, 0);
+						speedFL = clamp(nearbyint( speed + turn_imu - turn_enc_y), 0, 20);
+						speedRL = clamp(nearbyint(-(speed - turn_imu + turn_enc_y)), -20, 0);
+						speedRR = clamp(nearbyint( speed - turn_imu - turn_enc_y), 0, 20);
+						break;
+
+					case 3:	//後
+						speedFR = clamp(nearbyint( -(speed + turn_imu + turn_enc_x)), -20, 0);
+						speedFL = clamp(nearbyint( -(speed - turn_imu - turn_enc_x)), -20, 0);
+						speedRL = clamp(nearbyint( -(speed - turn_imu + turn_enc_x)), -20, 0);
+						speedRR = clamp(nearbyint( -(speed + turn_imu - turn_enc_x)), -20, 0);
+						break;
+
+					case 4:	//左
+						speedFR = clamp(nearbyint( speed - turn_imu - turn_enc_y ), 0, 20);
+						speedFL = clamp(nearbyint( -(speed - turn_imu + turn_enc_y)), -20, 0);
+						speedRL = clamp(nearbyint( speed + turn_imu - turn_enc_y), 0, 20);
+						speedRR = clamp(nearbyint( -(speed + turn_imu + turn_enc_y)), -20, 0);
+						break;
+
+					default:
+						speedFR = 0;
+						speedFL = 0;
+						speedRL = 0;
+						speedRR = 0;
+						break;
+				}
 			}
 		}
 
