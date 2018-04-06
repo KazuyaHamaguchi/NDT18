@@ -379,6 +379,7 @@ int main(int argc, char **argv)
 				speedRR = 0;
 				break;
 		}
+		ROS_INFO("%d\n", speedFR);
 
 		msg_m.motor_FR = speedFR;
 		msg_m.motor_FL = speedFL;
