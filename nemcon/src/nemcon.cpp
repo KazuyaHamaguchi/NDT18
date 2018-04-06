@@ -21,11 +21,11 @@ float lrf_y = 0.0f;
 float lrf_z = 0.0f;
 
 void acc_t_cb(const accel_decel::result& msg);
-void lrf_cb(const geometry_msgs::PoseStamped);
+void lrf_cb(const geometry_msgs::PoseStamped& msg);
 
 void led_flash(int num, float time, int color);	//color：blue = 0, yellow = 1
 void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_x, float tar_y, int front); //front：1前 2右 3後 4左
-void lrf_move(float V, float tar_x, float tar_y);
+void lrf_move(float V);
 
 nemcon::pid_param msg_pid_param;
 accel_decel::param msg_acc_param;
