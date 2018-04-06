@@ -40,6 +40,10 @@ void switch_cb(const nemcon::switch_in& msg)
 			cb_flag = true;
 			end = true;
 		}
+		else
+		{
+			ROS_INFO("flag_NG");
+		}
 	}
 	else
 	{
