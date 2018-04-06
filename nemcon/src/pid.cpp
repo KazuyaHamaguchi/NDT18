@@ -394,14 +394,14 @@ int main(int argc, char **argv)
 
 		if(pattern == 1)	//等速
 		{
-			if(speed == 0)
+			if(speed == -1)
 			{
 				speedFR = clamp(nearbyint(speed + turn_imu), -20, 20);
 				speedRL = clamp(nearbyint(speed - turn_imu), -20, 20);
 				speedFL = clamp(nearbyint(speed - turn_imu), -20, 20);
 				speedRR = clamp(nearbyint(speed + turn_imu), -20, 20);
 			}
-			if(speed > 0)
+			if(speed >= 0)
 			{
 				switch(front)
 				{
