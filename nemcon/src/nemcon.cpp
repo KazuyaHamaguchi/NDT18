@@ -261,5 +261,5 @@ void lrf_cb(const geometry_msgs::PoseStamped& msg)
 {
 	lrf_x = msg.pose.position.x;
 	lrf_y = msg.pose.position.y;
-	lrf_y = msg.pose.pose.orientation.z;
+	lrf_y = msg.pose.orientation.z;
 }
