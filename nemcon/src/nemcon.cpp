@@ -3,6 +3,7 @@
 #include <nemcon/pid_param.h>
 #include <accel_decel/param.h>
 #include <accel_decel/result.h>
+#include <geometry_msgs/PoseStamped.h>
 
 #include <pigpiod_if2.h>
 
