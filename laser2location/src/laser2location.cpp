@@ -19,8 +19,8 @@ int threshold;
 double dist_lrf;
 bool backward;
 
-#define FIELD_LENGTH 1.970	//フェンス左右からURGまでの距離
-#define FIELD_WIDTH 1.190	//フェンス正面からURGまでの距離
+#define FIELD_LENGTH 1.990	//フェンス左右からURGまでの距離
+#define FIELD_WIDTH 1.138	//フェンス正面からURGまでの距離
 
 
 #define FENCE_WIDTH				0.00	//[m]

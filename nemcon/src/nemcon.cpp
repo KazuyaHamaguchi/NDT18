@@ -28,12 +28,14 @@ void switch_cb(const nemcon::switch_in& msg)
 	{
 		if(msg.SZ && !msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
 		{
-			led_flash(3, 0.5, 0);
+			led_flash(3, 0.1, 0);
 			led_flash(-1, 0, 0);
 
-			movement(0, 1, 0, 0.5, 0.56, 0, 0, 4);
-			//movement(0, 1, 0, 0.5, 5, -0.56, 0, 1);
-			//movement(0, 1, 0, 0.5, 5, -0.56, 0, 1);
+			movement(0, 1, 0, 0.5, 1.05, 0, 0, 4);
+      ros::Duration(4).sleep();
+			movement(0, 1, 0, 0.5, 4.8, -1.15, 0, 1);
+      ros::Duration(8).sleep();
+			movement(0, 1, 0, 0.3, 1, -1.15, 4.5, 4);
 			ROS_INFO("OK");
 			led_flash(3, 0.25, 1);
 
@@ -89,25 +91,25 @@ void led_flash(int num, float time, int color)
 			if(color == 0)
 			{
 				gpio_write(pi, pin_blue, 1);
-				ros::Duration(time).sleep();
+				ros::Duration(time / 2).sleep();
 				gpio_write(pi, pin_blue, 0);
-				ros::Duration(time).sleep();
+				ros::Duration(time / 2).sleep();
 			}
 			if(color == 1)
 			{
 				gpio_write(pi, pin_yellow, 1);
-				ros::Duration(time).sleep();
+				ros::Duration(time / 2).sleep();
 				gpio_write(pi, pin_yellow, 0);
-				ros::Duration(time).sleep();
+				ros::Duration(time / 2).sleep();
 			}
 			if(color == 2)
 			{
 				gpio_write(pi, pin_yellow, 1);
 				gpio_write(pi, pin_blue, 1);
-				ros::Duration(time).sleep();
+				ros::Duration(time / 2).sleep();
 				gpio_write(pi, pin_yellow, 0);
 				gpio_write(pi, pin_blue, 0);
-				ros::Duration(time).sleep();
+				ros::Duration(time / 2).sleep();
 			}
 		}
 	}

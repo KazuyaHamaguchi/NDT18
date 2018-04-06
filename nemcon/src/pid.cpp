@@ -61,6 +61,17 @@ float clamp(float input, float min, float max)
 	{
 		output = max;
 	}
+  if(speed_X == 0 || speed_Y == 0)
+  {
+    if(-2 <= input && input < 0)
+    {
+      output = -2;
+    }
+    if(0 < input && input <= 2)
+    {
+      output = 2;
+    }
+  }
 	return output;
 }
 
