@@ -24,29 +24,29 @@ ros::Publisher pub_move_param;
 
 void switch_cb(const nemcon::switch_in& msg)
 {
-	if(msg.START && msg.SZ && !msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
+	if(msg.START)
 	{
-		led_flash(3, 0.5, 0);
-		led_flash(0, 0, 0);
+		if(msg.SZ && !msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
+		{
+			led_flash(3, 0.5, 0);
+			led_flash(-1, 0, 0);
 
-		movement(0, 1, 0, 0.5, 0.56, 0, 0, 4);
-		ROS_INFO("OK");
-		led_flash(0, 0, 1);
-		ros::Duration(2).sleep();
+			movement(0, 1, 0, 0.5, 0.56, 0, 0, 4);
+			//movement(0, 1, 0, 0.5, 5, -0.56, 0, 1);
+			//movement(0, 1, 0, 0.5, 5, -0.56, 0, 1);
+			ROS_INFO("OK");
+			led_flash(3, 0.25, 1);
 
-		cb_flag = true;
-		end = true;
-
+			cb_flag = true;
+			end = true;
+		}
 	}
 	else
 	{
-		led_flash(5, 0.25, 1);
-		led_flash(0, 0, 1);
+		led_flash(0, 0, 0);
+		led_flash(-1, 0, 1);
 		ROS_INFO("NG");
-		/*if(end)
-		{
-			//cb_flag = false;
-		}*/
+		cb_flag = false;
 	}
 }
 
@@ -78,7 +78,7 @@ int main(int argc, char **argv)
 
 void led_flash(int num, float time, int color)
 {
-	if(num > 0)
+	if(num > 0)		//点滅
 	{
 		for(int i = 0; i < num; i++)
 		{
@@ -96,11 +96,54 @@ void led_flash(int num, float time, int color)
 				gpio_write(pi, pin_yellow, 0);
 				ros::Duration(time).sleep();
 			}
+			if(color == 2)
+			{
+				gpio_write(pi, pin_yellow, 1);
+				gpio_write(pi, pin_blue, 1);
+				ros::Duration(time).sleep();
+				gpio_write(pi, pin_yellow, 0);
+				gpio_write(pi, pin_blue, 0);
+				ros::Duration(time).sleep();
+			}
 		}
 	}
-	if(num == 0)
+	if(num == 0)	//消灯
 	{
-		gpio_write(pi, pin_blue, 1);
+		if(color == 0)
+		{
+			gpio_write(pi, pin_blue, 0);
+			ros::Duration(time).sleep();
+		}
+		if(color == 1)
+		{
+			gpio_write(pi, pin_yellow, 0);
+			ros::Duration(time).sleep();
+		}
+		if(color == 2)
+		{
+			gpio_write(pi, pin_blue, 0);
+			gpio_write(pi, pin_yellow, 0);
+			ros::Duration(time).sleep();
+		}
+	}
+	if(num == -1)	//点灯
+	{
+		if(color == 0)
+		{
+			gpio_write(pi, pin_blue, 1);
+			ros::Duration(time).sleep();
+		}
+		if(color == 1)
+		{
+			gpio_write(pi, pin_yellow, 1);
+			ros::Duration(time).sleep();
+		}
+		if(color == 2)
+		{
+			gpio_write(pi, pin_blue, 1);
+			gpio_write(pi, pin_yellow, 1);
+			ros::Duration(time).sleep();
+		}
 	}
 }
 
