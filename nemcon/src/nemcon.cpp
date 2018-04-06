@@ -12,13 +12,20 @@ static const int pin_servo = 24;
 
 int pi = pigpio_start(0, 0);
 bool cb_flag = false;
+bool enc_flag = false;
 bool end = false;
 
 float acc_t = 0.0f;
+float lrf_x = 0.0f;
+float lrf_y = 0.0f;
+float lrf_z = 0.0f;
+
+void acc_t_cb(const accel_decel::result& msg);
+void lrf_cb(const geometry_msgs::PoseStamped);
 
 void led_flash(int num, float time, int color);	//color：blue = 0, yellow = 1
-void movement(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_x, float tar_y, int front); //front：1前 2右 3後 4左
-void acc_t_cb(const accel_decel::result& msg);
+void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_x, float tar_y, int front); //front：1前 2右 3後 4左
+void lrf_move(float V, float tar_x, float tar_y);
 
 nemcon::pid_param msg_pid_param;
 accel_decel::param msg_acc_param;
@@ -36,17 +43,26 @@ void switch_cb(const nemcon::switch_in& msg)
 			led_flash(3, 0.1, 0);
 			led_flash(-1, 0, 0);
 
-			movement(0, 1, 0, 0.5, 1.05, 0, 0, 4);	//SZ横
+			acc_move(0, 1, 0, 0.5, 1.05, 0, 0, 4);	//SZ横
 			ros::Duration(acc_t).sleep();
-			movement(0, 1, 0, 0.5, 4.8, -1.15, 0, 1);	//TZ1横
+			acc_move(0, 1, 0, 0.5, 4.8, -1.15, 0, 1);	//TZ1横
 			ros::Duration(acc_t).sleep();
-			movement(0, 1, 0, 0.3, 1, -1.15, 4.5, 4);	//TZ1受け渡しポイント
+			acc_move(0, 1, 0, 0.3, 1, -1.15, 4.5, 4);	//TZ1受け渡しポイント
 			ros::Duration(acc_t).sleep();
+			lrf_move(3);
+
 
 			led_flash(3, 0.25, 1);
 
 			cb_flag = true;
 			end = true;
+		}
+		if(!msg.SZ && msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
+		{
+			lrf_move(3);
+			led_flash(3, 0.25, 1);
+
+			cb_flag = true;
 		}
 	}
 	else
@@ -68,19 +84,12 @@ int main(int argc, char **argv)
 
 	ros::Subscriber subSwitch = nh.subscribe("/switch", 1000, switch_cb);
 	ros::Subscriber sub_accel = nh.subscribe("/accel_decel/result", 1000, acc_t_cb);
+	ros::Subscriber sub_lrf = nh.subscribe("/lrf_pose", 1000, lrf_cb);
+
 
 	pub_tar_dis = nh.advertise<nemcon::pid_param>("pid_param", 1000);
 	pub_move_param = nh.advertise<accel_decel::param>("accel_decel/param", 1000);
 
-	/*ros::Rate loop_rate(1);
-	while(ros::ok())
-	{
-		set_servo_pulsewidth(pi, pin_servo, 2450);
-		time_sleep(1);
-		set_servo_pulsewidth(pi, pin_servo, 650);
-		time_sleep(1);
-	}
-	return 0;*/
 	ros::spin();
 }
 
@@ -156,7 +165,7 @@ void led_flash(int num, float time, int color)
 }
 
 
-void movement(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_x, float tar_y, int front)
+void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_x, float tar_y, int front)
 {
 	msg_acc_param.Vs = Vs;
 	msg_acc_param.Vmax = Vmax;
@@ -166,12 +175,90 @@ void movement(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_
 	msg_pid_param.tar_x = tar_x;
 	msg_pid_param.tar_y = tar_y;
  	msg_pid_param.front = front;
+ 	msg_pid_param.pattern = 0;
 
 	pub_move_param.publish(msg_acc_param);
 	pub_tar_dis.publish(msg_pid_param);
 }
 
+void lrf_move(float V)
+{
+	bool flag_x = false;
+	bool flag_y = false;
+	bool flag_z = false;
+
+	msg_pid_param.pattern = 1;
+	msg_pid_param.speed = V;
+
+	while(1)
+	{
+		while(1)
+		{
+			if(lrf_x > 0)
+			{
+				msg_pid_param.front = 4;
+				pub_tar_dis.publish(msg_pid_param);
+			}
+			if(lrf_x < 0)
+			{
+				msg_pid_param.front = 2;
+				pub_tar_dis.publish(msg_pid_param);
+			}
+			if(-0.01 < lrf_x && lrf_x < 0.01)
+			{
+				msg_pid_param.speed = 0;
+				pub_tar_dis.publish(msg_pid_param);
+				flag_x = true;
+				break;
+			}
+		}
+		while(1)
+		{
+			if(lrf_y > 0)
+			{
+				msg_pid_param.front = 3;
+				pub_tar_dis.publish(msg_pid_param);
+			}
+			if(lrf_y < 0)
+			{
+				msg_pid_param.front = 1;
+				pub_tar_dis.publish(msg_pid_param);
+			}
+			if(-0.01 < lrf_y && lrf_y < 0.01)
+			{
+				msg_pid_param.speed = 0;
+				pub_tar_dis.publish(msg_pid_param);
+				flag_y = true;
+				break;
+			}
+		}
+		while(1)
+		{
+			msg_pid_param.speed = -1;
+			pub_tar_dis.publish(msg_pid_param);
+			if(-0.01 < lrf_z && lrf_z < 0.01)
+			{
+				msg_pid_param.speed = 0;
+				pub_tar_dis.publish(msg_pid_param);
+				flag_z = true;
+				break;
+			}
+		}
+		if(flag_x && flag_y && flag_z)
+		{
+			break;
+		}
+	}
+}
+
 void acc_t_cb(const accel_decel::result& msg)
 {
 	acc_t = msg.t;
+}
+
+void lrf_cb(const geometry_msgs::PoseStamped& msg)
+{
+	lrf_x = msg.pose.position.x;
+	lrf_y = msg.pose.position.y;
+	lrf_y = msg.pose.pose.orientation.z;
 }
