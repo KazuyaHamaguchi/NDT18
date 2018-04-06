@@ -395,10 +395,10 @@ int main(int argc, char **argv)
 		{
 			if(speed == 0)
 			{
-				speedFR = clamp(nearbyint(speed + turn), -20, 20);
-				speedRL = clamp(nearbyint(speed - turn), -20, 20);
-				speedFL = clamp(nearbyint(speed - turn), -20, 20);
-				speedRR = clamp(nearbyint(speed + turn), -20, 20);
+				speedFR = clamp(nearbyint(speed + turn_imu), -20, 20);
+				speedRL = clamp(nearbyint(speed - turn_imu), -20, 20);
+				speedFL = clamp(nearbyint(speed - turn_imu), -20, 20);
+				speedRR = clamp(nearbyint(speed + turn_imu), -20, 20);
 			}
 			if(speed > 0)
 			{
