@@ -2,6 +2,7 @@
 #include <nemcon/switch_in.h>
 #include <nemcon/pid_param.h>
 #include <accel_decel/param.h>
+#include <accel_decel/result.h>
 
 #include <pigpiod_if2.h>
 
@@ -13,8 +14,11 @@ int pi = pigpio_start(0, 0);
 bool cb_flag = false;
 bool end = false;
 
+float acc_t = 0.0f;
+
 void led_flash(int num, float time, int color);	//color：blue = 0, yellow = 1
 void movement(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_x, float tar_y, int front); //front：1前 2右 3後 4左
+void acc_t_cb(const accel_decel::result& msg);
 
 nemcon::pid_param msg_pid_param;
 accel_decel::param msg_acc_param;
@@ -32,11 +36,13 @@ void switch_cb(const nemcon::switch_in& msg)
 			led_flash(3, 0.1, 0);
 			led_flash(-1, 0, 0);
 
-			movement(0, 1, 0, 0.5, 1.05, 0, 0, 4);
-			ros::Duration(4).sleep();
-			movement(0, 1, 0, 0.5, 4.8, -1.15, 0, 1);
-			ros::Duration(8).sleep();
-			movement(0, 1, 0, 0.3, 1, -1.15, 4.5, 4);
+			movement(0, 1, 0, 0.5, 1.05, 0, 0, 4);	//SZ横
+			ros::Duration(acc_t).sleep();
+			movement(0, 1, 0, 0.5, 4.8, -1.15, 0, 1);	//TZ1横
+			ros::Duration(acc_t).sleep();
+			movement(0, 1, 0, 0.3, 1, -1.15, 4.5, 4);	//TZ1受け渡しポイント
+			ros::Duration(acc_t).sleep();
+
 			led_flash(3, 0.25, 1);
 
 			cb_flag = true;
@@ -61,6 +67,7 @@ int main(int argc, char **argv)
 	set_servo_pulsewidth(pi, pin_servo, 1520);	//0度
 
 	ros::Subscriber subSwitch = nh.subscribe("/switch", 1000, switch_cb);
+	ros::Subscriber sub_accel = nh.subscribe("/accel_decel/result", 1000, acc_t_cb);
 
 	pub_tar_dis = nh.advertise<nemcon::pid_param>("pid_param", 1000);
 	pub_move_param = nh.advertise<accel_decel::param>("accel_decel/param", 1000);
@@ -162,4 +169,9 @@ void movement(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_
 
 	pub_move_param.publish(msg_acc_param);
 	pub_tar_dis.publish(msg_pid_param);
+}
+
+void acc_t_cb(const accel_decel::result& msg)
+{
+	acc_t = msg.t;
 }
