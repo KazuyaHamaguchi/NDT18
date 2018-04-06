@@ -125,7 +125,8 @@ int main(int argc, char **argv)
 				end = true;
 				cb_flag = false;
 			}
-			printf("%f\t %f\n", t, msg.V);
+			msg.t = t1 + t2 + t3;
+			//printf("%f\t %f\n", t, msg.V);
 			pub.publish(msg);
 		}
 
