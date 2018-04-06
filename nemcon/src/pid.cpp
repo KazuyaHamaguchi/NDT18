@@ -107,7 +107,7 @@ void pid_enc(const geometry_msgs::PoseStamped& msg)
 	error_x = msg.pose.position.x - tar_x;
 	error_y = msg.pose.position.y - tar_y;
 
-	integral_imu += (error + lasterror) / 2.0 * dt;
+	integral_imu += (error_imu + lasterror_imu) / 2.0 * dt;
 	integral_x += (error_x + lasterror_x) / 2.0 * dt;
 	integral_y += (error_y + lasterror_y) / 2.0 * dt;
 
