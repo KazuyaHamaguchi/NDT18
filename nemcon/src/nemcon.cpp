@@ -58,7 +58,6 @@ void switch_cb(const nemcon::switch_in& msg)
 		}
 		if(!msg.SZ && msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
 		{
-			lrf_move(2);
 			led_flash(3, 0.25, 1);
 
 			cb_flag = true;
