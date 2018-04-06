@@ -80,11 +80,11 @@ float clamp2(float input, float min, float max)
 	{
 		output = max;
 	}
-	if(1 <= input && input < 3)
+	if(max > 0 && 1 <= input && input < 3)
 		{
 			output = 2;
 		}
-	if(-3 < input && input <= -1)
+	if(min < 0 && -3 < input && input <= -1)
 	{
 		output = -2;
 	}
