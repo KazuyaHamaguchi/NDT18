@@ -61,14 +61,17 @@ float clamp(float input, float min, float max)
 	{
 		output = max;
 	}
-	/*if(speed_X == 0 && speed_Y == 0 && min < 0 && (-3 < input && input < 0))
-	{
-	  output = -3;
-	}
-	if(speed_X == 0 && speed_Y == 0 && max > 0 && (0 < input && input < 3))
-	{
-	  output = 3;
-	}*/
+  if(speed_X == 0 || speed_Y == 0)
+  {
+    if(-2 <= input && input < 0)
+    {
+      output = -2;
+    }
+    if(0 < input && input <= 2)
+    {
+      output = 2;
+    }
+  }
 	return output;
 }
 
@@ -384,7 +387,6 @@ int main(int argc, char **argv)
 		msg_m.motor_FL = speedFL;
 		msg_m.motor_RR = speedRR;
 		msg_m.motor_RL = speedRL;
-		ROS_INFO("%d\n" = msg_m.motor_FR);
 		pub.publish(msg_m);
 
 		last_time = current_time;
