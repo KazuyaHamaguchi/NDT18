@@ -47,13 +47,13 @@ int main(int argc, char **argv)
 					msg_judg.leave = true;
 					pub_judg.publish(msg_judg);
 				}
-				last_time = current_time;
 			}
 			else
 			{
 				t = 0.0f;
 			}
 		}
+		last_time = current_time;
 		loop_rate.sleep();
 		ros::spinOnce();
 	}
