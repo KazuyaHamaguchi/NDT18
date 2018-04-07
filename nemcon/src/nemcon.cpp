@@ -33,18 +33,19 @@ void switch_cb(const nemcon::switch_in& msg)
 {
 	if(msg.START)
 	{
-		if(!msg.SZ && !msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
+		if(msg.SZ && !msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
 		{
 			led_flash(0, 0, 2);
 			led_flash(3, 0.1, 0);
 			led_flash(-1, 0, 0);
 
 			acc_move(0, 1, 0, 0.5, 1.05, 0, 0, 4);	//SZ横
-			ros::Duration(3.6324493885 + 0.05).sleep();;
+			ros::Duration(3.6324493885 + 0.1).sleep();;
 			acc_move(0, 1, 0, 0.5, 4.8, -1.1, 0, 1);	//TZ1横
-			ros::Duration(7.94159317017 + 0.05).sleep();
+			ros::Duration(7.94159317017 + 0.1).sleep();
 			acc_move(0, 1, 0, 0.5, 1, -1.15, 4.5, 4);	//TZ1受け渡しポイント
-			ros::Duration(3.54490756989 + 0.05).sleep();
+			ros::Duration(3.54490756989 + 10.1).sleep();
+      acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 4);
 			//lrf_move(3);
 
 
@@ -70,7 +71,7 @@ void switch_cb(const nemcon::switch_in& msg)
 
 int main(int argc, char **argv)
 {
-	ros::init(argc, argv, "servo_test");
+	ros::init(argc, argv, "nemcon");
 	ros::NodeHandle nh;
 
 	set_mode(pi, pin_blue, PI_OUTPUT);

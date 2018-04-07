@@ -32,16 +32,15 @@ int main(int argc, char **argv)
 	pub_acc = nh.advertise<accel_decel::result>("accel_decel/result", 1000);
 
 	msg_pid_param.pattern = 1;
+  msg_pid_param.speed = 1;
 	msg_acc.Vmax = false;
 	flag = true;
 
 	while(ros::ok())
 	{
-		if(flag)
-		{
-			if(!flag_x)
+			if(flag)
 			{
-				if(lrf_x > 0.01)
+				if(lrf_x > 0.01 && !flag_x)
 				{
 					ROS_INFO("lrf_x:%f", lrf_x);
 					msg_acc.V = 0.05;
@@ -50,7 +49,7 @@ int main(int argc, char **argv)
 					pub_acc.publish(msg_acc);
 					flag_x = false;
 				}
-				if(lrf_x < -0.01)
+				if(lrf_x < -0.01 && !flag_x)
 				{
 					ROS_INFO("-lrf_x:%f", lrf_x);
 					msg_acc.V = 0.05;
@@ -67,6 +66,10 @@ int main(int argc, char **argv)
 					pub_acc.publish(msg_acc);
 					flag_x = true;
 				}
+        else
+        {
+          flag_x = false;
+        }
 			}
 
 			if(flag_x)
@@ -97,8 +100,26 @@ int main(int argc, char **argv)
 					pub_acc.publish(msg_acc);
 					flag_y = true;
 				}
+        else
+        {
+          flag_y = false;
+        }
 			}
-		}
+
+      /*if(!flag_z)
+      {
+        if((lrf_z > 0.001 || lrf_z < -0.001) && !flag_z)
+        {
+          ROS_INFO("lrf_z:%f", lrf_z);
+          msg_pid_param.speed = -1;
+          pub_tar_dis.publish(msg_pid_param);
+          flag_z = false;
+        }
+        else
+        {
+          ROS_INFO("lrf_z OK!");
+          msg_pid_param.speed = 0;
+        }*/
 
 		loop_rate.sleep();
 		ros::spinOnce();
