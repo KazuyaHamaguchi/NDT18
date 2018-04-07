@@ -10,7 +10,7 @@ bool objT = false;
 bool objL = false;
 
 bool leave = false;
-bool judg = true;
+bool judg = false;
 
 float t = 0.0f;
 
