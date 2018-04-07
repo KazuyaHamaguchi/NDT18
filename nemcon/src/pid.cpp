@@ -35,7 +35,7 @@ float vs_I;
 float vs_D;
 
 float speedFR = 0.0f, speedRL = 0.0f, speedFL = 0.0f, speedRR = 0.0f;
-float turn_imu = 0.0f, turn_enc_x = 0.0f, turn_enc_y = 0.0f;
+float turn_imu = 0.0f, turn_enc_x = 0.0f, turn_enc_y = 0.0f, turn_lrf = 0.0f;
 float enc_vx = 0.0f, enc_vy = 0.0f;
 float tar_x = 0.0f, tar_y = 0.0f;
 float enc_x = 0.0f;
@@ -85,6 +85,19 @@ void enc_cb(const deadreckoning::enc& msg)
 {
   enc_vx = msg.speed_X;
   enc_vy = msg.speed_Y;
+}
+
+void pid_lrf(const geometry_msgs::PoseStamped& msg)
+{
+	float lasterror = 0, integral = 0, error = 0;
+
+	error = msg.pose.orientation.z - 0.00000f;
+
+	integral += (error + lasterror) / 2.0 * dt;
+
+	turn_lrf = imu_P * error + imu_I * integral + imu_D * (error - lasterror) / dt;
+
+	lasterror = error;
 }
 
 void pid_pose(const geometry_msgs::PoseStamped& msg)
@@ -313,7 +326,8 @@ int main(int argc, char **argv)
 	ros::Subscriber sub_dis = nh.subscribe("/pid_param", 1000, param_cb);
 	ros::Subscriber sub_enc = nh.subscribe("/robot/pose", 1000, pid_pose);
 	ros::Subscriber sub_accel = nh.subscribe("/accel_decel/result", 1000, pid_v);
-  ros::Subscriber sub_speed = nh.subscribe("/enc", 1000, enc_cb);
+	ros::Subscriber sub_speed = nh.subscribe("/enc", 1000, enc_cb);
+	ros::Subscriber sub_lrf = nh.subscribe("/lrf_pose", 1000, pid_lrf);
 
 	pub = nh.advertise<nemcon::motor>("motor", 100);
 
@@ -380,31 +394,31 @@ int main(int argc, char **argv)
 				switch(front)
 				{
 					case 1:	//前
-						speedFR = clamp(nearbyint( speed_Y - turn_imu), 0, 20);
-						speedFL = clamp(nearbyint( speed_Y + turn_imu), 0, 20);
-						speedRL = clamp(nearbyint( speed_Y + turn_imu), 0, 20);
-						speedRR = clamp(nearbyint( speed_Y - turn_imu), 0, 20);
+						speedFR = clamp(nearbyint( speed_Y - turn_lrf), 0, 20);
+						speedFL = clamp(nearbyint( speed_Y + turn_lrf), 0, 20);
+						speedRL = clamp(nearbyint( speed_Y + turn_lrf), 0, 20);
+						speedRR = clamp(nearbyint( speed_Y - turn_lrf), 0, 20);
 						break;
 
 					case 2:	//右
-						speedFR = clamp(nearbyint(-(speed_X + turn_imu)), -20, 0);
-						speedFL = clamp(nearbyint( speed_X + turn_imu), 0, 20);
-						speedRL = clamp(nearbyint(-(speed_X - turn_imu)), -20, 0);
-						speedRR = clamp(nearbyint( speed_X - turn_imu), 0, 20);
+						speedFR = clamp(nearbyint(-(speed_X + turn_lrf)), -20, 0);
+						speedFL = clamp(nearbyint( speed_X + turn_lrf), 0, 20);
+						speedRL = clamp(nearbyint(-(speed_X - turn_lrf)), -20, 0);
+						speedRR = clamp(nearbyint( speed_X - turn_lrf), 0, 20);
 						break;
 
 					case 3:	//後
-						speedFR = clamp(nearbyint( -(speed_Y + turn_imu)), -20, 0);
-						speedFL = clamp(nearbyint( -(speed_Y - turn_imu)), -20, 0);
-						speedRL = clamp(nearbyint( -(speed_Y - turn_imu)), -20, 0);
-						speedRR = clamp(nearbyint( -(speed_Y + turn_imu)), -20, 0);
+						speedFR = clamp(nearbyint( -(speed_Y + turn_lrf)), -20, 0);
+						speedFL = clamp(nearbyint( -(speed_Y - turn_lrf)), -20, 0);
+						speedRL = clamp(nearbyint( -(speed_Y - turn_lrf)), -20, 0);
+						speedRR = clamp(nearbyint( -(speed_Y + turn_lrf)), -20, 0);
 						break;
 
 					case 4:	//左
-						speedFR = clamp(nearbyint( speed_X - turn_imu), 0, 20);
-						speedFL = clamp(nearbyint( -(speed_X - turn_imu)), -20, 0);
-						speedRL = clamp(nearbyint( speed_X + turn_imu), 0, 20);
-						speedRR = clamp(nearbyint( -(speed_X + turn_imu)), -20, 0);
+						speedFR = clamp(nearbyint( speed_X - turn_lrf), 0, 20);
+						speedFL = clamp(nearbyint( -(speed_X - turn_lrf)), -20, 0);
+						speedRL = clamp(nearbyint( speed_X + turn_lrf), 0, 20);
+						speedRR = clamp(nearbyint( -(speed_X + turn_lrf)), -20, 0);
 						break;
 
 					default:
