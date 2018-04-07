@@ -4,7 +4,7 @@
 
 void lrf_cb(const geometry_msgs::PoseStamped& msg);
 
-bool flag = false;
+bool flag = true;
 bool flag_x = false;
 bool flag_y = false;
 
