@@ -9,8 +9,8 @@ bool objR = false;
 bool objT = false;
 bool objL = false;
 
-bool leave = true;
-bool judg = false;
+bool leave = false;
+bool judg = true;
 
 float t = 0.0f;
 
@@ -37,6 +37,7 @@ int main(int argc, char **argv)
 	{
 		current_time = ros::Time::now();
 		t += (current_time - last_time).toSec();
+
 		if(leave)
 		{
 			if(!objR && !objT && !objL)
@@ -47,6 +48,24 @@ int main(int argc, char **argv)
 					msg_judg.leave = true;
 					pub_judg.publish(msg_judg);
 					leave = false;
+				}
+			}
+			else
+			{
+				t = 0.0f;
+			}
+		}
+
+		if(judg)
+		{
+			if(!objR && !objT && objL)
+			{
+				if(t >= 1.5)
+				{
+					ROS_INFO("TZ1");
+					msg_judg.TZ1 = true;
+					pub_judg.publish(msg_judg);
+					judg = false;
 				}
 			}
 			else
