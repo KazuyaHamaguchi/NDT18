@@ -207,3 +207,5 @@ include_directories(
 
 add_executable(laser2location src/laser2location.cpp)
 target_link_libraries(laser2location ${catkin_LIBRARIES})
+add_executable(lrf_move src/lrf_move.cpp)
+target_link_libraries(lrf_move ${catkin_LIBRARIES})
