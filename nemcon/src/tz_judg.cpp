@@ -1,7 +1,7 @@
 #include <ros/ros.h>
 #include <nemcon/TZ_judg.h>
 #include <nemcon/object_in.h>
-#include <std_msgs/Int8.h>
+#include <std_msgs/Int16.h>
 
 ros::Time current_time, last_time;
 
@@ -15,7 +15,7 @@ bool judg = false;
 float t = 0.0f;
 
 void object_cb(const nemcon::object_in& msg);
-void throw_cb(const std_msgs::Int8& msg);
+void throw_cb(const std_msgs::Int16& msg);
 
 std_msgs::Int8 msg_throw;
 ros::Publisher pub_judg;
@@ -107,7 +107,7 @@ void object_cb(const nemcon::object_in& msg)
 	objL = msg.objL;
 }
 
-void throw_cb(const std_msgs::Int8& msg)
+void throw_cb(const std_msgs::Int16& msg)
 {
 	if(msg.data == 500)
 	{
