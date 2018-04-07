@@ -15,7 +15,7 @@ bool judg = true;
 float t = 0.0f;
 
 void object_cb(const nemcon::object_in& msg);
-//void throw_cb(const std_msgs::Int8& msg);
+void throw_cb(const std_msgs::Int8& msg);
 
 std_msgs::Int8 msg_throw;
 ros::Publisher pub_judg;
@@ -105,4 +105,16 @@ void object_cb(const nemcon::object_in& msg)
 	objR = msg.objR;
 	objT = msg.objT;
 	objL = msg.objL;
+}
+
+void throw_cb(const std_msgs::Int8& msg)
+{
+	if(msg.data == 500)
+	{
+		leave = true;
+	}
+	if(msg.data == 501)
+	{
+		judg = true;
+	}
 }
