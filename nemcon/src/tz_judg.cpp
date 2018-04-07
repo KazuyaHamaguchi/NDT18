@@ -29,7 +29,7 @@ int main(int argc, char **argv)
 	last_time = ros::Time::now();
 	ros::Rate loop_rate(40);
 
-	//ros::Subscriber sub_throw = nh.subscribe("Throw_on_1", 1000, throw_cb);
+	ros::Subscriber sub_throw = nh.subscribe("Throw_on_1", 1000, throw_cb);
 	ros::Subscriber sub_obj = nh.subscribe("object_in", 1000, object_cb);
 	pub_judg = nh.advertise<nemcon::TZ_judg>("TZ_judg", 1000);
 
