@@ -44,7 +44,7 @@ int main(int argc, char **argv)
 				t += (current_time - last_time).toSec();
 				if(t >= 1.5)
 				{
-					ROS_INFO("leave");
+					ROS_INFO("%f", t);
 					msg_judg.leave = true;
 					pub_judg.publish(msg_judg);
 				}
