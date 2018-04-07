@@ -35,13 +35,12 @@ int main(int argc, char **argv)
 
 	while(ros::ok())
 	{
-
+		current_time = ros::Time::now();
+		t += (current_time - last_time).toSec();
 		if(leave)
 		{
 			if(!objR && !objT && !objL)
 			{
-				current_time = ros::Time::now();
-				t += (current_time - last_time).toSec();
 				if(t >= 1.5)
 				{
 					ROS_INFO("%f", t);
@@ -49,6 +48,10 @@ int main(int argc, char **argv)
 					pub_judg.publish(msg_judg);
 				}
 				last_time = current_time;
+			}
+			else
+			{
+				t = 0.0f;
 			}
 		}
 		loop_rate.sleep();
