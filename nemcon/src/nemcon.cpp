@@ -22,6 +22,7 @@ bool end = false;
 float acc_t = 0.0f;
 
 void acc_t_cb(const accel_decel::result& msg);
+void receive_cb(const std_msgs::Int8& msg);
 
 void led_flash(int num, float time, int color);	//color：blue = 0, yellow = 1
 void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_x, float tar_y, int front); //front：1前 2右 3後 4左
@@ -29,7 +30,7 @@ void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_
 nemcon::pid_param msg_pid_param;
 accel_decel::param msg_acc_param;
 std_msgs::Int8 msg_throw;
-nemcon::lrf_flag& msg_lrf;
+nemcon::lrf_flag msg_lrf;
 ros::Publisher pub_tar_dis;
 ros::Publisher pub_move_param;
 ros::Publisher pub_throw;
@@ -192,7 +193,7 @@ void receive_cb(const std_msgs::Int8& msg)
 	{
 		acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 4);
 		ros::Duration(4.194392 + 0.05).sleep();
-		msg_lrf.flag = True;
+		msg_lrf.flag = true;
 		msg_lrf.TZ = 1;
 		pub_lrf.publish(msg_lrf);
 	}
