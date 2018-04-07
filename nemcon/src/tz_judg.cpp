@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 		{
 			if(!objR && !objT && !objL)
 			{
-				if(t >= 1.5)
+				if(t >= 0.5)
 				{
 					ROS_INFO("leave");
 					msg_judg.leave = true;
