@@ -72,6 +72,34 @@ int main(int argc, char **argv)
 			{
 				t = 0.0f;
 			}
+			if(!objR && objT && objL)
+			{
+				if(t >= 1.5)
+				{
+					ROS_INFO("TZ2");
+					msg_judg.TZ2 = true;
+					pub_judg.publish(msg_judg);
+					judg = false;
+				}
+			}
+			else
+			{
+				t = 0.0f;
+			}
+			if(objR && !objT && objL)
+			{
+				if(t >= 1.5)
+				{
+					ROS_INFO("TZ3");
+					msg_judg.TZ3 = true;
+					pub_judg.publish(msg_judg);
+					judg = false;
+				}
+			}
+			else
+			{
+				t = 0.0f;
+			}
 		}
 		last_time = current_time;
 		loop_rate.sleep();
