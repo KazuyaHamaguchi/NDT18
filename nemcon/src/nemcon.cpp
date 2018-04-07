@@ -43,11 +43,11 @@ void switch_cb(const nemcon::switch_in& msg)
 			led_flash(-1, 0, 0);
 
 			acc_move(0, 1, 0, 0.5, 1.05, 0, 0, 4);	//SZ横
-			ros::Duration(3.6324493885 + 0.1).sleep();;
-			acc_move(0, 1, 0, 0.5, 4.8, -1.15, 0, 1);	//TZ1横
-			ros::Duration(7.941593 + 0.1).sleep();
-			acc_move(0, 1, 0, 0.3, 1, -1.15, 4.5, 4);	//TZ1受け渡しポイント
-			ros::Duration(4.576456 + 0.1).sleep();
+			ros::Duration(3.6324493885 + 0.05).sleep();;
+			acc_move(0, 1, 0, 0.5, 4.8, -1.1, 0, 1);	//TZ1横
+			ros::Duration(7.94159317017 + 0.05).sleep();
+			acc_move(0, 1, 0, 0.5, 1, -1.15, 4.5, 4);	//TZ1受け渡しポイント
+			ros::Duration(3.54490756989 + 0.05).sleep();
 			//lrf_move(3);
 
 
@@ -181,5 +181,5 @@ void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_
 void acc_t_cb(const accel_decel::result& msg)
 {
 	acc_t = msg.t;
- 	ROS_INFO("%f", acc_t);
+ 	//ROS_INFO("%f", acc_t);
 }
