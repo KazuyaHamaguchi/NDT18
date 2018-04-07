@@ -17,7 +17,7 @@ float t = 0.0f;
 void object_cb(const nemcon::object_in& msg);
 void throw_cb(const std_msgs::Int16& msg);
 
-std_msgs::Int8 msg_throw;
+std_msgs::Int16 msg_throw;
 ros::Publisher pub_judg;
 nemcon::TZ_judg msg_judg;
 
