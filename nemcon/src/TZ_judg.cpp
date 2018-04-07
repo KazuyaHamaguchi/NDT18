@@ -10,12 +10,12 @@ bool objL = false;
 bool leave = true;
 bool judg = false;
 
-void object_cb(const snemcon::TZ_judg& msg);
+void object_cb(const nemcon::object_in& msg);
 void throw_cb(const std_msgs::Int8& msg);
 
 std_msgs::Int8 msg_throw;
-ros::Publisher pub_object;
-nemcon::object msg_obj;
+ros::Publisher pub_judg;
+nemcon::TZ_judg msg_obj;
 
 int main(int argc, char **argv)
 {
@@ -26,7 +26,8 @@ int main(int argc, char **argv)
 	ros::Rate loop_rate(40);
 
 	ros::Subscriber sub_throw = nh.subscribe("Throw_on_1", 1000, throw_cb);
-	pub_object = nh.advertise<nemcon::object>("object", 1);
+	ros::Subscriber sub_obj = nh.subscribe("object_in", 1000, object_cb);
+	pub_judg = nh.advertise<nemcon::TZ_judg>("TZ_judg", 1000);
 
 	while(ros::ok())
 	{
@@ -40,8 +41,8 @@ int main(int argc, char **argv)
 				ROS_INFO("leave");
 				if(t >= 1.5)
 				{
-					msg_obj.leave = true;
-					pub_object.publish(msg_obj);
+					msg_judg.leave = true;
+					pub_judg.publish(msg_judg);
 				}
 				last_time = current_time;
 			}
@@ -51,7 +52,7 @@ int main(int argc, char **argv)
 	}
 }
 
-void object_cb(const snemcon::TZ_judg& msg)
+void object_cb(const nemcon::object_in& msg)
 {
 	objR = msg.objR;
 	objT = msg.objT;
