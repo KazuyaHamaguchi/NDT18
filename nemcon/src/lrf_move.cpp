@@ -33,11 +33,13 @@ int main(int argc, char **argv)
 			if(lrf_x > 0 && !flag_x)
 			{
 				ROS_INFO("%f\n", lrf_x);
+				msg_pid_param.speed = 2;
 				msg_pid_param.front = 4;
 				pub_tar_dis.publish(msg_pid_param);
 			}
 			if(lrf_x < 0 && !flag_x)
 			{
+				msg_pid_param.speed = 2;
 				msg_pid_param.front = 2;
 				pub_tar_dis.publish(msg_pid_param);
 			}
@@ -54,11 +56,13 @@ int main(int argc, char **argv)
 
 			if(lrf_y > 0 && flag_x && !flag_y)
 			{
+				msg_pid_param.speed = 2;
 				msg_pid_param.front = 3;
 				pub_tar_dis.publish(msg_pid_param);
 			}
 			if(lrf_y < 0 && flag_x && !flag_y)
 			{
+				msg_pid_param.speed = 2;
 				msg_pid_param.front = 1;
 				pub_tar_dis.publish(msg_pid_param);
 			}
