@@ -68,11 +68,7 @@ int main(int argc, char **argv)
 					judg = false;
 				}
 			}
-			else
-			{
-				t = 0.0f;
-			}
-			if(!objR && objT && objL)
+			else if(!objR && objT && objL)
 			{
 				if(t >= 1.5)
 				{
@@ -82,11 +78,7 @@ int main(int argc, char **argv)
 					judg = false;
 				}
 			}
-			else
-			{
-				t = 0.0f;
-			}
-			if(objR && !objT && objL)
+			else if(objR && !objT && objL)
 			{
 				if(t >= 1.5)
 				{
@@ -101,6 +93,7 @@ int main(int argc, char **argv)
 				t = 0.0f;
 			}
 		}
+
 		last_time = current_time;
 		loop_rate.sleep();
 		ros::spinOnce();
