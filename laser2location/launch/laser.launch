@@ -10,4 +10,6 @@
     <param name="dist_lrf" value="0.037" /> <!--0.1995-->
     <param name="backward" value="false" />
   </node>
+  
+  <node name="lrf_move" pkg="nemcon" type="lrf_move" output="screen" />
 </launch>
