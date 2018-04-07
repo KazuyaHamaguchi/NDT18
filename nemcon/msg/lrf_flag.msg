@@ -1,2 +1,2 @@
-int8 flag
+bool flag
 int8 TZ
