@@ -54,6 +54,7 @@ add_message_files(
   switch_in.msg
   pid_param.msg
   lrf_flag.msg
+  object_in.msg
   object.msg
 #   Message1.msg
 #   Message2.msg
