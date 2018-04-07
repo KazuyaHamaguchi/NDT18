@@ -42,9 +42,9 @@ int main(int argc, char **argv)
 			{
 				current_time = ros::Time::now();
 				t += (current_time - last_time).toSec();
-				ROS_INFO("leave");
 				if(t >= 1.5)
 				{
+					ROS_INFO("leave");
 					msg_judg.leave = true;
 					pub_judg.publish(msg_judg);
 				}
