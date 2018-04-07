@@ -43,9 +43,10 @@ int main(int argc, char **argv)
 			{
 				if(t >= 1.5)
 				{
-					ROS_INFO("%f", t);
+					ROS_INFO("leave");
 					msg_judg.leave = true;
 					pub_judg.publish(msg_judg);
+					leave = false;
 				}
 			}
 			else
