@@ -1,183 +1,148 @@
 #include <ros/ros.h>
-#include <nemcon/switch_in.h>
 #include <nemcon/pid_param.h>
-#include <accel_decel/param.h>
-#include <accel_decel/result.h>
 #include <geometry_msgs/PoseStamped.h>
+#include <accel_decel/result.h>
+#include <nemcon/lrf_flag.h>
 
-#include <pigpiod_if2.h>
+void lrf_cb(const geometry_msgs::PoseStamped& msg);
+void flag_cb(const nemcon::lrf_flag& msg);
 
-static const int pin_blue = 16;
-static const int pin_yellow = 12;
-static const int pin_servo = 24;
+bool flag = false;
+bool flag_x = false;
+bool flag_y = false;
+bool flag_z = false;
 
-int pi = pigpio_start(0, 0);
-bool cb_flag = false;
-bool enc_flag = false;
-bool end = false;
+float lrf_x = 0.0f;
+float lrf_y = 0.0f;
+float lrf_z = 0.0f;
 
-float acc_t = 0.0f;
+float offsset = 0.0f;
 
-void acc_t_cb(const accel_decel::result& msg);
-
-void led_flash(int num, float time, int color);	//color：blue = 0, yellow = 1
-void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_x, float tar_y, int front); //front：1前 2右 3後 4左
-
+accel_decel::result msg_acc;
 nemcon::pid_param msg_pid_param;
-accel_decel::param msg_acc_param;
 ros::Publisher pub_tar_dis;
-ros::Publisher pub_move_param;
-
-
-void switch_cb(const nemcon::switch_in& msg)
-{
-	if(msg.START)
-	{
-		if(msg.SZ && !msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
-		{
-			led_flash(0, 0, 2);
-			led_flash(3, 0.1, 0);
-			led_flash(-1, 0, 0);
-
-			acc_move(0, 1, 0, 0.5, 1.05, 0, 0, 4);	//SZ横
-			ros::Duration(3.6324493885 + 0.1).sleep();;
-			acc_move(0, 1, 0, 0.5, 4.8, -1.1, 0, 1);	//TZ1横
-			ros::Duration(7.94159317017 + 0.1).sleep();
-			acc_move(0, 1, 0, 0.5, 1, -1.15, 4.5, 4);	//TZ1受け渡しポイント
-			ros::Duration(3.54490756989 + 10.1).sleep();
-      acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 4);
-			//lrf_move(3);
-
-
-			led_flash(3, 0.25, 1);
-
-			cb_flag = true;
-			end = true;
-		}
-		if(!msg.SZ && msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
-		{
-			led_flash(3, 0.25, 1);
-
-			cb_flag = true;
-		}
-	}
-	else
-	{
-		led_flash(0, 0, 0);
-		led_flash(-1, 0, 1);
-		cb_flag = false;
-	}
-}
+ros::Publisher pub_acc;
 
 int main(int argc, char **argv)
 {
-	ros::init(argc, argv, "nemcon");
+	ros::init(argc, argv, "lrf_move");
 	ros::NodeHandle nh;
 
-	set_mode(pi, pin_blue, PI_OUTPUT);
-	set_mode(pi, pin_yellow, PI_OUTPUT);
-	set_servo_pulsewidth(pi, pin_servo, 1520);	//0度
+	ros::Rate loop_rate(40);
 
-	ros::Subscriber subSwitch = nh.subscribe("/switch", 1000, switch_cb);
-	ros::Subscriber sub_accel = nh.subscribe("/accel_decel/result", 1000, acc_t_cb);
-
+	ros::Subscriber sub_lrf = nh.subscribe("/lrf_pose", 1000, lrf_cb);
+	ros::Subscriber sub_flag = nh.subscribe("lrf_flag", 1000, flag_cb);
 
 	pub_tar_dis = nh.advertise<nemcon::pid_param>("pid_param", 1000);
-	pub_move_param = nh.advertise<accel_decel::param>("accel_decel/param", 1000);
+	pub_acc = nh.advertise<accel_decel::result>("accel_decel/result", 1000);
 
-	ros::spin();
+	msg_pid_param.pattern = 1;
+	msg_pid_param.speed = 1;
+	msg_acc.Vmax = false;
+
+	while(ros::ok())
+	{
+		if(flag)
+		{
+			if(lrf_x > 0.01 + offsset && !flag_x)
+			{
+				ROS_INFO("lrf_x:%f", lrf_x);
+				msg_acc.V = 0.05;
+				msg_pid_param.front = 4;
+				pub_tar_dis.publish(msg_pid_param);
+				pub_acc.publish(msg_acc);
+				flag_x = false;
+			}
+			if(lrf_x < -0.01 + offsset && !flag_x)
+			{
+				ROS_INFO("-lrf_x:%f", lrf_x);
+				msg_acc.V = 0.05;
+				msg_pid_param.front = 2;
+				pub_tar_dis.publish(msg_pid_param);
+				pub_acc.publish(msg_acc);
+				flag_x = false;
+			}
+			if(-0.01 + offsset <= lrf_x && lrf_x <= 0.01 + offsset)
+			{
+				ROS_INFO("lrf_x OK");
+				msg_acc.V = 0;
+				pub_tar_dis.publish(msg_pid_param);
+				pub_acc.publish(msg_acc);
+				flag_x = true;
+			}
+			else
+			{
+			  flag_x = false;
+			}
+		}
+
+		if(flag_x)
+		{
+			if(lrf_y > 0 && !flag_y)
+			{
+				ROS_INFO("lrf_y:%f", lrf_y);
+				msg_acc.V = 0.05;
+				msg_pid_param.front = 3;
+				pub_tar_dis.publish(msg_pid_param);
+				pub_acc.publish(msg_acc);
+				flag_y = false;
+			}
+			if(lrf_y < 0 && flag_x && !flag_y)
+			{
+				ROS_INFO("-lrf_y:%f", lrf_y);
+				msg_acc.V = 0.05;
+				msg_pid_param.front = 1;
+				pub_tar_dis.publish(msg_pid_param);
+				pub_acc.publish(msg_acc);
+				flag_y = false;
+			}
+			if(-0.01 < lrf_y && lrf_y < 0.01)
+			{
+				ROS_INFO("lrf_y OK");
+				msg_acc.V = 0;
+				pub_tar_dis.publish(msg_pid_param);
+				pub_acc.publish(msg_acc);
+				flag_y = true;
+			}
+			else
+			{
+			  flag_y = false;
+			}
+		}
+		if(flag_x && flag_y)
+		{
+			flag = false;
+		}
+
+		loop_rate.sleep();
+		ros::spinOnce();
+	}
 }
 
-void led_flash(int num, float time, int color)
+void lrf_cb(const geometry_msgs::PoseStamped& msg)
 {
-	if(num > 0)		//点滅
-	{
-		for(int i = 0; i < num; i++)
-		{
-			if(color == 0)
-			{
-				gpio_write(pi, pin_blue, 1);
-				ros::Duration(time / 2).sleep();
-				gpio_write(pi, pin_blue, 0);
-				ros::Duration(time / 2).sleep();
-			}
-			if(color == 1)
-			{
-				gpio_write(pi, pin_yellow, 1);
-				ros::Duration(time / 2).sleep();
-				gpio_write(pi, pin_yellow, 0);
-				ros::Duration(time / 2).sleep();
-			}
-			if(color == 2)
-			{
-				gpio_write(pi, pin_yellow, 1);
-				gpio_write(pi, pin_blue, 1);
-				ros::Duration(time / 2).sleep();
-				gpio_write(pi, pin_yellow, 0);
-				gpio_write(pi, pin_blue, 0);
-				ros::Duration(time / 2).sleep();
-			}
-		}
-	}
-	if(num == 0)	//消灯
-	{
-		if(color == 0)
-		{
-			gpio_write(pi, pin_blue, 0);
-			ros::Duration(time).sleep();
-		}
-		if(color == 1)
-		{
-			gpio_write(pi, pin_yellow, 0);
-			ros::Duration(time).sleep();
-		}
-		if(color == 2)
-		{
-			gpio_write(pi, pin_blue, 0);
-			gpio_write(pi, pin_yellow, 0);
-			ros::Duration(time).sleep();
-		}
-	}
-	if(num == -1)	//点灯
-	{
-		if(color == 0)
-		{
-			gpio_write(pi, pin_blue, 1);
-			ros::Duration(time).sleep();
-		}
-		if(color == 1)
-		{
-			gpio_write(pi, pin_yellow, 1);
-			ros::Duration(time).sleep();
-		}
-		if(color == 2)
-		{
-			gpio_write(pi, pin_blue, 1);
-			gpio_write(pi, pin_yellow, 1);
-			ros::Duration(time).sleep();
-		}
-	}
+	lrf_x = msg.pose.position.x;
+	lrf_y = msg.pose.position.y;
+	lrf_z = msg.pose.orientation.z;
+	//ROS_INFO("%f\t %f\t %f\t", lrf_x, lrf_y, lrf_z);
 }
 
-
-void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_x, float tar_y, int front)
+void flag_cb(const nemcon::lrf_flag& msg)
 {
-	msg_acc_param.Vs = Vs;
-	msg_acc_param.Vmax = Vmax;
-	msg_acc_param.Ve = Ve;
-	msg_acc_param.Amax = Amax;
-	msg_acc_param.Xall = Xall;
-	msg_pid_param.tar_x = tar_x;
-	msg_pid_param.tar_y = tar_y;
- 	msg_pid_param.front = front;
- 	msg_pid_param.pattern = 0;
+	flag = msg.flag;
 
-	pub_move_param.publish(msg_acc_param);
-	pub_tar_dis.publish(msg_pid_param);
-}
+	switch(msg.TZ)
+	{
+		case 1: case 3:
+			offsset = 0.0f;
+			break;
 
-void acc_t_cb(const accel_decel::result& msg)
-{
-	acc_t = msg.t;
- 	//ROS_INFO("%f", acc_t);
+		case 2:
+			offsset = 0.0f;
+			break;
+
+		default:
+			offsset = 0.0f;
+			break;
+	}
 }
