@@ -55,7 +55,7 @@ add_message_files(
   pid_param.msg
   lrf_flag.msg
   object_in.msg
-  object.msg
+  TZ_judg.msg
 #   Message1.msg
 #   Message2.msg
 )
