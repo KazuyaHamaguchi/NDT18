@@ -58,7 +58,7 @@ int main(int argc, char **argv)
 
 		if(judg)
 		{
-			if(!objR && !objT && objL)
+			if(objR && objT && !objL)
 			{
 				if(t >= 1.5)
 				{
