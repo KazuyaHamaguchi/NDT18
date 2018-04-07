@@ -3,6 +3,8 @@
 #include <nemcon/object_in.h>
 #include <std_msgs/Int8.h>
 
+ros::Time current_time, last_time;
+
 bool objR = false;
 bool objT = false;
 bool objL = false;
@@ -15,7 +17,7 @@ void throw_cb(const std_msgs::Int8& msg);
 
 std_msgs::Int8 msg_throw;
 ros::Publisher pub_judg;
-nemcon::TZ_judg msg_obj;
+nemcon::TZ_judg msg_jidg;
 
 int main(int argc, char **argv)
 {
