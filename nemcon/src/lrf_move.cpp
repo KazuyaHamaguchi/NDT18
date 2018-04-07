@@ -4,8 +4,13 @@
 
 void lrf_cb(const geometry_msgs::PoseStamped& msg);
 
+bool flag = false;
 bool flag_x = false;
 bool flag_y = false;
+
+float lrf_x = 0.0f;
+float lrf_y = 0.0f;
+float lrf_z = 0.0f;
 
 nemcon::pid_param msg_pid_param;
 
