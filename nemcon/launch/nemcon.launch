@@ -2,6 +2,7 @@
 
   <include file="$(find nemcon)/launch/arduino.launch"/>
   <include file="$(find nemcon)/launch/pid.launch"/>
+   <include file="$(find laser2location)/launch/laser2location.launch"/>
   <node name="switch" pkg="nemcon" type="switch" />
   
   <node name="nemcon" pkg="nemcon" type="nemcon" output="screen" />
