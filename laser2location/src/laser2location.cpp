@@ -286,7 +286,7 @@ void thread_main(){
 			}
 			else if( (line_yaw < -CV_PI*3/4 || line_yaw > CV_PI*3/4) && right == NULL ){
 				right = &(lines[i]);
-				ROS_INFO("right[%f][%f]", right->theta, right->dist);
+				//ROS_INFO("right[%f][%f]", right->theta, right->dist);
 			}
 		}
 		if( front != NULL || right != NULL || left != NULL ){
@@ -338,7 +338,7 @@ void thread_main(){
 		std::cout << std::endl;
 #endif
 		double yaw_deg = yaw*180/CV_PI;
-		ROS_INFO("yaw=%f[deg] x=%f[m] y=%f[m]",yaw_deg, pose.pose.position.x, pose.pose.position.y );
+		//ROS_INFO("yaw=%f[deg] x=%f[m] y=%f[m]",yaw_deg, pose.pose.position.x, pose.pose.position.y );
 
 		pose.pose.position.x += dist_lrf*sin(yaw-M_PI/2);
 		pose.pose.position.y += dist_lrf*cos(yaw-M_PI/2);
