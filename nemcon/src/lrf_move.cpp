@@ -13,6 +13,7 @@ float lrf_y = 0.0f;
 float lrf_z = 0.0f;
 
 nemcon::pid_param msg_pid_param;
+ros::Publisher pub_tar_dis;
 
 int main(int argc, char **argv)
 {
