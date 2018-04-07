@@ -111,10 +111,12 @@ void throw_cb(const std_msgs::Int8& msg)
 {
 	if(msg.data == 500)
 	{
+		ROS_INFO("msg_leave");
 		leave = true;
 	}
 	if(msg.data == 501)
 	{
+		ROS_INFO("msg_judg");
 		judg = true;
 	}
 }
