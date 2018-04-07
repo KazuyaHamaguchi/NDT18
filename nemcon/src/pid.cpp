@@ -382,52 +382,42 @@ int main(int argc, char **argv)
 
 		if(pattern == 1)	//等速
 		{
-			if(speed == -1)
+			switch(front)
 			{
-				speedFR = clamp(nearbyint(turn_imu), -20, 20);
-				speedRL = clamp(nearbyint(- turn_imu), -20, 20);
-				speedFL = clamp(nearbyint(- turn_imu), -20, 20);
-				speedRR = clamp(nearbyint(turn_imu), -20, 20);
-			}
-			if(speed >= 0)
-			{
-				switch(front)
-				{
-					case 1:	//前
-						speedFR = clamp(nearbyint( speed_Y - turn_lrf), 0, 20);
-						speedFL = clamp(nearbyint( speed_Y + turn_lrf), 0, 20);
-						speedRL = clamp(nearbyint( speed_Y + turn_lrf), 0, 20);
-						speedRR = clamp(nearbyint( speed_Y - turn_lrf), 0, 20);
-						break;
+				case 1:	//前
+					speedFR = clamp(nearbyint( speed_Y - turn_lrf), 0, 20);
+					speedFL = clamp(nearbyint( speed_Y + turn_lrf), 0, 20);
+					speedRL = clamp(nearbyint( speed_Y + turn_lrf), 0, 20);
+					speedRR = clamp(nearbyint( speed_Y - turn_lrf), 0, 20);
+					break;
 
-					case 2:	//右
-						speedFR = clamp(nearbyint(-(speed_X + turn_lrf)), -20, 0);
-						speedFL = clamp(nearbyint( speed_X + turn_lrf), 0, 20);
-						speedRL = clamp(nearbyint(-(speed_X - turn_lrf)), -20, 0);
-						speedRR = clamp(nearbyint( speed_X - turn_lrf), 0, 20);
-						break;
+				case 2:	//右
+					speedFR = clamp(nearbyint(-(speed_X + turn_lrf)), -20, 0);
+					speedFL = clamp(nearbyint( speed_X + turn_lrf), 0, 20);
+					speedRL = clamp(nearbyint(-(speed_X - turn_lrf)), -20, 0);
+					speedRR = clamp(nearbyint( speed_X - turn_lrf), 0, 20);
+					break;
 
-					case 3:	//後
-						speedFR = clamp(nearbyint( -(speed_Y + turn_lrf)), -20, 0);
-						speedFL = clamp(nearbyint( -(speed_Y - turn_lrf)), -20, 0);
-						speedRL = clamp(nearbyint( -(speed_Y - turn_lrf)), -20, 0);
-						speedRR = clamp(nearbyint( -(speed_Y + turn_lrf)), -20, 0);
-						break;
+				case 3:	//後
+					speedFR = clamp(nearbyint( -(speed_Y + turn_lrf)), -20, 0);
+					speedFL = clamp(nearbyint( -(speed_Y - turn_lrf)), -20, 0);
+					speedRL = clamp(nearbyint( -(speed_Y - turn_lrf)), -20, 0);
+					speedRR = clamp(nearbyint( -(speed_Y + turn_lrf)), -20, 0);
+					break;
 
-					case 4:	//左
-						speedFR = clamp(nearbyint( speed_X - turn_lrf), 0, 20);
-						speedFL = clamp(nearbyint( -(speed_X - turn_lrf)), -20, 0);
-						speedRL = clamp(nearbyint( speed_X + turn_lrf), 0, 20);
-						speedRR = clamp(nearbyint( -(speed_X + turn_lrf)), -20, 0);
-						break;
+				case 4:	//左
+					speedFR = clamp(nearbyint( speed_X - turn_lrf), 0, 20);
+					speedFL = clamp(nearbyint( -(speed_X - turn_lrf)), -20, 0);
+					speedRL = clamp(nearbyint( speed_X + turn_lrf), 0, 20);
+					speedRR = clamp(nearbyint( -(speed_X + turn_lrf)), -20, 0);
+					break;
 
-					default:
-						speedFR = 0;
-						speedFL = 0;
-						speedRL = 0;
-						speedRR = 0;
-						break;
-				}
+				default:
+					speedFR = 0;
+					speedFL = 0;
+					speedRL = 0;
+					speedRR = 0;
+					break;
 			}
 		}
 
