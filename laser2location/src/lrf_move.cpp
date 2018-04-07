@@ -11,7 +11,7 @@ nemcon::pid_param msg_pid_param;
 
 int main(int argc, char **argv)
 {
-	ros::init(argc, argv, "servo_test");
+	ros::init(argc, argv, "lrf_move");
 	ros::NodeHandle nh;
 
 	ros::Rate loop_rate(40);
