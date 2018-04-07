@@ -41,11 +41,10 @@ void switch_cb(const nemcon::switch_in& msg)
 {
 	if(msg.START)
 	{
-		msg_throw.data = 30;
-		pub_throw.publish(msg_throw);
-
 		if(msg.SZ && !msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
 		{
+      msg_throw.data = 30;
+      pub_throw.publish(msg_throw);
 			led_flash(0, 0, 2);
 			led_flash(3, 0.1, 0);
 			led_flash(-1, 0, 0);
@@ -56,8 +55,8 @@ void switch_cb(const nemcon::switch_in& msg)
 			ros::Duration(7.941593 + 0.05).sleep();
 			acc_move(0, 1, 0, 0.5, 1, -1.15, 4.5, 4);	//TZ1受け渡しポイント
 			ros::Duration(3.544907 + 0.05).sleep();
-
-			msg_throw.data = 20;
+      ROS_INFO("CLOSE\n");
+			msg_throw.data = 40;
 			pub_throw.publish(msg_throw);
 
 			cb_flag = true;
@@ -89,7 +88,7 @@ int main(int argc, char **argv)
 
 	ros::Subscriber subSwitch = nh.subscribe("/switch", 1000, switch_cb);
 	ros::Subscriber sub_accel = nh.subscribe("/accel_decel/result", 1000, acc_t_cb);
-	ros::Subscriber sub_receive = nh.subscribe("/Receive", 1000, receive_cb);
+	ros::Subscriber sub_receive = nh.subscribe("Throw_on", 1000, receive_cb);
 
 	pub_tar_dis = nh.advertise<nemcon::pid_param>("pid_param", 1000);
 	pub_move_param = nh.advertise<accel_decel::param>("accel_decel/param", 1000);
@@ -189,8 +188,9 @@ void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_
 
 void receive_cb(const std_msgs::Int8& msg)
 {
-	if(msg.data == -20)
+	if(msg.data == -40)
 	{
+    ros::Duration(5).sleep();
 		acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 4);
 		ros::Duration(4.194392 + 0.05).sleep();
 		msg_lrf.flag = true;
