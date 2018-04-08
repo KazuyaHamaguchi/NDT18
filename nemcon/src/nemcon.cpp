@@ -5,6 +5,7 @@
 #include <accel_decel/result.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <std_msgs/Int16.h>
+#include <std_msgs/Int8.h>
 #include <nemcon/lrf_flag.h>
 #include <nemcon/TZ_judg.h>
 
