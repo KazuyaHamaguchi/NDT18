@@ -113,11 +113,12 @@ int main(int argc, char **argv)
 				msg_acc.V = 0;
 				pub_tar_dis.publish(msg_pid_param);
 				pub_acc.publish(msg_acc);
-				if(t >= 1)
+				if(t >= 2)
 				{
 					msg_receive.data = -50;
 					pub_receive.publish(msg_receive);
 					flag = false;
+          flag_x = false;
 					flag_y = true;
 				}
 			}

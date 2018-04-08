@@ -52,8 +52,6 @@ void switch_cb(const nemcon::switch_in& msg)
 		{
 			msg_throw.data = 3;
 			pub_throw.publish(msg_throw);
-			msg_throw.data = 30;
-			pub_throw.publish(msg_throw);
 			msg_throw.data = 43;
 			pub_throw.publish(msg_throw);
       msg_throw.data = 4;
@@ -67,8 +65,11 @@ void switch_cb(const nemcon::switch_in& msg)
 			ros::Duration(3.632449 + 0.05).sleep();
 			acc_move(0, 1, 0, 0.5, 4.8, -1.1, 0, 1);	//TZ1横
 			ros::Duration(7.941593 + 0.05).sleep();
+      msg_throw.data = 30;
+      pub_throw.publish(msg_throw);
 			acc_move(0, 1, 0, 0.5, 1, -1.15, 4.5, 4);	//TZ1受け渡しポイント
 			ros::Duration(3.544907 + 0.05).sleep();
+
 
 			msg_throw.data = 40;	//受け取り待機
 			pub_throw.publish(msg_throw);
@@ -200,35 +201,44 @@ void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_
 	pub_move_param.publish(msg_acc_param);
 	pub_tar_dis.publish(msg_pid_param);
 }
-
+bool lrf_i = false;
 void receive_cb(const std_msgs::Int8& msg)
 {
-
 	if(msg.data == -40)	//CRからの受け取りに成功
 	{
-		msg_throw.data = 50;
+		msg_throw.data = 51;
 		pub_throw.publish(msg_throw);
 	}
-	/*if(msg.data == -42)	//TR受け渡し→投射に成功
-	{
-		msg_throw.data = 50;
-		pub_throw.publish(msg_throw);
-	}*/
 	if(msg.data == -50)
 	{
+    lrf_i = true;
 		msg_pid_param.pattern = 3;
 		pub_tar_dis.publish(msg_pid_param);
 	}
 	if(msg.data == -42)
 	{
-		//lrf = true;
-		msg_lrf.flag = false;
+	  msg_lrf.flag = false;
 		pub_lrf.publish(msg_lrf);
 		set_servo_pulsewidth(pi, pin_servo, 950);	//90度
 		ros::Duration(1).sleep();
-		msg_throw.data = 1;
+	  msg_throw.data = 1;
 		pub_throw.publish(msg_throw);
 	}
+  if(msg.data == -1)
+  {
+    set_servo_pulsewidth(pi, pin_servo, 1520);
+    acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 2);
+  }
+  if(msg.data == -100)
+  {
+    msg_throw.data = 40;
+    pub_throw.publish(msg_throw);
+  }
+  if(msg.data == -44)
+  {
+    msg_throw.data = 53;
+    pub_throw.publish(msg_throw);
+  }
 	/*if(msg.data == -10)
 	{
 		receive = true;
@@ -239,11 +249,11 @@ void judg_cb(const nemcon::TZ_judg& msg)
 {
 	if(msg.leave)	//1回目にCRが離れた
 	{
-		msg_throw.data = 41;
-		pub_throw.publish(msg_throw);
 		if(!first)	//1回だけTZ1
 		{
-			acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 4);
+      msg_throw.data = 41;
+      pub_throw.publish(msg_throw);
+			acc_move(0, 1, 0, 0.5, 1.3, -1.1, 4.4, 4);
 			ros::Duration(4.194392 + 0.05).sleep();
 			msg_lrf.flag = true;
 			msg_lrf.TZ = 1;
@@ -252,38 +262,45 @@ void judg_cb(const nemcon::TZ_judg& msg)
 		}
 		else
 		{
-			msg_throw.data = 52;
-			pub_throw.publish(msg_throw);
+      msg_throw.data = 44;
+      pub_throw.publish(msg_throw);
 		}
 	}
 	if(msg.TZ1)	//TZ1と判断
 	{
+    ROS_INFO("msg.TZ1");
 		TZ = 1;
-		msg_throw.data = 51;
+		msg_throw.data = 52;
 		pub_throw.publish(msg_throw);
 	}
 	if(msg.TZ2)	//TZ2と判断
 	{
 		TZ = 2;
-		msg_throw.data = 51;
+		msg_throw.data = 52;
 		pub_throw.publish(msg_throw);
 	}
 	if(msg.TZ3)	//TZ3と判断
 	{
 		TZ = 3;
-		msg_throw.data = 51;
+		msg_throw.data = 52;
 		pub_throw.publish(msg_throw);
 	}
-	if(msg.leave2 && TZ == 1)	//2回目にCRが離れてTZ1だった時
+  ROS_INFO("%d", TZ);
+	if(msg.leave2)	//2回目にCRが離れてTZ1だった時
 	{
-		acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 4);
-		ros::Duration(4.194392 + 0.05).sleep();
-		msg_lrf.flag = true;
-		msg_lrf.TZ = 2;
-		pub_lrf.publish(msg_lrf);
-
+    if(TZ == 1)
+    {
+      msg_throw.data = 41;
+      pub_throw.publish(msg_throw);
+      ROS_INFO("TZ1 OK!");
+		  acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 4);
+		  ros::Duration(4.194392 + 0.05).sleep();
+		  msg_lrf.flag = true;
+		  msg_lrf.TZ = 1;
+		  pub_lrf.publish(msg_lrf);
+    }
 	}
-	if(msg.leave2 && TZ == 2)	//2回目にCRが離れてTZ2だった時
+	/*if(msg.leave2 && TZ == 2)	//2回目にCRが離れてTZ2だった時
 	{
 		acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 4);
 		ros::Duration(4.194392 + 0.05).sleep();
@@ -298,7 +315,7 @@ void judg_cb(const nemcon::TZ_judg& msg)
 		msg_lrf.flag = true;
 		msg_lrf.TZ = 3;
 		pub_lrf.publish(msg_lrf);
-	}
+	}*/
 }
 void acc_t_cb(const accel_decel::result& msg)
 {
