@@ -1,277 +1,145 @@
 #include <ros/ros.h>
-#include <nemcon/switch_in.h>
-#include <nemcon/pid_param.h>
-#include <accel_decel/param.h>
-#include <accel_decel/result.h>
-#include <geometry_msgs/PoseStamped.h>
-#include <std_msgs/Int16.h>
-#include <nemcon/lrf_flag.h>
 #include <nemcon/TZ_judg.h>
+#include <nemcon/object_in.h>
+#include <std_msgs/Int16.h>
 
-#include <pigpiod_if2.h>
+ros::Time current_time, last_time;
 
-static const int pin_blue = 16;
-static const int pin_yellow = 12;
-static const int pin_servo = 24;
+bool objR = false;
+bool objT = false;
+bool objL = false;
 
-int pi = pigpio_start(0, 0);
-bool cb_flag = false;
-bool enc_flag = false;
-bool receive_flag = false;
-bool end = false;
-bool first = false;
+bool leave = false;
+bool judg = false;
 
-int TZ = 0;
+float t = 0.0f;
 
-float acc_t = 0.0f;
+void object_cb(const nemcon::object_in& msg);
+void throw_cb(const std_msgs::Int16& msg);
 
-void acc_t_cb(const accel_decel::result& msg);
-void receive_cb(const std_msgs::Int8& msg);
-void judg_cb(const nemcon::TZ_judg& msg);
-
-void led_flash(int num, float time, int color);	//color：blue = 0, yellow = 1
-void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_x, float tar_y, int front); //front：1前 2右 3後 4左
-
-nemcon::pid_param msg_pid_param;
-accel_decel::param msg_acc_param;
 std_msgs::Int16 msg_throw;
-nemcon::lrf_flag msg_lrf;
-ros::Publisher pub_tar_dis;
-ros::Publisher pub_move_param;
-ros::Publisher pub_throw;
-ros::Publisher pub_lrf;
-
-
-void switch_cb(const nemcon::switch_in& msg)
-{
-	if(msg.START)
-	{
-		if(msg.SZ && !msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
-		{
-			msg_throw.data = 30;
-			pub_throw.publish(msg_throw);
-
-			led_flash(0, 0, 2);
-			led_flash(3, 0.1, 0);
-			led_flash(-1, 0, 0);
-
-			acc_move(0, 1, 0, 0.5, 1.05, 0, 0, 4);	//SZ横
-			ros::Duration(3.632449 + 0.05).sleep();
-			acc_move(0, 1, 0, 0.5, 4.8, -1.1, 0, 1);	//TZ1横
-			ros::Duration(7.941593 + 0.05).sleep();
-			acc_move(0, 1, 0, 0.5, 1, -1.15, 4.5, 4);	//TZ1受け渡しポイント
-			ros::Duration(3.544907 + 0.05).sleep();
-
-			msg_throw.data = 40;
-			pub_throw.publish(msg_throw);
-
-			cb_flag = true;
-			end = true;
-		}
-		if(!msg.SZ && msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
-		{
-			led_flash(3, 0.25, 1);
-
-			cb_flag = true;
-		}
-	}
-	else
-	{
-		led_flash(0, 0, 0);
-		led_flash(-1, 0, 1);
-		cb_flag = false;
-	}
-}
+ros::Publisher pub_judg;
+nemcon::TZ_judg msg_judg;
 
 int main(int argc, char **argv)
 {
-	ros::init(argc, argv, "nemcon");
+	ros::init(argc, argv, "TZ_judg");
 	ros::NodeHandle nh;
+	current_time = ros::Time::now();
+	last_time = ros::Time::now();
+	ros::Rate loop_rate(40);
 
-	set_mode(pi, pin_blue, PI_OUTPUT);
-	set_mode(pi, pin_yellow, PI_OUTPUT);
-	set_servo_pulsewidth(pi, pin_servo, 1520);	//0度
+	ros::Subscriber sub_throw = nh.subscribe("Throw_on_1", 1000, throw_cb);
+	ros::Subscriber sub_obj = nh.subscribe("object_in", 1000, object_cb);
+	pub_judg = nh.advertise<nemcon::TZ_judg>("TZ_judg", 1000);
 
-	ros::Subscriber subSwitch = nh.subscribe("/switch", 1000, switch_cb);
-	ros::Subscriber sub_accel = nh.subscribe("/accel_decel/result", 1000, acc_t_cb);
-	ros::Subscriber sub_receive = nh.subscribe("Throw_on", 1000, receive_cb);
-	ros::Subscriber sub_judg = nh.subscribe("TZ_judg", 1000, judg_cb);
-
-	pub_tar_dis = nh.advertise<nemcon::pid_param>("pid_param", 1000);
-	pub_move_param = nh.advertise<accel_decel::param>("accel_decel/param", 1000);
-	pub_throw = nh.advertise<std_msgs::Int16>("Throw_on_1", 1000);
-	pub_lrf = nh.advertise<nemcon::lrf_flag>("lrf_flag", 1000);
-
-	ros::spin();
-}
-
-void led_flash(int num, float time, int color)
-{
-	if(num > 0)		//点滅
+	while(ros::ok())
 	{
-		for(int i = 0; i < num; i++)
+		current_time = ros::Time::now();
+		t += (current_time - last_time).toSec();
+
+		if(leave)
 		{
-			if(color == 0)
+			if(!objR && !objT && !objL)
 			{
-				gpio_write(pi, pin_blue, 1);
-				ros::Duration(time / 2).sleep();
-				gpio_write(pi, pin_blue, 0);
-				ros::Duration(time / 2).sleep();
+				if(t >= 0.5)
+				{
+					ROS_INFO("leave");
+					msg_judg.leave = true;
+					pub_judg.publish(msg_judg);
+					leave = false;
+				}
 			}
-			if(color == 1)
+			else
 			{
-				gpio_write(pi, pin_yellow, 1);
-				ros::Duration(time / 2).sleep();
-				gpio_write(pi, pin_yellow, 0);
-				ros::Duration(time / 2).sleep();
-			}
-			if(color == 2)
-			{
-				gpio_write(pi, pin_yellow, 1);
-				gpio_write(pi, pin_blue, 1);
-				ros::Duration(time / 2).sleep();
-				gpio_write(pi, pin_yellow, 0);
-				gpio_write(pi, pin_blue, 0);
-				ros::Duration(time / 2).sleep();
+				t = 0.0f;
 			}
 		}
-	}
-	if(num == 0)	//消灯
-	{
-		if(color == 0)
+
+		if(leave2)
 		{
-			gpio_write(pi, pin_blue, 0);
-			ros::Duration(time).sleep();
+			if(!objR && !objT && !objL)
+			{
+				if(t >= 0.5)
+				{
+					ROS_INFO("leave2");
+					msg_judg.leave2 = true;
+					pub_judg.publish(msg_judg);
+					leave2 = false;
+				}
+			}
+			else
+			{
+				t = 0.0f;
+			}
 		}
-		if(color == 1)
+
+		if(judg)
 		{
-			gpio_write(pi, pin_yellow, 0);
-			ros::Duration(time).sleep();
+			if(objR && objT && !objL)
+			{
+				if(t >= 1.5)
+				{
+					ROS_INFO("TZ1");
+					msg_judg.TZ1 = true;
+					pub_judg.publish(msg_judg);
+					judg = false;
+				}
+			}
+			else if(!objR && objT && objL)
+			{
+				if(t >= 1.5)
+				{
+					ROS_INFO("TZ2");
+					msg_judg.TZ2 = true;
+					pub_judg.publish(msg_judg);
+					judg = false;
+				}
+			}
+			else if(objR && !objT && objL)
+			{
+				if(t >= 1.5)
+				{
+					ROS_INFO("TZ3");
+					msg_judg.TZ3 = true;
+					pub_judg.publish(msg_judg);
+					judg = false;
+				}
+			}
+			else
+			{
+				t = 0.0f;
+			}
 		}
-		if(color == 2)
-		{
-			gpio_write(pi, pin_blue, 0);
-			gpio_write(pi, pin_yellow, 0);
-			ros::Duration(time).sleep();
-		}
-	}
-	if(num == -1)	//点灯
-	{
-		if(color == 0)
-		{
-			gpio_write(pi, pin_blue, 1);
-			ros::Duration(time).sleep();
-		}
-		if(color == 1)
-		{
-			gpio_write(pi, pin_yellow, 1);
-			ros::Duration(time).sleep();
-		}
-		if(color == 2)
-		{
-			gpio_write(pi, pin_blue, 1);
-			gpio_write(pi, pin_yellow, 1);
-			ros::Duration(time).sleep();
-		}
+
+		last_time = current_time;
+		loop_rate.sleep();
+		ros::spinOnce();
 	}
 }
 
-
-void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_x, float tar_y, int front)
+void object_cb(const nemcon::object_in& msg)
 {
-	msg_acc_param.Vs = Vs;
-	msg_acc_param.Vmax = Vmax;
-	msg_acc_param.Ve = Ve;
-	msg_acc_param.Amax = Amax;
-	msg_acc_param.Xall = Xall;
-	msg_pid_param.tar_x = tar_x;
-	msg_pid_param.tar_y = tar_y;
- 	msg_pid_param.front = front;
- 	msg_pid_param.pattern = 0;
-
-	pub_move_param.publish(msg_acc_param);
-	pub_tar_dis.publish(msg_pid_param);
+	objR = msg.objR;
+	objT = msg.objT;
+	objL = msg.objL;
 }
 
-void receive_cb(const std_msgs::Int8& msg)
+void throw_cb(const std_msgs::Int16& msg)
 {
-	if(msg.data == -40)
+	if(msg.data == 500)
 	{
-		msg_throw.data = 500;
-		pub_throw.publish(msg_throw);
+		ROS_INFO("msg_leave");
+		leave = true;
 	}
-	/*if(msg.data == -10)
+	if(msg.data == 501)
 	{
-
-	}*/
-	else;
-}
-void judg_cb(const nemcon::TZ_judg& msg)
-{
-	if(msg.leave)
-	{
-		msg_throw.data = 10;
-		pub_throw.publish(msg_throw);
-		if(!first)
-		{
-			acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 4);
-			ros::Duration(4.194392 + 0.05).sleep();
-			msg_lrf.flag = true;
-			msg_lrf.TZ = 1;
-			pub_lrf.publish(msg_lrf);
-			first = true;
-		}
-		else
-		{
-			msg_throw.data = 502;
-			pub_throw.publish(msg_throw);
-		}
+		ROS_INFO("msg_leave2");
+		judg = true;
 	}
-	if(msg.TZ1)
+	if(msg.data == 502)
 	{
-		TZ = 1;
-		msg_throw.data = 501;
-		pub_throw.publish(msg_throw);
+		ROS_INFO("msg_judg");
+		judg = true;
 	}
-	if(msg.TZ1)
-	{
-		TZ = 2;
-		msg_throw.data = 501;
-		pub_throw.publish(msg_throw);
-	}
-	if(msg.TZ1)
-	{
-		TZ = 3;
-		msg_throw.data = 501;
-		pub_throw.publish(msg_throw);
-	}
-	if(msg.leave2 && TZ == 1)
-	{
-		acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 4);
-		ros::Duration(4.194392 + 0.05).sleep();
-		msg_lrf.flag = true;
-		msg_lrf.TZ = 2;
-		pub_lrf.publish(msg_lrf);
-
-	}
-	if(msg.leave2 && TZ == 2)
-	{
-		acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 4);
-		ros::Duration(4.194392 + 0.05).sleep();
-		msg_lrf.flag = true;
-		msg_lrf.TZ = 2;
-		pub_lrf.publish(msg_lrf);
-	}
-	if(msg.leave2 && TZ == 3)
-	{
-		acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 4);
-		ros::Duration(4.194392 + 0.05).sleep();
-		msg_lrf.flag = true;
-		msg_lrf.TZ = 3;
-		pub_lrf.publish(msg_lrf);
-	}
-}
-void acc_t_cb(const accel_decel::result& msg)
-{
-	acc_t = msg.t;
 }
