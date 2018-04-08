@@ -106,18 +106,15 @@ int main(int argc, char **argv)
 				msg_acc.V = 0;
 				pub_tar_dis.publish(msg_pid_param);
 				pub_acc.publish(msg_acc);
+				msg_receive.data = -50;
+				pub_receive.publish(msg_receive);
+				flag = false;
 				flag_y = true;
 			}
 			else
 			{
 			  flag_y = false;
 			}
-		}
-		if(flag_x && flag_y)
-		{
-			flag = false;
-			msg_receive.data = -50;
-			pub_receive.publish(msg_receive);
 		}
 
 		loop_rate.sleep();
