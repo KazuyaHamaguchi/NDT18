@@ -155,7 +155,7 @@ void flag_cb(const nemcon::lrf_flag& msg)
 			break;
 
 		case 2:
-			offsset = 0.0f;
+			offsset = 3.27503521586;
 			break;
 
 		default:

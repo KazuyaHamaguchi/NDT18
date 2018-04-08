@@ -19,7 +19,7 @@ void object_cb(const nemcon::object_in& msg);
 void throw_cb(const std_msgs::Int8& msg);
 
 ros::Publisher pub_judg;
-nemcon::TZ_judg msg_judg;
+std_msgs::Int8 msg_judg;
 
 int main(int argc, char **argv)
 {
@@ -31,7 +31,7 @@ int main(int argc, char **argv)
 
 	ros::Subscriber sub_throw = nh.subscribe("Throw_on_1", 1000, throw_cb);
 	ros::Subscriber sub_obj = nh.subscribe("object_in", 1000, object_cb);
-	pub_judg = nh.advertise<nemcon::TZ_judg>("TZ_judg", 1000);
+	pub_judg = nh.advertise<std_msgs::Int8>("TZ_judg", 1000);
 
 	while(ros::ok())
 	{
@@ -42,10 +42,10 @@ int main(int argc, char **argv)
 		{
 			if(!objR && !objT && !objL)
 			{
-				if(t >= 1.5)
+				if(t >= 0.8)
 				{
 					ROS_INFO("leave");
-					msg_judg.leave = true;
+					msg_judg.data = 1;
 					pub_judg.publish(msg_judg);
 					leave = false;
 				}
@@ -60,10 +60,10 @@ int main(int argc, char **argv)
 		{
 			if(!objR && !objT && !objL)
 			{
-				if(t >= 1.5)
+				if(t >= 0.8)
 				{
 					ROS_INFO("leave2");
-					msg_judg.leave2 = true;
+					msg_judg.data = 5;
 					pub_judg.publish(msg_judg);
 					leave2 = false;
 				}
@@ -81,7 +81,7 @@ int main(int argc, char **argv)
 				if(t >= 1.5)
 				{
 					ROS_INFO("TZ1");
-					msg_judg.TZ1 = true;
+					msg_judg.data = 2;
 					pub_judg.publish(msg_judg);
 					judg = false;
 				}
@@ -91,7 +91,7 @@ int main(int argc, char **argv)
 				if(t >= 1.5)
 				{
 					ROS_INFO("TZ2");
-					msg_judg.TZ2 = true;
+					msg_judg.data = 3;
 					pub_judg.publish(msg_judg);
 					judg = false;
 				}
@@ -101,7 +101,7 @@ int main(int argc, char **argv)
 				if(t >= 1.5)
 				{
 					ROS_INFO("TZ3");
-					msg_judg.TZ3 = true;
+					msg_judg.data = 4;
 					pub_judg.publish(msg_judg);
 					judg = false;
 				}
@@ -131,15 +131,21 @@ void throw_cb(const std_msgs::Int8& msg)
 	{
 		ROS_INFO("msg_leave");
 		leave = true;
+    leave2 = false;
+    judg - false;
 	}
 	if(msg.data == 51)
 	{
 		ROS_INFO("msg_leave2");
+    leave = false;
 		leave2 = true;
+    judg = false;
 	}
 	if(msg.data == 52)
 	{
 		ROS_INFO("msg_judg");
+    leave = false;
+    leave2 = false;
 		judg = true;
 	}
 }
