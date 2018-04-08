@@ -4,8 +4,9 @@
 #include <accel_decel/param.h>
 #include <accel_decel/result.h>
 #include <geometry_msgs/PoseStamped.h>
-#include <std_msgs/Int8.h>
+#include <std_msgs/Int16.h>
 #include <nemcon/lrf_flag.h>
+#include <nemcon/TZ_judg.h>
 
 #include <pigpiod_if2.h>
 
@@ -18,18 +19,22 @@ bool cb_flag = false;
 bool enc_flag = false;
 bool receive_flag = false;
 bool end = false;
+bool first = false;
+
+int TZ = 0;
 
 float acc_t = 0.0f;
 
 void acc_t_cb(const accel_decel::result& msg);
 void receive_cb(const std_msgs::Int8& msg);
+void judg_cb(const nemcon::TZ_judg& msg);
 
 void led_flash(int num, float time, int color);	//color：blue = 0, yellow = 1
 void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_x, float tar_y, int front); //front：1前 2右 3後 4左
 
 nemcon::pid_param msg_pid_param;
 accel_decel::param msg_acc_param;
-std_msgs::Int8 msg_throw;
+std_msgs::Int16 msg_throw;
 nemcon::lrf_flag msg_lrf;
 ros::Publisher pub_tar_dis;
 ros::Publisher pub_move_param;
@@ -43,8 +48,9 @@ void switch_cb(const nemcon::switch_in& msg)
 	{
 		if(msg.SZ && !msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
 		{
-      msg_throw.data = 30;
-      pub_throw.publish(msg_throw);
+			msg_throw.data = 30;
+			pub_throw.publish(msg_throw);
+
 			led_flash(0, 0, 2);
 			led_flash(3, 0.1, 0);
 			led_flash(-1, 0, 0);
@@ -55,7 +61,7 @@ void switch_cb(const nemcon::switch_in& msg)
 			ros::Duration(7.941593 + 0.05).sleep();
 			acc_move(0, 1, 0, 0.5, 1, -1.15, 4.5, 4);	//TZ1受け渡しポイント
 			ros::Duration(3.544907 + 0.05).sleep();
-      ROS_INFO("CLOSE\n");
+
 			msg_throw.data = 40;
 			pub_throw.publish(msg_throw);
 
@@ -89,10 +95,11 @@ int main(int argc, char **argv)
 	ros::Subscriber subSwitch = nh.subscribe("/switch", 1000, switch_cb);
 	ros::Subscriber sub_accel = nh.subscribe("/accel_decel/result", 1000, acc_t_cb);
 	ros::Subscriber sub_receive = nh.subscribe("Throw_on", 1000, receive_cb);
+	ros::Subscriber sub_judg = nh.subscribe("TZ_judg", 1000, judg_cb);
 
 	pub_tar_dis = nh.advertise<nemcon::pid_param>("pid_param", 1000);
 	pub_move_param = nh.advertise<accel_decel::param>("accel_decel/param", 1000);
-	pub_throw = nh.advertise<std_msgs::Int8>("Throw_on_1", 1000);
+	pub_throw = nh.advertise<std_msgs::Int16>("Throw_on_1", 1000);
 	pub_lrf = nh.advertise<nemcon::lrf_flag>("lrf_flag", 1000);
 
 	ros::spin();
@@ -190,14 +197,79 @@ void receive_cb(const std_msgs::Int8& msg)
 {
 	if(msg.data == -40)
 	{
-    ros::Duration(5).sleep();
+		msg_throw.data = 500;
+		pub_throw.publish(msg_throw);
+	}
+	/*if(msg.data == -10)
+	{
+
+	}*/
+	else;
+}
+void judg_cb(const nemcon::TZ_judg& msg)
+{
+	if(msg.leave)
+	{
+		msg_throw.data = 10;
+		pub_throw.publish(msg_throw);
+		if(!first)
+		{
+			acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 4);
+			ros::Duration(4.194392 + 0.05).sleep();
+			msg_lrf.flag = true;
+			msg_lrf.TZ = 1;
+			pub_lrf.publish(msg_lrf);
+			first = true;
+		}
+		else
+		{
+			msg_throw.data = 502;
+			pub_throw.publish(msg_throw);
+		}
+	}
+	if(msg.TZ1)
+	{
+		TZ = 1;
+		msg_throw.data = 501;
+		pub_throw.publish(msg_throw);
+	}
+	if(msg.TZ1)
+	{
+		TZ = 2;
+		msg_throw.data = 501;
+		pub_throw.publish(msg_throw);
+	}
+	if(msg.TZ1)
+	{
+		TZ = 3;
+		msg_throw.data = 501;
+		pub_throw.publish(msg_throw);
+	}
+	if(msg.leave2 && TZ == 1)
+	{
 		acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 4);
 		ros::Duration(4.194392 + 0.05).sleep();
 		msg_lrf.flag = true;
-		msg_lrf.TZ = 1;
+		msg_lrf.TZ = 2;
+		pub_lrf.publish(msg_lrf);
+
+	}
+	if(msg.leave2 && TZ == 2)
+	{
+		acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 4);
+		ros::Duration(4.194392 + 0.05).sleep();
+		msg_lrf.flag = true;
+		msg_lrf.TZ = 2;
 		pub_lrf.publish(msg_lrf);
 	}
-	else;
+	if(msg.leave2 && TZ == 3)
+	{
+		acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 4);
+		ros::Duration(4.194392 + 0.05).sleep();
+		msg_lrf.flag = true;
+		msg_lrf.TZ = 3;
+		pub_lrf.publish(msg_lrf);
+	}
 }
 void acc_t_cb(const accel_decel::result& msg)
 {
