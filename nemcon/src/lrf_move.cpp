@@ -3,6 +3,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <accel_decel/result.h>
 #include <nemcon/lrf_flag.h>
+#include <std_msgs/Int8.h>
 
 void lrf_cb(const geometry_msgs::PoseStamped& msg);
 void flag_cb(const nemcon::lrf_flag& msg);
@@ -20,8 +21,10 @@ float offsset = 0.0f;
 
 accel_decel::result msg_acc;
 nemcon::pid_param msg_pid_param;
+std_msgs::Int8 msg_receive;
 ros::Publisher pub_tar_dis;
 ros::Publisher pub_acc;
+ros::Publisher pub_receiver;
 
 int main(int argc, char **argv)
 {
@@ -35,6 +38,7 @@ int main(int argc, char **argv)
 
 	pub_tar_dis = nh.advertise<nemcon::pid_param>("pid_param", 1000);
 	pub_acc = nh.advertise<accel_decel::result>("accel_decel/result", 1000);
+	pub_receive = nh.advertise<std_msgs::Int8>("Throw_on", 1000);
 
 	msg_pid_param.pattern = 1;
 	msg_pid_param.speed = 1;
@@ -112,6 +116,8 @@ int main(int argc, char **argv)
 		if(flag_x && flag_y)
 		{
 			flag = false;
+			msg_receive.data = -50;
+			pub_receive.publish(msg_receive);
 		}
 
 		loop_rate.sleep();
