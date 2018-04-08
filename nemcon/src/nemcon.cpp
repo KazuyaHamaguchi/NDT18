@@ -17,7 +17,6 @@ static const int pin_servo = 24;
 int pi = pigpio_start(0, 0);
 bool cb_flag = false;
 bool enc_flag = false;
-bool receive_flag = false;
 bool end = false;
 bool first = false;
 bool lrf = false;
@@ -27,7 +26,6 @@ int TZ = 0;
 
 float acc_t = 0.0f;
 
-void acc_t_cb(const accel_decel::result& msg);
 void receive_cb(const std_msgs::Int8& msg);
 void judg_cb(const std_msgs::Int8& msg);
 
@@ -101,7 +99,6 @@ int main(int argc, char **argv)
 	set_servo_pulsewidth(pi, pin_servo, 1520);	//0度
 
 	ros::Subscriber subSwitch = nh.subscribe("/switch", 1000, switch_cb);
-	ros::Subscriber sub_accel = nh.subscribe("/accel_decel/result", 1000, acc_t_cb);
 	ros::Subscriber sub_receive = nh.subscribe("Throw_on", 1000, receive_cb);
 	ros::Subscriber sub_judg = nh.subscribe("TZ_judg", 1000, judg_cb);
 
@@ -200,7 +197,7 @@ void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_
 	pub_move_param.publish(msg_acc_param);
 	pub_tar_dis.publish(msg_pid_param);
 }
-bool th = false;
+
 void receive_cb(const std_msgs::Int8& msg)
 {
 	if(msg.data == -40)	//CRからの受け取りに成功
@@ -212,33 +209,60 @@ void receive_cb(const std_msgs::Int8& msg)
 	{
 		msg_pid_param.pattern = 3;
 		pub_tar_dis.publish(msg_pid_param);
+		if(!receive)
+		{
+			receive = true;
+			msg_throw.data = 100;
+			pub_throw.publish(msg_throw);
+		}
 	}
 	if(msg.data == -42)
 	{
-		msg_lrf.flag = false;
-		pub_lrf.publish(msg_lrf);
-		set_servo_pulsewidth(pi, pin_servo, 950);	//90度
-		ros::Duration(1).sleep();
-    if(TZ == 1)
-    {
-		  msg_throw.data = 1;
-		  pub_throw.publish(msg_throw);
-    }
-    if(TZ == 2)
-    {
-      msg_throw.data = 11;
-      pub_throw.publish(msg_throw);
-    }
+		if(receive)
+		{
+			msg_lrf.flag = false;
+			pub_lrf.publish(msg_lrf);
+			set_servo_pulsewidth(pi, pin_servo, 950);	//90度
+			ros::Duration(1).sleep();
+			if(TZ == 1)
+			{
+				msg_throw.data = 1;
+				pub_throw.publish(msg_throw);
+			}
+			if(TZ == 2)
+			{
+				msg_throw.data = 11;
+				pub_throw.publish(msg_throw);
+			}
+			if(TZ == 3)
+			{
+				msg_throw.data = 111;
+				pub_throw.publish(msg_throw);
+			}
+		}
+		else
+		{
+			receive = false;
+		}
 	}
 	if(msg.data == -1)
 	{
-    if(!th)
-    {
-		  set_servo_pulsewidth(pi, pin_servo, 1520);
-		  acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 2);
-      th = true;
-    }
+		set_servo_pulsewidth(pi, pin_servo, 1520);
+		acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 2);
 	}
+
+	if(msg.data == -11)
+	{
+		set_servo_pulsewidth(pi, pin_servo, 1520);
+		acc_move(0, 1, 0, 0.5, 1.3, -1, 6.4, 2);
+	}
+
+	if(msg.data == -111)
+	{
+		set_servo_pulsewidth(pi, pin_servo, 1520);
+		acc_move(0, 1, 0, 0.5, 4, -1, 6.4, 2);
+	}
+
 	if(msg.data == -100)
 	{
 		msg_throw.data = 40;
@@ -249,19 +273,15 @@ void receive_cb(const std_msgs::Int8& msg)
 		msg_throw.data = 52;
 		pub_throw.publish(msg_throw);
 	}
-	/*if(msg.data == -10)
-	{
-		receive = true;
-	}*/
-	else;
 }
+
 void judg_cb(const std_msgs::Int8& msg)
 {
 	if(msg.data == 1)	//1回目にCRが離れた
 	{
 		if(!first)	//1回だけTZ1
 		{
-      TZ = 1;
+			TZ = 1;
 			msg_throw.data = 41;
 			pub_throw.publish(msg_throw);
 			acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 4);
@@ -277,28 +297,28 @@ void judg_cb(const std_msgs::Int8& msg)
 			pub_throw.publish(msg_throw);
 		}
 	}
-	else if(msg.data == 2)	//TZ1と判断
+	if(msg.data == 2)	//TZ1と判断
 	{
-    ROS_INFO("TZ = 1");
+		ROS_INFO("TZ = 1");
 		TZ = 1;
 		msg_throw.data = 51;
 		pub_throw.publish(msg_throw);
 	}
-	else if(msg.data == 3)	//TZ2と判断
+	if(msg.data == 3)	//TZ2と判断
 	{
 		TZ = 2;
 		msg_throw.data = 51;
 		pub_throw.publish(msg_throw);
 	}
-	else if(msg.data == 4)	//TZ3と判断
+	if(msg.data == 4)	//TZ3と判断
 	{
 		TZ = 3;
 		msg_throw.data = 51;
 		pub_throw.publish(msg_throw);
 	}
-	else if(msg.data == 5)	//2回目にCRが離れてTZ1だった時
+	if(msg.data == 5)	//2回目にCRが離れてTZ1だった時
 	{
-    ROS_INFO("leave2");
+		ROS_INFO("leave2");
 		if(TZ == 1)
 		{
 			msg_throw.data = 41;
@@ -314,31 +334,26 @@ void judg_cb(const std_msgs::Int8& msg)
 		{
 			ROS_INFO("TZ2 OK!");
 			acc_move(0, 1, 0, 0.5, 1, -1, 4.4, 2);
-			ros::Duration(5 + 0.05).sleep();
-      acc_move(0, 1, 0, 0.5, 2.2, -1, 4.4, 1);
-      ros::Duration(7 + 0.05).sleep();
-      acc_move(0, 1, 0, 0.5, 2.4, -1, 6.4, 4);
-      ros::Duration(7 + 0.05).sleep();
+			ros::Duration(3.544908 + 0.05).sleep();
+			acc_move(0, 1, 0, 0.5, 2.2, -1, 4.4, 1);
+			ros::Duration(5.257948 + 0.05).sleep();
+			acc_move(0, 1, 0, 0.5, 2.4, -1, 6.4, 4);
+			ros::Duration(5.491748 + 0.05).sleep();
 			msg_lrf.flag = true;
 			msg_lrf.TZ = 2;
 			pub_lrf.publish(msg_lrf);
-      msg_throw.data = 41;
-      pub_throw.publish(msg_throw);
+			msg_throw.data = 41;
+			pub_throw.publish(msg_throw);
 		}
 		if(TZ == 3)
 		{
-			msg_throw.data = 41;
-			pub_throw.publish(msg_throw);
 			ROS_INFO("TZ3 OK!");
-			acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 4);
-			ros::Duration(4.194392 + 0.05).sleep();
+			acc_move(0, 1, 0, 0.5, 4, -1, 6.4, 4);
+			ros::Duration(10 + 0.05).sleep();
 			msg_lrf.flag = true;
-			msg_lrf.TZ = 1;
+			msg_lrf.TZ = 3;
 			pub_lrf.publish(msg_lrf);
-		}
+			msg_throw.data = 41;
+			pub_throw.publish(msg_throw);		}
 	}
-}
-void acc_t_cb(const accel_decel::result& msg)
-{
-	acc_t = msg.t;
 }
