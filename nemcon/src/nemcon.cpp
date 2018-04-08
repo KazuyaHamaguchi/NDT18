@@ -56,6 +56,8 @@ void switch_cb(const nemcon::switch_in& msg)
 			pub_throw.publish(msg_throw);
 			msg_throw.data = 43;
 			pub_throw.publish(msg_throw);
+      msg_throw.data = 4;
+      pub_throw.publish(msg_throw);
 
 			led_flash(0, 0, 2);
 			led_flash(3, 0.1, 0);
@@ -207,18 +209,18 @@ void receive_cb(const std_msgs::Int8& msg)
 		msg_throw.data = 50;
 		pub_throw.publish(msg_throw);
 	}
-	if(msg.data == -42)	//TR受け渡し→投射に成功
+	/*if(msg.data == -42)	//TR受け渡し→投射に成功
 	{
 		msg_throw.data = 50;
 		pub_throw.publish(msg_throw);
-	}
-	if(msg.data == -50)
+	}*/
+	if(msg.data == -42)
 	{
 		//lrf = true;
 		msg_lrf.flag = false;
 		pub_lrf.publish(msg_lrf);
-		set_servo_pulsewidth(pi, pin_servo, 300);	//90度
-		ros::Duration(1).sleep();
+		set_servo_pulsewidth(pi, pin_servo, 950);	//90度
+    ros::Duration(2).sleep();
 		msg_throw.data = 1;
 		pub_throw.publish(msg_throw);
 	}
