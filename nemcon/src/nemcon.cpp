@@ -4,7 +4,6 @@
 #include <accel_decel/param.h>
 #include <accel_decel/result.h>
 #include <geometry_msgs/PoseStamped.h>
-#include <std_msgs/Int16.h>
 #include <std_msgs/Int8.h>
 #include <nemcon/lrf_flag.h>
 #include <nemcon/TZ_judg.h>
@@ -35,7 +34,7 @@ void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_
 
 nemcon::pid_param msg_pid_param;
 accel_decel::param msg_acc_param;
-std_msgs::Int16 msg_throw;
+std_msgs::Int8 msg_throw;
 nemcon::lrf_flag msg_lrf;
 ros::Publisher pub_tar_dis;
 ros::Publisher pub_move_param;
@@ -63,7 +62,7 @@ void switch_cb(const nemcon::switch_in& msg)
 			acc_move(0, 1, 0, 0.5, 1, -1.15, 4.5, 4);	//TZ1受け渡しポイント
 			ros::Duration(3.544907 + 0.05).sleep();
 
-			msg_throw.data = 40;
+			msg_throw.data = 40;	//受け取り待機
 			pub_throw.publish(msg_throw);
 
 			cb_flag = true;
@@ -100,7 +99,7 @@ int main(int argc, char **argv)
 
 	pub_tar_dis = nh.advertise<nemcon::pid_param>("pid_param", 1000);
 	pub_move_param = nh.advertise<accel_decel::param>("accel_decel/param", 1000);
-	pub_throw = nh.advertise<std_msgs::Int16>("Throw_on_1", 1000);
+	pub_throw = nh.advertise<std_msgs::Int8>("Throw_on_1", 1000);
 	pub_lrf = nh.advertise<nemcon::lrf_flag>("lrf_flag", 1000);
 
 	ros::spin();
@@ -196,24 +195,23 @@ void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_
 
 void receive_cb(const std_msgs::Int8& msg)
 {
-	if(msg.data == -40)
+	if(msg.data == -40)	//CRからの受け取りに成功
 	{
-		msg_throw.data = 500;
+		msg_throw.data = 50;
 		pub_throw.publish(msg_throw);
 	}
-	/*if(msg.data == -10)
+	if(msg.data == -10)
 	{
-
-	}*/
+	}
 	else;
 }
 void judg_cb(const nemcon::TZ_judg& msg)
 {
-	if(msg.leave)
+	if(msg.leave)	//1回目にCRが離れた
 	{
 		msg_throw.data = 10;
 		pub_throw.publish(msg_throw);
-		if(!first)
+		if(!first)	//1回だけTZ1
 		{
 			acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 4);
 			ros::Duration(4.194392 + 0.05).sleep();
@@ -224,29 +222,29 @@ void judg_cb(const nemcon::TZ_judg& msg)
 		}
 		else
 		{
-			msg_throw.data = 502;
+			msg_throw.data = 52;
 			pub_throw.publish(msg_throw);
 		}
 	}
-	if(msg.TZ1)
+	if(msg.TZ1)	//TZ1と判断
 	{
 		TZ = 1;
-		msg_throw.data = 501;
+		msg_throw.data = 51;
 		pub_throw.publish(msg_throw);
 	}
-	if(msg.TZ1)
+	if(msg.TZ2)	//TZ2と判断
 	{
 		TZ = 2;
-		msg_throw.data = 501;
+		msg_throw.data = 51;
 		pub_throw.publish(msg_throw);
 	}
-	if(msg.TZ1)
+	if(msg.TZ3)	//TZ3と判断
 	{
 		TZ = 3;
-		msg_throw.data = 501;
+		msg_throw.data = 51;
 		pub_throw.publish(msg_throw);
 	}
-	if(msg.leave2 && TZ == 1)
+	if(msg.leave2 && TZ == 1)	//2回目にCRが離れてTZ1だった時
 	{
 		acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 4);
 		ros::Duration(4.194392 + 0.05).sleep();
@@ -255,7 +253,7 @@ void judg_cb(const nemcon::TZ_judg& msg)
 		pub_lrf.publish(msg_lrf);
 
 	}
-	if(msg.leave2 && TZ == 2)
+	if(msg.leave2 && TZ == 2)	//2回目にCRが離れてTZ2だった時
 	{
 		acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 4);
 		ros::Duration(4.194392 + 0.05).sleep();
@@ -263,7 +261,7 @@ void judg_cb(const nemcon::TZ_judg& msg)
 		msg_lrf.TZ = 2;
 		pub_lrf.publish(msg_lrf);
 	}
-	if(msg.leave2 && TZ == 3)
+	if(msg.leave2 && TZ == 3)	//2回目にCRが離れてTZ3だった時
 	{
 		acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 4);
 		ros::Duration(4.194392 + 0.05).sleep();
