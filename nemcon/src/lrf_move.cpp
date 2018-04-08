@@ -118,7 +118,7 @@ int main(int argc, char **argv)
 					msg_receive.data = -50;
 					pub_receive.publish(msg_receive);
 					flag = false;
-          flag_x = false;
+					flag_x = false;
 					flag_y = true;
 				}
 			}
