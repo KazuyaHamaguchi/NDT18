@@ -420,6 +420,13 @@ int main(int argc, char **argv)
 					break;
 			}
 		}
+		if(pattern == 3)
+		{
+			speedFR = 8080;
+			speedFL = 8080;
+			speedRL = 8080;
+			speedRR = 8080;
+		}
 
 		msg_m.motor_FR = speedFR;
 		msg_m.motor_FL = speedFL;
