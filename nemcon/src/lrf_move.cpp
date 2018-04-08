@@ -19,6 +19,8 @@ float lrf_z = 0.0f;
 
 float offsset = 0.0f;
 
+float t = 0.0f;
+
 ros::Time current_time, last_time;
 
 accel_decel::result msg_acc;
