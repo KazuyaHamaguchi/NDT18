@@ -284,14 +284,39 @@ void judg_cb(const nemcon::TZ_judg& msg)
 	}
 	if(msg.leave2)	//2回目にCRが離れてTZ1だった時
 	{
-		msg_throw.data = 41;
-		pub_throw.publish(msg_throw);
-		ROS_INFO("TZ1 OK!");
-		acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 4);
-		ros::Duration(4.194392 + 0.05).sleep();
-		msg_lrf.flag = true;
-		msg_lrf.TZ = 1;
-		pub_lrf.publish(msg_lrf);
+		if(TZ == 1)
+		{
+			msg_throw.data = 41;
+			pub_throw.publish(msg_throw);
+			ROS_INFO("TZ1 OK!");
+			acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 4);
+			ros::Duration(4.194392 + 0.05).sleep();
+			msg_lrf.flag = true;
+			msg_lrf.TZ = 1;
+			pub_lrf.publish(msg_lrf);
+		}
+		if(TZ == 2)
+		{
+			msg_throw.data = 41;
+			pub_throw.publish(msg_throw);
+			ROS_INFO("TZ2 OK!");
+			acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 4);
+			ros::Duration(4.194392 + 0.05).sleep();
+			msg_lrf.flag = true;
+			msg_lrf.TZ = 1;
+			pub_lrf.publish(msg_lrf);
+		}
+		if(TZ == 3)
+		{
+			msg_throw.data = 41;
+			pub_throw.publish(msg_throw);
+			ROS_INFO("TZ3 OK!");
+			acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 4);
+			ros::Duration(4.194392 + 0.05).sleep();
+			msg_lrf.flag = true;
+			msg_lrf.TZ = 1;
+			pub_lrf.publish(msg_lrf);
+		}
 	}
 }
 void acc_t_cb(const accel_decel::result& msg)
