@@ -194,8 +194,8 @@ void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_
 	msg_acc_param.Xall = Xall;
 	msg_pid_param.tar_x = tar_x;
 	msg_pid_param.tar_y = tar_y;
- 	msg_pid_param.front = front;
- 	msg_pid_param.pattern = 0;
+	msg_pid_param.front = front;
+	msg_pid_param.pattern = 0;
 
 	pub_move_param.publish(msg_acc_param);
 	pub_tar_dis.publish(msg_pid_param);
@@ -214,13 +214,18 @@ void receive_cb(const std_msgs::Int8& msg)
 		msg_throw.data = 50;
 		pub_throw.publish(msg_throw);
 	}*/
+	if(msg.data == -50)
+	{
+		msg_pid_param.pattern = 3;
+		pub_tar_dis.publish(msg_pid_param);
+	}
 	if(msg.data == -42)
 	{
 		//lrf = true;
 		msg_lrf.flag = false;
 		pub_lrf.publish(msg_lrf);
 		set_servo_pulsewidth(pi, pin_servo, 950);	//90度
-    ros::Duration(2).sleep();
+		ros::Duration(1).sleep();
 		msg_throw.data = 1;
 		pub_throw.publish(msg_throw);
 	}
