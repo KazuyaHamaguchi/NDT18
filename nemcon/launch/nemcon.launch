@@ -3,6 +3,7 @@
   <include file="$(find nemcon)/launch/arduino.launch"/>
   <include file="$(find nemcon)/launch/pid.launch"/>
   <include file="$(find laser2location)/launch/laser.launch"/>
+  <node name="tz_judg" pkg="nemcon" type="tz_judg" output="screen" />
   <node name="switch" pkg="nemcon" type="switch" />
   
   <node name="nemcon" pkg="nemcon" type="nemcon" output="screen" />
