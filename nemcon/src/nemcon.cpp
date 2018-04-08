@@ -54,8 +54,6 @@ void switch_cb(const nemcon::switch_in& msg)
 			pub_throw.publish(msg_throw);
 			msg_throw.data = 4;
 			pub_throw.publish(msg_throw);
-			msg_throw.data = 30;
-			pub_throw.publish(msg_throw);
 
 			led_flash(0, 0, 2);
 			led_flash(3, 0.1, 0);
@@ -65,6 +63,8 @@ void switch_cb(const nemcon::switch_in& msg)
 			ros::Duration(3.632449 + 0.05).sleep();
 			acc_move(0, 1, 0, 0.5, 4.8, -1.1, 0, 1);	//TZ1横
 			ros::Duration(7.941593 + 0.05).sleep();
+      msg_throw.data = 30;
+      pub_throw.publish(msg_throw);
 			acc_move(0, 1, 0, 0.5, 1, -1.15, 4.5, 4);	//TZ1受け渡しポイント
 			ros::Duration(3.544907 + 0.05).sleep();
 
@@ -209,42 +209,29 @@ void receive_cb(const std_msgs::Int8& msg)
 	{
 		msg_pid_param.pattern = 3;
 		pub_tar_dis.publish(msg_pid_param);
-		if(!receive)
-		{
-			receive = true;
-			msg_throw.data = 100;
-			pub_throw.publish(msg_throw);
-		}
-	}
+  }
 	if(msg.data == -42)
 	{
-		if(receive)
+		msg_lrf.flag = false;
+		pub_lrf.publish(msg_lrf);
+		set_servo_pulsewidth(pi, pin_servo, 950);	//90度
+		ros::Duration(1).sleep();
+		if(TZ == 1)
 		{
-			msg_lrf.flag = false;
-			pub_lrf.publish(msg_lrf);
-			set_servo_pulsewidth(pi, pin_servo, 950);	//90度
-			ros::Duration(1).sleep();
-			if(TZ == 1)
-			{
-				msg_throw.data = 1;
-				pub_throw.publish(msg_throw);
-			}
-			if(TZ == 2)
-			{
-				msg_throw.data = 11;
-				pub_throw.publish(msg_throw);
-			}
-			if(TZ == 3)
-			{
-				msg_throw.data = 111;
-				pub_throw.publish(msg_throw);
-			}
+			msg_throw.data = 1;
+			pub_throw.publish(msg_throw);
 		}
-		else
+		if(TZ == 2)
 		{
-			receive = false;
+			msg_throw.data = 11;
+			pub_throw.publish(msg_throw);
 		}
-	}
+		if(TZ == 3)
+		{
+			msg_throw.data = 111;
+			pub_throw.publish(msg_throw);
+		}
+  }
 	if(msg.data == -1)
 	{
 		set_servo_pulsewidth(pi, pin_servo, 1520);
@@ -260,7 +247,7 @@ void receive_cb(const std_msgs::Int8& msg)
 	if(msg.data == -111)
 	{
 		set_servo_pulsewidth(pi, pin_servo, 1520);
-		acc_move(0, 1, 0, 0.5, 4, -1, 6.4, 2);
+		acc_move(0, 1, 0, 0.5, 4.8, -1, 6.4, 2);
 	}
 
 	if(msg.data == -100)
@@ -348,8 +335,8 @@ void judg_cb(const std_msgs::Int8& msg)
 		if(TZ == 3)
 		{
 			ROS_INFO("TZ3 OK!");
-			acc_move(0, 1, 0, 0.5, 4, -1, 6.4, 4);
-			ros::Duration(10 + 0.05).sleep();
+			acc_move(0, 1, 0, 0.5, 4.7, -1, 6.4, 4);
+			ros::Duration(7.841593 + 0.05).sleep();
 			msg_lrf.flag = true;
 			msg_lrf.TZ = 3;
 			pub_lrf.publish(msg_lrf);
