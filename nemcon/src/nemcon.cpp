@@ -50,7 +50,11 @@ void switch_cb(const nemcon::switch_in& msg)
 	{
 		if(msg.SZ && !msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
 		{
+			msg_throw.data = 3;
+			pub_throw.publish(msg_throw);
 			msg_throw.data = 30;
+			pub_throw.publish(msg_throw);
+			msg_throw.data = 43;
 			pub_throw.publish(msg_throw);
 
 			led_flash(0, 0, 2);
@@ -203,11 +207,16 @@ void receive_cb(const std_msgs::Int8& msg)
 		msg_throw.data = 50;
 		pub_throw.publish(msg_throw);
 	}
+	if(msg.data == -42)	//TR受け渡し→投射に成功
+	{
+		msg_throw.data = 50;
+		pub_throw.publish(msg_throw);
+	}
 	if(msg.data == -50)
 	{
 		//lrf = true;
-    msg_lrf.flag = false;
-    pub_lrf.publish(msg_lrf);
+		msg_lrf.flag = false;
+		pub_lrf.publish(msg_lrf);
 		set_servo_pulsewidth(pi, pin_servo, 300);	//90度
 		ros::Duration(1).sleep();
 		msg_throw.data = 1;
@@ -223,7 +232,7 @@ void judg_cb(const nemcon::TZ_judg& msg)
 {
 	if(msg.leave)	//1回目にCRが離れた
 	{
-		msg_throw.data = 10;
+		msg_throw.data = 41;
 		pub_throw.publish(msg_throw);
 		if(!first)	//1回だけTZ1
 		{
