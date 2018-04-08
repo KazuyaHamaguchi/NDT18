@@ -56,6 +56,24 @@ int main(int argc, char **argv)
 			}
 		}
 
+		if(leave2)
+		{
+			if(!objR && !objT && !objL)
+			{
+				if(t >= 0.5)
+				{
+					ROS_INFO("leave2");
+					msg_judg.leave2 = true;
+					pub_judg.publish(msg_judg);
+					leave2 = false;
+				}
+			}
+			else
+			{
+				t = 0.0f;
+			}
+		}
+
 		if(judg)
 		{
 			if(objR && objT && !objL)
@@ -115,6 +133,11 @@ void throw_cb(const std_msgs::Int16& msg)
 		leave = true;
 	}
 	if(msg.data == 501)
+	{
+		ROS_INFO("msg_leave2");
+		judg = true;
+	}
+	if(msg.data == 502)
 	{
 		ROS_INFO("msg_judg");
 		judg = true;
