@@ -206,7 +206,9 @@ void receive_cb(const std_msgs::Int8& msg)
 	if(msg.data == -50)
 	{
 		//lrf = true;
-		set_servo_pulsewidth(pi, pin_servo, 700);	//90度
+    msg_lrf.flag = false;
+    pub_lrf.publish(msg_lrf);
+		set_servo_pulsewidth(pi, pin_servo, 300);	//90度
 		ros::Duration(1).sleep();
 		msg_throw.data = 1;
 		pub_throw.publish(msg_throw);
