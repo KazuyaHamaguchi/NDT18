@@ -19,6 +19,8 @@ float lrf_z = 0.0f;
 
 float offsset = 0.0f;
 
+ros::Time current_time, last_time;
+
 accel_decel::result msg_acc;
 nemcon::pid_param msg_pid_param;
 std_msgs::Int8 msg_receive;
@@ -46,6 +48,9 @@ int main(int argc, char **argv)
 
 	while(ros::ok())
 	{
+		current_time = ros::Time::now();
+		t += (current_time - last_time).toSec();
+
 		if(flag)
 		{
 			if(lrf_x > 0.01 + offsset && !flag_x)
@@ -106,16 +111,22 @@ int main(int argc, char **argv)
 				msg_acc.V = 0;
 				pub_tar_dis.publish(msg_pid_param);
 				pub_acc.publish(msg_acc);
-				msg_receive.data = -50;
-				pub_receive.publish(msg_receive);
-				flag = false;
-				flag_y = true;
+				if(t >= 1)
+				{
+					msg_receive.data = -50;
+					pub_receive.publish(msg_receive);
+					flag = false;
+					flag_y = true;
+				}
 			}
 			else
 			{
 			  flag_y = false;
+			  t = 0.0f;
 			}
 		}
+
+		last_time = current_time;
 
 		loop_rate.sleep();
 		ros::spinOnce();
