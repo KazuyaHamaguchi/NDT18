@@ -24,7 +24,7 @@ nemcon::pid_param msg_pid_param;
 std_msgs::Int8 msg_receive;
 ros::Publisher pub_tar_dis;
 ros::Publisher pub_acc;
-ros::Publisher pub_receiver;
+ros::Publisher pub_receive;
 
 int main(int argc, char **argv)
 {
