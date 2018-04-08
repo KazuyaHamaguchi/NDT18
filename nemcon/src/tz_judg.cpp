@@ -34,7 +34,6 @@ int main(int argc, char **argv)
 	ros::Subscriber sub_throw = nh.subscribe("Throw_on_1", 1000, throw_cb);
 	ros::Subscriber sub_obj = nh.subscribe("object_in", 1000, object_cb);
 	pub_judg = nh.advertise<std_msgs::Int8>("TZ_judg", 1000);
-	ros::Subscriber sub_throw = nh.subscribe("Throw_on_1", 1000, throw_cb);
 	pub_throw = nh.advertise<std_msgs::Int8>("Throw_on", 1000);
 
 	while(ros::ok())
