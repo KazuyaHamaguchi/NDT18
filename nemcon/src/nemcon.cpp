@@ -20,6 +20,8 @@ bool enc_flag = false;
 bool receive_flag = false;
 bool end = false;
 bool first = false;
+bool lrf = false;
+bool receive = false;
 
 int TZ = 0;
 
@@ -195,14 +197,24 @@ void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_
 
 void receive_cb(const std_msgs::Int8& msg)
 {
+
 	if(msg.data == -40)	//CRからの受け取りに成功
 	{
 		msg_throw.data = 50;
 		pub_throw.publish(msg_throw);
 	}
-	if(msg.data == -10)
+	if(msg.data == -50)
 	{
+		//lrf = true;
+		set_servo_pulsewidth(pi, pin_servo, 700);	//90度
+		ros::Duration(1).sleep();
+		msg_throw.data = 1;
+		pub_throw.publish(msg_throw);
 	}
+	/*if(msg.data == -10)
+	{
+		receive = true;
+	}*/
 	else;
 }
 void judg_cb(const nemcon::TZ_judg& msg)
