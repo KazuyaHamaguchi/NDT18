@@ -42,7 +42,7 @@ int main(int argc, char **argv)
 		{
 			if(!objR && !objT && !objL)
 			{
-				if(t >= 0.5)
+				if(t >= 1.5)
 				{
 					ROS_INFO("leave");
 					msg_judg.leave = true;
@@ -60,7 +60,7 @@ int main(int argc, char **argv)
 		{
 			if(!objR && !objT && !objL)
 			{
-				if(t >= 0.5)
+				if(t >= 1.5)
 				{
 					ROS_INFO("leave2");
 					msg_judg.leave2 = true;
@@ -127,17 +127,17 @@ void object_cb(const nemcon::object_in& msg)
 
 void throw_cb(const std_msgs::Int8& msg)
 {
-	if(msg.data == 51)
+	if(msg.data == 50)
 	{
 		ROS_INFO("msg_leave");
 		leave = true;
 	}
-	if(msg.data == 52)
+	if(msg.data == 51)
 	{
 		ROS_INFO("msg_leave2");
 		judg = true;
 	}
-	if(msg.data == 53)
+	if(msg.data == 52)
 	{
 		ROS_INFO("msg_judg");
 		judg = true;
