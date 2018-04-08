@@ -135,7 +135,7 @@ void throw_cb(const std_msgs::Int8& msg)
 	if(msg.data == 51)
 	{
 		ROS_INFO("msg_leave2");
-		judg = true;
+		leave2 = true;
 	}
 	if(msg.data == 52)
 	{
