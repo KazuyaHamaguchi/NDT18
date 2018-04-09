@@ -124,11 +124,11 @@ void lrf_cb(const std_msgs::Int8& msg)
 		msg_pid_param.pattern = 3;
 		pub_tar_dis.publish(msg_pid_param);
 		lrf = true;
-		if(!throw_on)
+		/*if(!throw_on)
 		{
 			msg_judg.data = 100;
 			pub_judg.publish(msg_judg);
-		}
+		}*/
 	}
 	else
 	{
@@ -146,8 +146,8 @@ void receive_cb(const std_msgs::Int8& msg)
 
 	if(msg.data == -41)
 	{
-		if(lrf)
-		{
+		/*if(lrf)
+		{*/
 			msg_lrf.flag = false;
 			pub_lrf.publish(msg_lrf);
 			set_servo_pulsewidth(pi, pin_servo, 950);	//90度
@@ -168,27 +168,30 @@ void receive_cb(const std_msgs::Int8& msg)
 				pub_throw.publish(msg_throw);
 			}
 			throw_on = true;
-		}
+		/*}
 		else
 		{
 			throw_on = false;
-		}
+		}*/
 	}
 
 	if(msg.data == -1)
 	{
 		set_servo_pulsewidth(pi, pin_servo, 1520);
 		acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 2);
+    current_TZ = TZ;
 	}
 	if(msg.data == -11)
 	{
 		set_servo_pulsewidth(pi, pin_servo, 1520);
 		acc_move(0, 1, 0, 0.5, 1.3, -1, 6.4, 2);
+    current_TZ = TZ;
 	}
 	if(msg.data == -111)
 	{
 		set_servo_pulsewidth(pi, pin_servo, 1520);
 		acc_move(0, 1, 0, 0.5, 4.8, -1, 6.4, 2);
+    current_TZ = TZ;
 	}
 
 	if(msg.data == -100)
@@ -294,7 +297,6 @@ void judg_cb(const std_msgs::Int8& msg)
 			pub_judg.publish(msg_judg);
 		}
 	}
-	current_TZ = TZ;
 }
 
 void led_flash(int num, float time, int color)
