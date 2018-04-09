@@ -241,7 +241,7 @@ void judg_cb(const std_msgs::Int8& msg)
 	if(msg.data == 5)	//2回目にCRが離れてTZ1だった時
 	{
 		ROS_INFO("leave2");
-		if(TZ == 1 && current_TZ == 1)
+		if(TZ == 1 && pre_TZ == 1)
 		{
 			msg_throw.data = 41;
 			pub_throw.publish(msg_throw);
@@ -252,7 +252,7 @@ void judg_cb(const std_msgs::Int8& msg)
 			msg_lrf.TZ = 1;
 			pub_lrf.publish(msg_lrf);
 		}
-		else if(TZ == 2 && current_TZ == 1)
+		else if(TZ == 2 && pre_TZ == 1)
 		{
 			ROS_INFO("TZ2 OK!");
 			acc_move(0, 1, 0, 0.5, 1, -1, 4.4, 2);
@@ -267,7 +267,7 @@ void judg_cb(const std_msgs::Int8& msg)
 			msg_throw.data = 41;
 			pub_throw.publish(msg_throw);
 		}
-		else if(TZ == 3 && (current_TZ == 2 || current_TZ == 3))
+		else if(TZ == 3 && (pre_TZ == 2 || pre_TZ == 3))
 		{
 			ROS_INFO("TZ3 OK!");
 			acc_move(0, 1, 0, 0.5, 4.7, -1, 6.4, 4);
