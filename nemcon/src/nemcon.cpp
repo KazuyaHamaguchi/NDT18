@@ -236,7 +236,7 @@ void judg_cb(const std_msgs::Int8& msg)
 		set_servo_pulsewidth(pi, pin_servo, 1520);
 	}
 
-	ROS_INFO("current_TZ: %d, TZ: %d", current_TZ, TZ);
+	ROS_INFO("pre_TZ: %d, TZ: %d", pre_TZ, TZ);
 
 	if(msg.data == 5)	//2回目にCRが離れてTZ1だった時
 	{
