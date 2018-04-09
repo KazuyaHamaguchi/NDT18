@@ -19,9 +19,10 @@ void object_cb(const nemcon::object_in& msg);
 void throw_cb(const std_msgs::Int8& msg);
 
 ros::Publisher pub_judg;
-ros::Publisher pub_throw;
 std_msgs::Int8 msg_judg;
+ros::Publisher pub_throw;
 std_msgs::Int8 msg_throw;
+
 
 int main(int argc, char **argv)
 {
@@ -31,8 +32,8 @@ int main(int argc, char **argv)
 	last_time = ros::Time::now();
 	ros::Rate loop_rate(40);
 
-	ros::Subscriber sub_throw = nh.subscribe("Throw_on_1", 1000, throw_cb);
 	ros::Subscriber sub_obj = nh.subscribe("object_in", 1000, object_cb);
+	ros::Subscriber sub_throw = nh.subscribe("judg_call", 1000, throw_cb);
 	pub_judg = nh.advertise<std_msgs::Int8>("TZ_judg", 1000);
 	pub_throw = nh.advertise<std_msgs::Int8>("Throw_on", 1000);
 
@@ -153,7 +154,7 @@ void throw_cb(const std_msgs::Int8& msg)
 	}
 	if(msg.data == 100)
 	{
-		msg_throw.data = -42;
+		msg_throw.data = -41;
 		pub_throw.publish(msg_throw);
 	}
 }
