@@ -25,10 +25,10 @@ ros::Time current_time, last_time;
 
 accel_decel::result msg_acc;
 nemcon::pid_param msg_pid_param;
-std_msgs::Int8 msg_receive;
+std_msgs::Int8 msg_lrf;
 ros::Publisher pub_tar_dis;
 ros::Publisher pub_acc;
-ros::Publisher pub_receive;
+ros::Publisher pub_lrf;
 
 int main(int argc, char **argv)
 {
@@ -42,7 +42,7 @@ int main(int argc, char **argv)
 
 	pub_tar_dis = nh.advertise<nemcon::pid_param>("pid_param", 1000);
 	pub_acc = nh.advertise<accel_decel::result>("accel_decel/result", 1000);
-	pub_receive = nh.advertise<std_msgs::Int8>("Throw_on", 1000);
+	pub_lrf = nh.advertise<std_msgs::Int8>("lrf", 1000);
 
 	msg_pid_param.pattern = 1;
 	msg_pid_param.speed = 1;
@@ -115,8 +115,8 @@ int main(int argc, char **argv)
 				pub_acc.publish(msg_acc);
 				if(t >= 2)
 				{
-					msg_receive.data = -50;
-					pub_receive.publish(msg_receive);
+					msg_lrf.data = -50;
+					pub_lrf.publish(msg_lrf);
 					flag = false;
 					flag_x = false;
 					flag_y = true;
