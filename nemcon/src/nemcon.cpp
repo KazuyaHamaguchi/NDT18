@@ -23,7 +23,7 @@ bool lrf = false;
 bool throw_on = false;
 
 int TZ = 0;
-int current_TZ = 0;
+int pre_TZ = 0;
 
 float acc_t = 0.0f;
 
@@ -123,16 +123,6 @@ void lrf_cb(const std_msgs::Int8& msg)
 	{
 		msg_pid_param.pattern = 3;
 		pub_tar_dis.publish(msg_pid_param);
-		lrf = true;
-		/*if(!throw_on)
-		{
-			msg_judg.data = 100;
-			pub_judg.publish(msg_judg);
-		}*/
-	}
-	else
-	{
-		lrf = false;
 	}
 }
 
@@ -146,52 +136,43 @@ void receive_cb(const std_msgs::Int8& msg)
 
 	if(msg.data == -41)
 	{
-		/*if(lrf)
-		{*/
-			msg_lrf.flag = false;
-			pub_lrf.publish(msg_lrf);
-			set_servo_pulsewidth(pi, pin_servo, 950);	//90度
-			ros::Duration(1).sleep();
-			if(TZ == 1)
-			{
-				msg_throw.data = 1;
-				pub_throw.publish(msg_throw);
-			}
-			if(TZ == 2)
-			{
-				msg_throw.data = 11;
-				pub_throw.publish(msg_throw);
-			}
-			if(TZ == 3)
-			{
-				msg_throw.data = 111;
-				pub_throw.publish(msg_throw);
-			}
-			throw_on = true;
-		/*}
-		else
+		pub_lrf.publish(msg_lrf);
+		set_servo_pulsewidth(pi, pin_servo, 950);	//90度
+		ros::Duration(1).sleep();
+		if(TZ == 1)
 		{
-			throw_on = false;
-		}*/
+			msg_throw.data = 1;
+			pub_throw.publish(msg_throw);
+		}
+		if(TZ == 2)
+		{
+			msg_throw.data = 11;
+			pub_throw.publish(msg_throw);
+		}
+		if(TZ == 3)
+		{
+			msg_throw.data = 111;
+			pub_throw.publish(msg_throw);
+		}
 	}
 
 	if(msg.data == -1)
 	{
 		set_servo_pulsewidth(pi, pin_servo, 1520);
 		acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 2);
-    current_TZ = TZ;
+		pre_TZ = TZ;
 	}
 	if(msg.data == -11)
 	{
 		set_servo_pulsewidth(pi, pin_servo, 1520);
 		acc_move(0, 1, 0, 0.5, 1.3, -1, 6.4, 2);
-    current_TZ = TZ;
+		pre_TZ = TZ;
 	}
 	if(msg.data == -111)
 	{
 		set_servo_pulsewidth(pi, pin_servo, 1520);
 		acc_move(0, 1, 0, 0.5, 4.8, -1, 6.4, 2);
-    current_TZ = TZ;
+ 		pre_TZ = TZ;
 	}
 
 	if(msg.data == -100)
@@ -231,22 +212,28 @@ void judg_cb(const std_msgs::Int8& msg)
 
 	if(msg.data == 2)	//TZ1と判断
 	{
+		set_servo_pulsewidth(pi, pin_servo, 1400);
 		ROS_INFO("TZ = 1");
 		TZ = 1;
 		msg_judg.data = 51;
 		pub_judg.publish(msg_judg);
+		set_servo_pulsewidth(pi, pin_servo, 1520);
 	}
 	if(msg.data == 3)	//TZ2と判断
 	{
+		set_servo_pulsewidth(pi, pin_servo, 1400);
 		TZ = 2;
 		msg_judg.data = 51;
 		pub_judg.publish(msg_judg);
+		set_servo_pulsewidth(pi, pin_servo, 1520);
 	}
 	if(msg.data == 4)	//TZ3と判断
 	{
+		set_servo_pulsewidth(pi, pin_servo, 1400);
 		TZ = 3;
 		msg_judg.data = 51;
 		pub_judg.publish(msg_judg);
+		set_servo_pulsewidth(pi, pin_servo, 1520);
 	}
 
 	ROS_INFO("current_TZ: %d, TZ: %d", current_TZ, TZ);
