@@ -162,7 +162,7 @@ void mySigintHandler(int sig)
 
 int main(int argc, char **argv)
 {
-	ros::init(argc, argv, "pid_control", ros::init_options::NoSigintHandler);
+	ros::init(argc, argv, "pid_param", ros::init_options::NoSigintHandler);
 	ros::NodeHandle nh;
 	current_time = ros::Time::now();
 	last_time = ros::Time::now();
