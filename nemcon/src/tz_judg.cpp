@@ -82,7 +82,7 @@ int main(int argc, char **argv)
 		{
 			if(objR && objT && !objL)
 			{
-				if(t >= 1.5)
+				if(t >= 1.0)
 				{
 					ROS_INFO("TZ1");
 					msg_judg.data = 2;
@@ -92,7 +92,7 @@ int main(int argc, char **argv)
 			}
 			else if(!objR && objT && objL)
 			{
-				if(t >= 1.5)
+				if(t >= 1.0)
 				{
 					ROS_INFO("TZ2");
 					msg_judg.data = 3;
@@ -102,7 +102,7 @@ int main(int argc, char **argv)
 			}
 			else if(objR && !objT && objL)
 			{
-				if(t >= 1.5)
+				if(t >= 1.0)
 				{
 					ROS_INFO("TZ3");
 					msg_judg.data = 4;
