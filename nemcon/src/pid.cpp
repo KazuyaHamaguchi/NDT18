@@ -383,7 +383,7 @@ int main(int argc, char **argv)
 		ROS_INFO("Parameter lrfv_P is not defind. Now, it is set default value.");
 		local_nh.setParam("lrfv_P", 0);
 	}
-	if(!local_nh.getParam("lrfv_P", vs_P))
+	if(!local_nh.getParam("lrfv_P", lrfv_P))
 	{
 		ROS_ERROR("parameter front is invalid.");
 		return -1;
@@ -407,7 +407,7 @@ int main(int argc, char **argv)
 		ROS_INFO("Parameter lrfv_D is not defind. Now, it is set default value.");
 		local_nh.setParam("lrfv_D", 0);
 	}
-	if(!local_nh.getParam("lrfv_D", vs_D))
+	if(!local_nh.getParam("lrfv_D", lrfv_D))
 	{
 		ROS_ERROR("parameter front is invalid.");
 		return -1;
