@@ -8,11 +8,11 @@
     <param name="enc_P" value="10.0" />
     <param name="enc_I" value="2.00"/>
     <param name="enc_D" value= "0.02" />
-    <param name="v_P" value="77.00" />
-    <param name="v_I" value="240.0" />
-    <param name="v_D" value="0.005" />
-    <param name="vs_P" value="100.0" />
-    <param name="vs_I" value="500.0" />
-    <param name="vs_D" value="0.020" />
+    <param name="v_P" value="210.00" />
+    <param name="v_I" value="10.0" />
+    <param name="v_D" value="0.009" />
+    <param name="vs_P" value="210.0" />
+    <param name="vs_I" value="10.0" />
+    <param name="vs_D" value="0.009" />
   </node>
 </launch>

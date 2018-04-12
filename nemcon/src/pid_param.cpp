@@ -69,6 +69,10 @@ float clamp(float input, float min, float max)
 	{
 		output = -2;
 	}
+  if(input <= 0.0)
+  {
+    output = 8080;
+  }
 	return output;
 }
 
@@ -77,8 +81,8 @@ void param_cb(const nemcon::pid_param& msg)
 	speed = msg.speed;
 	pattern = msg.pattern;
 	front = msg.front;
-	tar_x = msg.tar_x;
-	tar_y = msg.tar_y;
+	tar_x = 0.0f;
+	tar_y = 0.0f;
 }
 
 void enc_cb(const deadreckoning::enc& msg)
@@ -129,6 +133,8 @@ void pid_v(const accel_decel::result& msg)
 	error_x = msg.V - abs(enc_vx);
 	error_y = msg.V - abs(enc_vy);
 
+  printf("%f\n", abs(enc_vy));
+
 	integral_x += (error_x + lasterror_x) / 2.0 * dt;
 	integral_y += (error_y + lasterror_y) / 2.0 * dt;
 
@@ -142,6 +148,7 @@ void pid_v(const accel_decel::result& msg)
 		speed_X= vs_P * error_x + vs_I * integral_x + vs_D * (error_x - lasterror_x) / dt;
 		speed_Y = vs_P * error_y + vs_I * integral_y + vs_D * (error_y - lasterror_y) / dt;
 	}
+  //printf("%f\n", speed_Y);
 
 	lasterror_x = error_x;
 	lasterror_y = error_y;
@@ -372,10 +379,10 @@ int main(int argc, char **argv)
 			switch(front)
 			{
 				case 1:	//前
-					speedFR = clamp(nearbyint( speed_Y - turn_imu + turn_enc_x), 0, 20);
-					speedFL = clamp(nearbyint( speed_Y + turn_imu - turn_enc_x), 0, 20);
-					speedRL = clamp(nearbyint( speed_Y + turn_imu + turn_enc_x), 0, 20);
-					speedRR = clamp(nearbyint( speed_Y - turn_imu - turn_enc_x), 0, 20);
+					speedFR = clamp(nearbyint( speed_Y - turn_imu + turn_enc_x), 0, 60);
+					speedFL = clamp(nearbyint( speed_Y + turn_imu - turn_enc_x), 0, 60);
+					speedRL = clamp(nearbyint( speed_Y + turn_imu + turn_enc_x), 0, 60);
+					speedRR = clamp(nearbyint( speed_Y - turn_imu - turn_enc_x), 0, 60);
 					break;
 
 				case 2:	//右

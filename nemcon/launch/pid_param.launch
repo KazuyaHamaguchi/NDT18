@@ -3,18 +3,18 @@
   <node name="pid_param" pkg="nemcon" type="pid_param" output="screen">
   <param name="front" value= "1"/>
     <!-- 前：1，右：2，後：3，左：4 -->
-    <param name="pattern" value= "1"/>
+    <param name="pattern" value= "0"/>
     <param name="imu_P" value= "30"/>
     <param name="imu_I" value= "5.5"/>
     <param name="imu_D" value="0.03" />
     <param name="enc_P" value="10.0" />
     <param name="enc_I" value="2.00"/>
-    <param name="enc_D" value= "0.02" />
-    <param name="v_P" value="77.00" />
-    <param name="v_I" value="240.0" />
-    <param name="v_D" value="0.005" />
+    <param name="enc_D" value= "0.0" />
+    <param name="v_P" value="210.00" />
+    <param name="v_I" value="10.0" />
+    <param name="v_D" value="0.009" />
     <param name="vs_P" value="100.0" />
-    <param name="vs_I" value="500.0" />
+    <param name="vs_I" value="30.0" />
     <param name="vs_D" value="0.020" />
   </node>
 </launch>

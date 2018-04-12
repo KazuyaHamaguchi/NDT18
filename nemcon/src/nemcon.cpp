@@ -88,14 +88,14 @@ void switch_cb(const nemcon::switch_in& msg)
 			led_flash(3, 0.1, 0);
 			led_flash(-1, 0, 0);
 
-			acc_move(0, 1, 0, 0.5, 1.05, 0, 0, 4);	//SZ横
-			ros::Duration(3.632449 + 0.05).sleep();
-			acc_move(0, 1, 0, 0.5, 4.8, -1.05, 0, 1);	//TZ1横
-			ros::Duration(7.941593 + 0.05).sleep();
+			//acc_move(0, 1, 0, 0.5, 1.05, 0, 0, 4);	//SZ横
+			//ros::Duration(3.632449 + 0.05).sleep();
+			acc_move(0, 3, 0, 2, 4.5, -1.15, 0, 1);	//TZ1横
+			ros::Duration(3.759942 + 0.05).sleep();
 			msg_throw.data = 30;
 			pub_throw.publish(msg_throw);
-			acc_move(0, 1, 0, 0.5, 1, -1.15, 4.42, 4);	//TZ1受け渡しポイント
-			ros::Duration(3.544907 + 0.05).sleep();
+			acc_move(0, 3, 0, 2, 1, -1.05, 4.42, 4);	//TZ1受け渡しポイント
+			ros::Duration(1.772454 + 0.05).sleep();
 
 			msg_throw.data = 40;	//受け取り待機
 			pub_throw.publish(msg_throw);
@@ -160,19 +160,19 @@ void receive_cb(const std_msgs::Int8& msg)
 	if(msg.data == -1)
 	{
 		set_servo_pulsewidth(pi, pin_servo, 1520);
-		acc_move(0, 1, 0, 0.5, 1.3, -1, 4.5, 2);
+		acc_move(0, 3, 0, 2, 1.3, -1, 4.5, 2);
 		pre_TZ = TZ;
 	}
 	if(msg.data == -11)
 	{
 		set_servo_pulsewidth(pi, pin_servo, 1520);
-		acc_move(0, 1, 0, 0.5, 1.3, -1, 6.5, 2);
+		acc_move(0, 3, 0, 2, 1.3, -1, 6.5, 2);
 		pre_TZ = TZ;
 	}
 	if(msg.data == -111)
 	{
 		set_servo_pulsewidth(pi, pin_servo, 1520);
-		acc_move(0, 2, 0, 0.5, 4.8, -1, 6.4, 2);
+		acc_move(0, 3, 0, 2, 4.8, -1, 6.4, 2);
  		pre_TZ = TZ;
     TZ_3 = true;
 	}
@@ -198,8 +198,8 @@ void judg_cb(const std_msgs::Int8& msg)
 			TZ = 1;
 			msg_throw.data = 41;
 			pub_throw.publish(msg_throw);
-			acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 4);
-			ros::Duration(4.194392 + 0.05).sleep();
+			acc_move(0, 3, 0, 2, 1.5, -1.15, 4.2, 4);
+			ros::Duration(2.19432 + 0.05).sleep();
 			msg_lrf.flag = true;
 			msg_lrf.TZ = 1;
 			pub_lrf.publish(msg_lrf);
@@ -217,7 +217,7 @@ void judg_cb(const std_msgs::Int8& msg)
     msg_throw.data = 41;
     pub_throw.publish(msg_throw);
     ROS_INFO("TZ3 OK!");
-    acc_move(0, 2, 0, 0.5, 4.8, -1.15, 6.4, 4);
+    acc_move(0, 3, 0, 2, 4.8, -1.15, 6.4, 4);
     ros::Duration(7.841593 + 0.05).sleep();
     msg_lrf.flag = true;
     msg_lrf.TZ = 3;
@@ -262,7 +262,7 @@ void judg_cb(const std_msgs::Int8& msg)
 			msg_throw.data = 41;
 			pub_throw.publish(msg_throw);
 			ROS_INFO("TZ1 OK!");
-			acc_move(0, 1, 0, 0.5, 1.3, -1.15, 4.4, 4);
+			acc_move(0, 3, 0, 2, 1.3, -1.15, 4.4, 4);
 			ros::Duration(4.194392 + 0.05).sleep();
 			msg_lrf.flag = true;
 			msg_lrf.TZ = 1;
@@ -272,12 +272,12 @@ void judg_cb(const std_msgs::Int8& msg)
 		{
       set_servo_pulsewidth(pi, pin_servo, 1520);
 			ROS_INFO("TZ2 OK!");
-			acc_move(0, 1, 0, 0.5, 1, -1.1, 4.5, 2);
-			ros::Duration(3.544908 + 0.05).sleep();
-			acc_move(0, 1, 0, 0.5, 2.2, -1.1, 4.4, 1);
-			ros::Duration(5.257948 + 0.05).sleep();
-			acc_move(0, 1, 0, 0.5, 2.25, -1.1, 6.4, 4);
-			ros::Duration(5.491748 + 0.05).sleep();
+			acc_move(0, 3, 0, 2, 1, -1.1, 4.5, 2);
+			ros::Duration(1.772454 + 0.05).sleep();
+			acc_move(0, 3, 0, 2, 2.2, -1.1, 4.4, 1);
+			ros::Duration(1.314487 + 0.05).sleep();
+			acc_move(0, 3, 0, 2, 2.25, -1.1, 6.4, 4);
+			ros::Duration(2.65868 + 0.05).sleep();
 			msg_lrf.flag = true;
 			msg_lrf.TZ = 2;
 			pub_lrf.publish(msg_lrf);
@@ -290,7 +290,7 @@ void judg_cb(const std_msgs::Int8& msg)
 			ROS_INFO("TZ3 OK!");
       msg_throw.data = 41;
       pub_throw.publish(msg_throw);
-			acc_move(0, 2, 0, 0.5, 4.8, -1.15, 6.4, 4);
+			acc_move(0, 3, 0, 2, 4.8, -1.15, 6.4, 4);
 			ros::Duration(7.841593 + 0.05).sleep();
 			msg_lrf.flag = true;
 			msg_lrf.TZ = 3;
