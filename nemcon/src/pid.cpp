@@ -18,6 +18,8 @@ float speed_X = 0.0f, speed_Y = 0.0f, speed = 0.0f;
 int front;	//旋回：-1，前：1，右：2，後：3，左：4
 int pattern; //0：加減速，1：等速
 
+bool lrf = false;
+
 float imu_P;
 float imu_I;
 float imu_D;
@@ -33,6 +35,10 @@ float v_D;
 float vs_P;
 float vs_I;
 float vs_D;
+
+float lrfv_P;
+float lrfv_I;
+float lrfv_D;
 
 float speedFR = 0.0f, speedRL = 0.0f, speedFL = 0.0f, speedRR = 0.0f;
 float turn_imu = 0.0f, turn_enc_x = 0.0f, turn_enc_y = 0.0f, turn_lrf = 0.0f;
@@ -62,21 +68,46 @@ float clamp(float input, float min, float max)
 		output = max;
 	}
 	if(max > 0 && 0.1 <= input && input < 3)
-		{
-			output = 3;
-		}
+	{
+		output = 5;
+	}
 	if(min < 0 && -3 < input && input <= -0.1)
 	{
-		output = -3;
+		output = -5;
 	}
-  if(max > 0 && input <= 0.0)
-  {
-    output = 8080;
-  }
-  if(min < 0 && 0.0 <= input)
-  {
-    output = 8080;
-  }
+	if(max > 0 && input <= 0.0)
+	{
+		output = 8080;
+	}
+	if(min < 0 && 0.0 <= input)
+	{
+		output = 8080;
+	}
+	return output;
+}
+float clamp2(float input, float min, float max)
+{
+	float output = 0.00000f;
+	if(input <= min)
+	{
+		output = min;
+	}
+	if(min < input && input < max)
+	{
+		output = input;
+	}
+	if(input >= max)
+	{
+		output = max;
+	}
+	if(max > 0 && 1 <= input && input < 3)
+	{
+		output = 2;
+	}
+	if(min < 0 && -3 < input && input <= 3)
+	{
+		output = -2;
+	}
 	return output;
 }
 
@@ -87,6 +118,14 @@ void param_cb(const nemcon::pid_param& msg)
 	front = msg.front;
 	tar_x = msg.tar_x;
 	tar_y = msg.tar_y;
+	if(pattern = 1)
+	{
+		lrf = true;
+	}
+	else
+	{
+		lrf = false;
+	}
 }
 
 void enc_cb(const deadreckoning::enc& msg)
@@ -140,15 +179,23 @@ void pid_v(const accel_decel::result& msg)
 	integral_x += (error_x + lasterror_x) / 2.0 * dt;
 	integral_y += (error_y + lasterror_y) / 2.0 * dt;
 
-	if(!msg.Vmax)	//加減速用
+	if(!lrf)
 	{
-		speed_X= v_P * error_x + v_I * integral_x + v_D * (error_x - lasterror_x) / dt;
-		speed_Y = v_P * error_y + v_I * integral_y + v_D * (error_y - lasterror_y) / dt;
+		if(!msg.Vmax)	//加減速用
+		{
+			speed_X= v_P * error_x + v_I * integral_x + v_D * (error_x - lasterror_x) / dt;
+			speed_Y = v_P * error_y + v_I * integral_y + v_D * (error_y - lasterror_y) / dt;
+		}
+		else			//等速直進用
+		{
+			speed_X= vs_P * error_x + vs_I * integral_x + vs_D * (error_x - lasterror_x) / dt;
+			speed_Y = vs_P * error_y + vs_I * integral_y + vs_D * (error_y - lasterror_y) / dt;
+		}
 	}
-	else			//等速直進用
+	else
 	{
-		speed_X= vs_P * error_x + vs_I * integral_x + vs_D * (error_x - lasterror_x) / dt;
-		speed_Y = vs_P * error_y + vs_I * integral_y + vs_D * (error_y - lasterror_y) / dt;
+		speed_X= lrfv_P * error_x + lrfv_I * integral_x + lrfv_D * (error_x - lasterror_x) / dt;
+		speed_Y = lrfv_P * error_y + lrfv_I * integral_y + lrfv_D * (error_y - lasterror_y) / dt;
 	}
 
 	lasterror_x = error_x;
@@ -331,6 +378,44 @@ int main(int argc, char **argv)
 
 	/************************************************************************/
 
+	if(!local_nh.hasParam("lrfv_P"))
+	{
+		ROS_INFO("Parameter lrfv_P is not defind. Now, it is set default value.");
+		local_nh.setParam("lrfv_P", 0);
+	}
+	if(!local_nh.getParam("lrfv_P", vs_P))
+	{
+		ROS_ERROR("parameter front is invalid.");
+		return -1;
+	}
+	ROS_INFO("lrfv_P: %f", lrfv_P);
+
+	if(!local_nh.hasParam("lrfv_I"))
+	{
+		ROS_INFO("Parameter lrfv_I is not defind. Now, it is set default value.");
+		local_nh.setParam("lrfv_I", 0);
+	}
+	if(!local_nh.getParam("lrfv_I", lrfv_I))
+	{
+		ROS_ERROR("parameter front is invalid.");
+		return -1;
+	}
+	ROS_INFO("lrfv_I: %f", lrfv_I);
+
+	if(!local_nh.hasParam("lrfv_D"))
+	{
+		ROS_INFO("Parameter lrfv_D is not defind. Now, it is set default value.");
+		local_nh.setParam("lrfv_D", 0);
+	}
+	if(!local_nh.getParam("lrfv_D", vs_D))
+	{
+		ROS_ERROR("parameter front is invalid.");
+		return -1;
+	}
+	ROS_INFO("lrfv_D: %f", lrfv_D);
+
+	/************************************************************************/
+
 	ros::Subscriber sub_dis = nh.subscribe("/pid_param", 1000, param_cb);
 	ros::Subscriber sub_enc = nh.subscribe("/robot/pose", 1000, pid_pose);
 	ros::Subscriber sub_accel = nh.subscribe("/accel_decel/result", 1000, pid_v);
@@ -393,31 +478,31 @@ int main(int argc, char **argv)
 			switch(front)
 			{
 				case 1:	//前
-					speedFR = clamp(nearbyint( speed_Y - turn_lrf), 0, 20);
-					speedFL = clamp(nearbyint( speed_Y + turn_lrf), 0, 20);
-					speedRL = clamp(nearbyint( speed_Y + turn_lrf), 0, 20);
-					speedRR = clamp(nearbyint( speed_Y - turn_lrf), 0, 60);
+					speedFR = clamp2(nearbyint( speed_Y - turn_lrf), 0, 20);
+					speedFL = clamp2(nearbyint( speed_Y + turn_lrf), 0, 20);
+					speedRL = clamp2(nearbyint( speed_Y + turn_lrf), 0, 20);
+					speedRR = clamp2(nearbyint( speed_Y - turn_lrf), 0, 60);
 					break;
 
 				case 2:	//右
-					speedFR = clamp(nearbyint(-(speed_X + turn_lrf)), -20, 0);
-					speedFL = clamp(nearbyint( speed_X + turn_lrf), 0, 20);
-					speedRL = clamp(nearbyint(-(speed_X - turn_lrf)), -20, 0);
-					speedRR = clamp(nearbyint( speed_X - turn_lrf), 0, 20);
+					speedFR = clamp2(nearbyint(-(speed_X + turn_lrf)), -20, 0);
+					speedFL = clamp2(nearbyint( speed_X + turn_lrf), 0, 20);
+					speedRL = clamp2(nearbyint(-(speed_X - turn_lrf)), -20, 0);
+					speedRR = clamp2(nearbyint( speed_X - turn_lrf), 0, 20);
 					break;
 
 				case 3:	//後
-					speedFR = clamp(nearbyint( -(speed_Y + turn_lrf)), -20, 0);
-					speedFL = clamp(nearbyint( -(speed_Y - turn_lrf)), -20, 0);
-					speedRL = clamp(nearbyint( -(speed_Y - turn_lrf)), -20, 0);
-					speedRR = clamp(nearbyint( -(speed_Y + turn_lrf)), -20, 0);
+					speedFR = clamp2(nearbyint( -(speed_Y + turn_lrf)), -20, 0);
+					speedFL = clamp2(nearbyint( -(speed_Y - turn_lrf)), -20, 0);
+					speedRL = clamp2(nearbyint( -(speed_Y - turn_lrf)), -20, 0);
+					speedRR = clamp2(nearbyint( -(speed_Y + turn_lrf)), -20, 0);
 					break;
 
 				case 4:	//左
-					speedFR = clamp(nearbyint( speed_X - turn_lrf), 0, 20);
-					speedFL = clamp(nearbyint( -(speed_X - turn_lrf)), -20, 0);
-					speedRL = clamp(nearbyint( speed_X + turn_lrf), 0, 20);
-					speedRR = clamp(nearbyint( -(speed_X + turn_lrf)), -20, 0);
+					speedFR = clamp2(nearbyint( speed_X - turn_lrf), 0, 20);
+					speedFL = clamp2(nearbyint( -(speed_X - turn_lrf)), -20, 0);
+					speedRL = clamp2(nearbyint( speed_X + turn_lrf), 0, 20);
+					speedRR = clamp2(nearbyint( -(speed_X + turn_lrf)), -20, 0);
 					break;
 
 				default:
