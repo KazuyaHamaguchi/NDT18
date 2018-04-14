@@ -90,12 +90,13 @@ void switch_cb(const nemcon::switch_in& msg)
 
 			//acc_move(0, 1, 0, 0.5, 1.05, 0, 0, 4);	//SZ横
 			//ros::Duration(3.632449 + 0.05).sleep();
-			acc_move(0, 3, 0, 2, 4.5, -1.15, 0, 1);	//TZ1横
-			ros::Duration(3.759942 + 0.1).sleep();
+			/*acc_move(0, 3, 0, 2, 4.5, -1.15, 0, 1);	//TZ1横
+			ros::Duration(3.759942 + 0.1).sleep();*/
+      ros::Duration(5 + 0.05).sleep();
 			msg_throw.data = 30;
 			pub_throw.publish(msg_throw);
-			acc_move(0, 3, 0, 2, 0.95, -1.05, 4.42, 4);	//TZ1受け渡しポイント
-			ros::Duration(1.772454 + 0.1).sleep();
+			/*acc_move(0, 3, 0, 2, 0.95, -1.05, 4.42, 4);	//TZ1受け渡しポイント
+			ros::Duration(1.772454 + 0.1).sleep();*/
 
 			msg_throw.data = 40;	//受け取り待機
 			pub_throw.publish(msg_throw);
@@ -131,8 +132,10 @@ void receive_cb(const std_msgs::Int8& msg)
 {
 	if(msg.data == -40)	//CRからの受け取りに成功
 	{
-		msg_judg.data = 50;
-		pub_judg.publish(msg_judg);
+		/*msg_judg.data = 50;
+		pub_judg.publish(msg_judg);*/
+    msg_throw.data = 41;
+    pub_throw.publish(msg_throw);
 	}
 
 	if(msg.data == -41)
@@ -140,7 +143,9 @@ void receive_cb(const std_msgs::Int8& msg)
 		pub_lrf.publish(msg_lrf);
 		set_servo_pulsewidth(pi, pin_servo, 950);	//90度
 		ros::Duration(1).sleep();
-		if(TZ == 1)
+    msg_throw.data = 111;
+    pub_throw.publish(msg_throw);
+		/*if(TZ == 1)
 		{
 			msg_throw.data = 1;
 			pub_throw.publish(msg_throw);
@@ -154,7 +159,7 @@ void receive_cb(const std_msgs::Int8& msg)
 		{
 			msg_throw.data = 111;
 			pub_throw.publish(msg_throw);
-		}
+		}*/
 	}
 
 	if(msg.data == -1)
@@ -172,9 +177,9 @@ void receive_cb(const std_msgs::Int8& msg)
 	if(msg.data == -111)
 	{
 		set_servo_pulsewidth(pi, pin_servo, 1520);
-		acc_move(0, 3, 0, 2, 4.8, -1, 6.35, 2);
+		/*acc_move(0, 3, 0, 2, 4.8, -1, 6.35, 2);
  		pre_TZ = TZ;
-    TZ_3 = true;
+    TZ_3 = true;*/
 	}
 
 	if(msg.data == -100)
