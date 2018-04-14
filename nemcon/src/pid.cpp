@@ -104,7 +104,7 @@ float clamp2(float input, float min, float max)
 	{
 		output = 2;
 	}
-	if(min < 0 && -3 < input && input <= 3)
+	if(min < 0 && -3 < input && input <= -1)
 	{
 		output = -2;
 	}
@@ -118,7 +118,7 @@ void param_cb(const nemcon::pid_param& msg)
 	front = msg.front;
 	tar_x = msg.tar_x;
 	tar_y = msg.tar_y;
-	if(pattern = 1)
+	if(pattern == 1)
 	{
 		lrf = true;
 	}
@@ -481,7 +481,7 @@ int main(int argc, char **argv)
 					speedFR = clamp2(nearbyint( speed_Y - turn_lrf), 0, 20);
 					speedFL = clamp2(nearbyint( speed_Y + turn_lrf), 0, 20);
 					speedRL = clamp2(nearbyint( speed_Y + turn_lrf), 0, 20);
-					speedRR = clamp2(nearbyint( speed_Y - turn_lrf), 0, 60);
+					speedRR = clamp2(nearbyint( speed_Y - turn_lrf), 0, 20);
 					break;
 
 				case 2:	//右
