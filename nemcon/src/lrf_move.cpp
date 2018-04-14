@@ -55,7 +55,16 @@ int main(int argc, char **argv)
 
 		if(flag)
 		{
-			if(lrf_x > 0.01 + offsset && !flag_x)
+			if(0.03 <= lrf_x  && !flag_x)
+			{
+				ROS_INFO("lrf_x:%f", lrf_x);
+				msg_acc.V = 0.2;
+				msg_pid_param.front = 4;
+				pub_tar_dis.publish(msg_pid_param);
+				pub_acc.publish(msg_acc);
+				flag_x = false;
+			}
+			if(0.01 + offsset < lrf_x && lrf_x < 0.03  && !flag_x)
 			{
 				ROS_INFO("lrf_x:%f", lrf_x);
 				msg_acc.V = 0.05;
@@ -64,7 +73,16 @@ int main(int argc, char **argv)
 				pub_acc.publish(msg_acc);
 				flag_x = false;
 			}
-			if(lrf_x < -0.01 + offsset && !flag_x)
+			if(-0.03 >= lrf_x && !flag_x)
+			{
+				ROS_INFO("-lrf_x:%f", lrf_x);
+				msg_acc.V = 0.2;
+				msg_pid_param.front = 2;
+				pub_tar_dis.publish(msg_pid_param);
+				pub_acc.publish(msg_acc);
+				flag_x = false;
+			}
+			if(-0.03 < lrf_x && lrf_x < -0.01 + offsset && !flag_x)
 			{
 				ROS_INFO("-lrf_x:%f", lrf_x);
 				msg_acc.V = 0.05;
@@ -89,7 +107,16 @@ int main(int argc, char **argv)
 
 		if(flag_x)
 		{
-			if(lrf_y > 0 && !flag_y)
+			if(0.03 <= lrf_y && !flag_y)
+			{
+				ROS_INFO("lrf_y:%f", lrf_y);
+				msg_acc.V = 0.2;
+				msg_pid_param.front = 3;
+				pub_tar_dis.publish(msg_pid_param);
+				pub_acc.publish(msg_acc);
+				flag_y = false;
+			}
+			if(0.01 <= lrf_y && lrf_y < 0.03 && !flag_y)
 			{
 				ROS_INFO("lrf_y:%f", lrf_y);
 				msg_acc.V = 0.05;
@@ -98,10 +125,19 @@ int main(int argc, char **argv)
 				pub_acc.publish(msg_acc);
 				flag_y = false;
 			}
-			if(lrf_y < 0 && flag_x && !flag_y)
+			if(-0.03 >= lrf_y && !flag_y)
 			{
 				ROS_INFO("-lrf_y:%f", lrf_y);
-				msg_acc.V = 0.05;
+				msg_acc.V = 0.2;
+				msg_pid_param.front = 1;
+				pub_tar_dis.publish(msg_pid_param);
+				pub_acc.publish(msg_acc);
+				flag_y = false;
+			}
+			if(-0.01 <= lrf_y && lrf_y < -0.03 && !flag_y)
+			{
+				ROS_INFO("-lrf_y:%f", lrf_y);
+				msg_acc.V = 0.5;
 				msg_pid_param.front = 1;
 				pub_tar_dis.publish(msg_pid_param);
 				pub_acc.publish(msg_acc);
