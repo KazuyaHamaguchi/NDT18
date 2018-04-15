@@ -17,7 +17,8 @@ float lrf_x = 0.0f;
 float lrf_y = 0.0f;
 float lrf_z = 0.0f;
 
-float offsset = 0.0f;
+float gain = 0.0f;
+float offset = 0.0f;
 
 float t = 0.0f;
 
@@ -55,16 +56,7 @@ int main(int argc, char **argv)
 
 		if(flag)
 		{
-			if(0.03 <= lrf_x  && !flag_x)
-			{
-				ROS_INFO("lrf_x:%f", lrf_x);
-				msg_acc.V = 0.2;
-				msg_pid_param.front = 4;
-				pub_tar_dis.publish(msg_pid_param);
-				pub_acc.publish(msg_acc);
-				flag_x = false;
-			}
-			if(0.01 + offsset < lrf_x && lrf_x < 0.03  && !flag_x)
+			if(lrf_x > gain + offset && !flag_x)
 			{
 				ROS_INFO("lrf_x:%f", lrf_x);
 				msg_acc.V = 0.05;
@@ -73,16 +65,7 @@ int main(int argc, char **argv)
 				pub_acc.publish(msg_acc);
 				flag_x = false;
 			}
-			if(-0.03 >= lrf_x && !flag_x)
-			{
-				ROS_INFO("-lrf_x:%f", lrf_x);
-				msg_acc.V = 0.2;
-				msg_pid_param.front = 2;
-				pub_tar_dis.publish(msg_pid_param);
-				pub_acc.publish(msg_acc);
-				flag_x = false;
-			}
-			if(-0.03 < lrf_x && lrf_x < -0.01 + offsset && !flag_x)
+			if(lrf_x < - gain + offset && !flag_x)
 			{
 				ROS_INFO("-lrf_x:%f", lrf_x);
 				msg_acc.V = 0.05;
@@ -91,7 +74,7 @@ int main(int argc, char **argv)
 				pub_acc.publish(msg_acc);
 				flag_x = false;
 			}
-			if(-0.01 + offsset <= lrf_x && lrf_x <= 0.01 + offsset)
+			if(- gain + offset <= lrf_x && lrf_x <= gain + offset)
 			{
 				ROS_INFO("lrf_x OK");
 				msg_acc.V = 0;
@@ -107,16 +90,7 @@ int main(int argc, char **argv)
 
 		if(flag_x)
 		{
-			if(0.03 <= lrf_y && !flag_y)
-			{
-				ROS_INFO("lrf_y:%f", lrf_y);
-				msg_acc.V = 0.2;
-				msg_pid_param.front = 3;
-				pub_tar_dis.publish(msg_pid_param);
-				pub_acc.publish(msg_acc);
-				flag_y = false;
-			}
-			if(0.01 <= lrf_y && lrf_y < 0.03 && !flag_y)
+			if(lrf_y > gain && !flag_y)
 			{
 				ROS_INFO("lrf_y:%f", lrf_y);
 				msg_acc.V = 0.05;
@@ -125,25 +99,16 @@ int main(int argc, char **argv)
 				pub_acc.publish(msg_acc);
 				flag_y = false;
 			}
-			if(-0.03 >= lrf_y && !flag_y)
+			if(lrf_y < -gain && !flag_y)
 			{
 				ROS_INFO("-lrf_y:%f", lrf_y);
-				msg_acc.V = 0.2;
+				msg_acc.V = 0.05;
 				msg_pid_param.front = 1;
 				pub_tar_dis.publish(msg_pid_param);
 				pub_acc.publish(msg_acc);
 				flag_y = false;
 			}
-			if(-0.01 <= lrf_y && lrf_y < -0.03 && !flag_y)
-			{
-				ROS_INFO("-lrf_y:%f", lrf_y);
-				msg_acc.V = 0.5;
-				msg_pid_param.front = 1;
-				pub_tar_dis.publish(msg_pid_param);
-				pub_acc.publish(msg_acc);
-				flag_y = false;
-			}
-			if(-0.01 < lrf_y && lrf_y < 0.01)
+			if(-gain <= lrf_y && lrf_y <= gain)
 			{
 				ROS_INFO("lrf_y OK");
 				msg_acc.V = 0;
@@ -151,6 +116,7 @@ int main(int argc, char **argv)
 				pub_acc.publish(msg_acc);
 				if(t >= 1.2)
 				{
+          ROS_INFO("lrf stop");
 					msg_lrf.data = -50;
 					pub_lrf.publish(msg_lrf);
 					flag = false;
@@ -186,16 +152,23 @@ void flag_cb(const nemcon::lrf_flag& msg)
 
 	switch(msg.TZ)
 	{
-		case 1: case 3:
-			offsset = 0.0f;
+		case 1: 
+      gain = 0.02;
+			offset = 0.0f;
 			break;
 
 		case 2:
-			offsset = 3.27503521586;
+      gain = 0.02;
+			offset = 3.27503521586;
 			break;
 
+    case 3:
+      gain = 0.01;
+      offset = 0.0f;
+      break;
+
 		default:
-			offsset = 0.0f;
+			offset = 0.0f;
 			break;
 	}
 }

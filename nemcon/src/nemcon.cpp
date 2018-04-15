@@ -124,6 +124,8 @@ void lrf_cb(const std_msgs::Int8& msg)
 	{
 		msg_pid_param.pattern = 3;
 		pub_tar_dis.publish(msg_pid_param);
+    msg_lrf.flag = false;
+    pub_lrf.publish(msg_lrf);
 	}
 }
 
@@ -137,7 +139,6 @@ void receive_cb(const std_msgs::Int8& msg)
 
 	if(msg.data == -41)
 	{
-		pub_lrf.publish(msg_lrf);
 		set_servo_pulsewidth(pi, pin_servo, 950);	//90度
 		ros::Duration(1).sleep();
 		if(TZ == 1)
@@ -274,7 +275,7 @@ void judg_cb(const std_msgs::Int8& msg)
 			ROS_INFO("TZ2 OK!");
 			acc_move(0, 3, 0, 2, 1, -1.1, 4.4, 2);
 			ros::Duration(1.772454 + 0.05).sleep();
-			acc_move(0, 3, 0, 2, 2.2, -1.1, 4.4, 1);
+			acc_move(0, 3, 0, 2, 2.2, -1.2, 4.4, 1);
 			ros::Duration(2.628974 + 0.1).sleep();
 			acc_move(0, 3, 0, 2, 2.25, -1.1, 6.4, 4);
 			ros::Duration(2.65868 + 0.1).sleep();
