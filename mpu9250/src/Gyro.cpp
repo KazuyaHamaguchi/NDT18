@@ -44,7 +44,7 @@ int main(int argc, char **argv)
 	float gyroCoefficient = 1000 / float(0x8000);
 
 	//較正値を算出する
-	ROS_INFO("Gyro calibration start\n");
+	ROS_INFO("Gyro calibration start");
 	float sum[3] = {0, 0, 0};
 
 	//実データのサンプルを取る
@@ -67,7 +67,7 @@ int main(int argc, char **argv)
 	printf("%6.6f\t", offsetGyroY);
 	printf("%6.6f\n", offsetGyroZ);
 
-	ROS_INFO("Gyro calibration complete\n");
+	ROS_INFO("Gyro calibration complete");
 
 	float pregx = 0, pregy = 0, pregz = 0;
 	float degreeX = 0, degreeY = 0, degreeZ = 0;
