@@ -7,6 +7,6 @@
     <param name="port" value="/dev/ttyACM2"/>
     <param name="baud" value="57600" />
   </node>
-  <node name="Gyro" pkg="mpu9250" type="mpu9250" output="screen" />
+  <node name="Gyro" pkg="mpu9250" type="Gyro" output="screen" />
   <node name="deadreckoning" pkg="deadreckoning" type="deadreckoning" />
 </launch>
