@@ -206,7 +206,7 @@ find_library(LIBPIGPIOD_IF2_LIBRARIES NAMES pigpiod_if2)
 # catkin_add_nosetests(test)
 
 
-#add_executable(mpu9250 src/mpu9250.cpp)
-#target_link_libraries(mpu9250 ${catkin_LIBRARIES} ${LIBPIGPIOD_IF2_LIBRARIES})
-#add_executable(Gyro src/Gyro.cpp)
-#target_link_libraries(Gyro ${catkin_LIBRARIES} ${LIBPIGPIOD_IF2_LIBRARIES})
+add_executable(mpu9250 src/mpu9250.cpp)
+target_link_libraries(mpu9250 ${catkin_LIBRARIES} ${LIBPIGPIOD_IF2_LIBRARIES})
+add_executable(Gyro src/Gyro.cpp)
+target_link_libraries(Gyro ${catkin_LIBRARIES} ${LIBPIGPIOD_IF2_LIBRARIES})
