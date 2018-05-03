@@ -53,6 +53,8 @@ int main(int argc, char **argv)
 		current_time = ros::Time::now();
 		t += (current_time - last_time).toSec();
 
+
+/*
 		if(flag)
 		{
 			if(lrf_x > 0.01 + offsset && !flag_x)
@@ -73,7 +75,7 @@ int main(int argc, char **argv)
 				pub_acc.publish(msg_acc);
 				flag_x = false;
 			}
-			if(-0.01 + offsset <= lrf_x && lrf_x <= 0.01 + offsset)
+			if(-0.01 + offsset <= lrf_x && lrf_x <= 0.01 + offsset && !flag_x)
 			{
 				ROS_INFO("lrf_x OK");
 				msg_acc.V = 0;
@@ -86,6 +88,46 @@ int main(int argc, char **argv)
 			  flag_x = false;
 			}
 		}
+*/
+
+
+
+
+		if(flag)
+		{
+			if(0.01 + offsset < lrf_x && lrf_x <= 0.05 + offsset && !flag_x)
+			{
+				ROS_INFO("lrf_x:%f", lrf_x);
+				msg_acc.V = 0.05;
+				msg_pid_param.front = 4;
+				pub_tar_dis.publish(msg_pid_param);
+				pub_acc.publish(msg_acc);
+				flag_x = false;
+			}
+			if(-0.05 + offsset <= lrf_x && lrf_x < -0.01 + offsset && !flag_x)
+			{
+				ROS_INFO("-lrf_x:%f", lrf_x);
+				msg_acc.V = 0.05;
+				msg_pid_param.front = 2;
+				pub_tar_dis.publish(msg_pid_param);
+				pub_acc.publish(msg_acc);
+				flag_x = false;
+			}
+			if(-0.01 + offsset <= lrf_x && lrf_x <= 0.01 + offsset && !flag_x)
+			{
+				ROS_INFO("lrf_x OK");
+				msg_acc.V = 0;
+				pub_tar_dis.publish(msg_pid_param);
+				pub_acc.publish(msg_acc);
+				flag_x = true;
+			}
+			else
+			{
+			  flag_x = false;
+			}
+		}
+
+
 
 		if(flag_x)
 		{
