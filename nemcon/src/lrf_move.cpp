@@ -54,7 +54,7 @@ int main(int argc, char **argv)
 		t += (current_time - last_time).toSec();
 
 
-/*
+
 		if(flag)
 		{
 			if(lrf_x > 0.01 + offsset && !flag_x)
@@ -88,11 +88,11 @@ int main(int argc, char **argv)
 			  flag_x = false;
 			}
 		}
-*/
 
 
 
 
+/*
 		if(flag)
 		{
 			if(0.01 + offsset < lrf_x && lrf_x <= 0.05 + offsset && !flag_x)
@@ -126,7 +126,7 @@ int main(int argc, char **argv)
 			  flag_x = false;
 			}
 		}
-
+*/
 
 
 		if(flag_x)
