@@ -77,12 +77,12 @@ void switch_cb(const nemcon::switch_in& msg)
 	{
 		if(msg.SZ && !msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
 		{
-			msg_throw.data = 3;
+			/*msg_throw.data = 3;
 			pub_throw.publish(msg_throw);
 			msg_throw.data = 43;
 			pub_throw.publish(msg_throw);
 			msg_throw.data = 4;
-			pub_throw.publish(msg_throw);
+			pub_throw.publish(msg_throw);*/
 
 			led_flash(0, 0, 2);
 			led_flash(3, 0.1, 0);
@@ -92,13 +92,13 @@ void switch_cb(const nemcon::switch_in& msg)
 			//ros::Duration(3.632449 + 0.05).sleep();
 			acc_move(0, 3, 0, 2, 4.5, -1.15, 0, 1);	//TZ1横
 			ros::Duration(3.759942 + 0.1).sleep();
-			msg_throw.data = 30;
-			pub_throw.publish(msg_throw);
+			/*msg_throw.data = 30;
+			pub_throw.publish(msg_throw);*/
 			acc_move(0, 3, 0, 2, 0.95, -1.05, 4.42, 4);	//TZ1受け渡しポイント
 			ros::Duration(1.772454 + 0.1).sleep();
 
-			msg_throw.data = 40;	//受け取り待機
-			pub_throw.publish(msg_throw);
+			/*msg_throw.data = 40;	//受け取り待機
+			pub_throw.publish(msg_throw);*/
 
 			cb_flag = true;
 			end = true;
