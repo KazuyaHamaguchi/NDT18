@@ -24,6 +24,10 @@ float imu_P;
 float imu_I;
 float imu_D;
 
+float lrf_P;
+float lrf_I;
+float lrf_D;
+
 float enc_P;
 float enc_I;
 float enc_D;
@@ -138,11 +142,11 @@ void pid_lrf(const geometry_msgs::PoseStamped& msg)
 {
 	float lasterror = 0, integral = 0, error = 0;
 
-	error = msg.pose.orientation.z - /*0.00000f*/0.0261769406497;
+	error = msg.pose.orientation.z - /*0.00000f*/0.0218;
 
 	integral += (error + lasterror) / 2.0 * dt;
 
-	turn_lrf = imu_P * error + imu_I * integral + imu_D * (error - lasterror) / dt;
+	turn_lrf = lrf_P * error + lrf_I * integral + lrf_D * (error - lasterror) / dt;
 
 	lasterror = error;
 }
@@ -261,6 +265,44 @@ int main(int argc, char **argv)
 		return -1;
 	}
 	ROS_INFO("imu_D: %f", imu_D);
+
+	/************************************************************************/
+
+	if(!local_nh.hasParam("lrf_P"))
+	{
+		ROS_INFO("Parameter lrf_P is not defind. Now, it is set default value.");
+		local_nh.setParam("lrf_P", 0);
+	}
+	if(!local_nh.getParam("lrf_P", lrf_P))
+	{
+		ROS_ERROR("parameter front is invalid.");
+		return -1;
+	}
+	ROS_INFO("lrf_P: %f", lrf_P);
+
+	if(!local_nh.hasParam("lrf_I"))
+	{
+		ROS_INFO("Parameter lrf_I is not defind. Now, it is set default value.");
+		local_nh.setParam("lrf_I", 0);
+	}
+	if(!local_nh.getParam("lrf_I", lrf_I))
+	{
+		ROS_ERROR("parameter front is invalid.");
+		return -1;
+	}
+	ROS_INFO("lrf_I: %f", lrf_I);
+
+	if(!local_nh.hasParam("lrf_D"))
+	{
+		ROS_INFO("Parameter lrf_D is not defind. Now, it is set default value.");
+		local_nh.setParam("lrf_D", 0);
+	}
+	if(!local_nh.getParam("lrf_D", lrf_D))
+	{
+		ROS_ERROR("parameter front is invalid.");
+		return -1;
+	}
+	ROS_INFO("lrf_D: %f", lrf_D);
 
 	/************************************************************************/
 

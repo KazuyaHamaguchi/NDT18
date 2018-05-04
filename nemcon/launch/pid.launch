@@ -5,6 +5,9 @@
     <param name="imu_P" value= "90"/>
     <param name="imu_I" value= "10.0"/>
     <param name="imu_D" value="0.08" />
+    <param name="lrf_P" value= "40"/>
+    <param name="lrf_I" value= "0.7"/>
+    <param name="lrf_D" value="0.008" />
     <param name="enc_P" value="10.0" />
     <param name="enc_I" value="2.00"/>
     <param name="enc_D" value= "0.02" />
