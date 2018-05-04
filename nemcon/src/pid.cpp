@@ -225,7 +225,7 @@ int main(int argc, char **argv)
 	ros::NodeHandle nh;
 	current_time = ros::Time::now();
 	last_time = ros::Time::now();
-	ros::Rate loop_rate(40);
+	ros::Rate loop_rate(60);
 	ros::NodeHandle local_nh("~");
 
 	/*****************************************************************************/
