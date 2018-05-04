@@ -4,7 +4,7 @@
 #include <math.h>
 
 ros::Publisher pub;
-accel_decel::result msg;
+accel_decel::result r_msg;
 
 ros::Time current_time, last_time;
 
@@ -50,7 +50,8 @@ void param_cb(const accel_decel::param& msg)
 		X2 = Xall - (X1 + X3);
 		t2 = X2 / Vmax;
 
-
+		msg.t = t1 + t2 + t3;
+		pub.publish(r_msg);
 
 		ROS_INFO("Vs: %f\t Vmax: %f\t Ve: %f\t Amax: %f\t Xall: %f", Vs, Vmax, Ve, Amax, Xall);
 		ROS_INFO("t1: %f\t X1: %f\t t2: %f\t X2: %f\t t3: %f\t X3: %f\n", t1, X1, t2, X2, t3, X3);
@@ -104,20 +105,20 @@ int main(int argc, char **argv)
 			if(t <= t1)
 			{
 				//ROS_INFO("time: %f\t V: %f\t X1", t, accel(t));
-				msg.V = ((Vmax - Vs) * (1 - cos(((2 * Amax) * t) / (Vmax - Vs))) / 2) + Vs;
-				msg.Vmax = false;
+				r_msg.V = ((Vmax - Vs) * (1 - cos(((2 * Amax) * t) / (Vmax - Vs))) / 2) + Vs;
+				r_msg.Vmax = false;
 			}
 			if(t1 <= t && t <= (t1 + t2))
 			{
 				//ROS_INFO("time: %f\t V: %f\t X2", t, Vmax);
-				msg.V = Vmax;
-				msg.Vmax = true;
+				r_msg.V = Vmax;
+				r_msg.Vmax = true;
 			}
 			if((t1 + t2) <= t && t <= (t1 + t2 + t3))
 			{
 				//ROS_INFO("time: %f\t V: %f\t X3", t, decel(t));
-				msg.V = ((Vmax - Ve) * (1 - cos(((2 * Amax)  * (t - ((t1 + t2) + (t3 - t1)) - t1)) / (Vmax - Ve))) / 2) + Ve;
-				msg.Vmax = false;
+				r_msg.V = ((Vmax - Ve) * (1 - cos(((2 * Amax)  * (t - ((t1 + t2) + (t3 - t1)) - t1)) / (Vmax - Ve))) / 2) + Ve;
+				r_msg.Vmax = false;
 			}
 			if(t >= (t1 + t2 + t3))
 			{
@@ -125,7 +126,6 @@ int main(int argc, char **argv)
 				end = true;
 				cb_flag = false;
 			}
-			msg.t = t1 + t2 + t3;
 			//printf("%f\t %f\n", t, msg.V);
 			pub.publish(msg);
 		}
