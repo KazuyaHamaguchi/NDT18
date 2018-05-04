@@ -50,7 +50,7 @@ void param_cb(const accel_decel::param& msg)
 		X2 = Xall - (X1 + X3);
 		t2 = X2 / Vmax;
 
-		msg.t = t1 + t2 + t3;
+		r_msg.t = t1 + t2 + t3;
 		pub.publish(r_msg);
 
 		ROS_INFO("Vs: %f\t Vmax: %f\t Ve: %f\t Amax: %f\t Xall: %f", Vs, Vmax, Ve, Amax, Xall);
@@ -127,7 +127,7 @@ int main(int argc, char **argv)
 				cb_flag = false;
 			}
 			//printf("%f\t %f\n", t, msg.V);
-			pub.publish(msg);
+			pub.publish(r_msg);
 		}
 
 		last_time = current_time;
