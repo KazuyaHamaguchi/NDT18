@@ -160,18 +160,24 @@ void receive_cb(const std_msgs::Int8& msg)
 
 	if(msg.data == -1)
 	{
+		msg_lrf.flag = false;
+		pub_lrf.publish(msg_lrf);
 		set_servo_pulsewidth(pi, pin_servo, 1520);
 		acc_move(0, 3, 0, 2, 1.2, -1, 4.42, 2);
 		pre_TZ = TZ;
 	}
 	if(msg.data == -11)
 	{
+		msg_lrf.flag = false;
+		pub_lrf.publish(msg_lrf);
 		set_servo_pulsewidth(pi, pin_servo, 1520);
 		acc_move(0, 3, 0, 2, 1.3, -1, 6.5, 2);
 		pre_TZ = TZ;
 	}
 	if(msg.data == -111)
 	{
+		msg_lrf.flag = false;
+		pub_lrf.publish(msg_lrf);
 		set_servo_pulsewidth(pi, pin_servo, 1520);
 		acc_move(0, 3, 0, 2, 4.8, -1, 6.35, 2);
 		pre_TZ = TZ;
