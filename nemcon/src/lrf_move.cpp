@@ -50,20 +50,20 @@ int main(int argc, char **argv)
 
 	while(ros::ok())
 	{
-    current_time = ros::Time::now();
+		current_time = ros::Time::now();
 		t += (current_time - last_time).toSec();
 
 		if(flag && !flag_x && !flag_y)
 		{
-      if(0.1 + offsset < lrf_x)
-      {
-        ROS_INFO("lrf_x:%f", lrf_x);
-        msg_acc.V = 0.2;
-        msg_pid_param.front = 4;
-        pub_tar_dis.publish(msg_pid_param);
-        pub_acc.publish(msg_acc);
-        flag_x = false;
-      }
+			if(0.1 + offsset < lrf_x)
+			{
+				ROS_INFO("lrf_x:%f", lrf_x);
+				msg_acc.V = 0.2;
+				msg_pid_param.front = 4;
+				pub_tar_dis.publish(msg_pid_param);
+				pub_acc.publish(msg_acc);
+				flag_x = false;
+			}
 			if(0.01 + offsset < lrf_x && lrf_x <= 0.1 + offsset)
 			{
 				ROS_INFO("lrf_x2:%f", lrf_x);
@@ -73,15 +73,15 @@ int main(int argc, char **argv)
 				pub_acc.publish(msg_acc);
 				flag_x = false;
 			}
-      if(lrf_x < -0.1 + offsset)
-      {
-        ROS_INFO("-lrf_x:%f", lrf_x);
-        msg_acc.V = 0.2;
-        msg_pid_param.front = 2;
-        pub_tar_dis.publish(msg_pid_param);
-        pub_acc.publish(msg_acc);
-        flag_x = false;
-      }
+			if(lrf_x < -0.1 + offsset)
+			{
+				ROS_INFO("-lrf_x:%f", lrf_x);
+				msg_acc.V = 0.2;
+				msg_pid_param.front = 2;
+				pub_tar_dis.publish(msg_pid_param);
+				pub_acc.publish(msg_acc);
+				flag_x = false;
+			}
 			if(-0.1 + offsset <= lrf_x && lrf_x < -0.01 + offsset)
 			{
 				ROS_INFO("-lrf_x2:%f", lrf_x);
@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 			}
 			if(-0.01 + offsset <= lrf_x && lrf_x <= 0.01 + offsset)
 			{
-		    ROS_INFO("lrf_x OK");
+				ROS_INFO("lrf_x OK");
 				msg_acc.V = 0;
 				pub_tar_dis.publish(msg_pid_param);
 				pub_acc.publish(msg_acc);
@@ -103,20 +103,20 @@ int main(int argc, char **argv)
 			{
 			  flag_x = false;
 			}
-    }
+		}
 
 
 		if(flag_x && !flag_y)
 		{
-      if(0.1 < lrf_y)
-      {
-        ROS_INFO("lrf_y:%f", lrf_y);
-        msg_acc.V = 0.2;
-        msg_pid_param.front = 3;
-        pub_tar_dis.publish(msg_pid_param);
-        pub_acc.publish(msg_acc);
-        flag_y = false;
-      }
+			if(0.1 < lrf_y)
+			{
+				ROS_INFO("lrf_y:%f", lrf_y);
+				msg_acc.V = 0.2;
+				msg_pid_param.front = 3;
+				pub_tar_dis.publish(msg_pid_param);
+				pub_acc.publish(msg_acc);
+				flag_y = false;
+			}
 			if(0.01 < lrf_y && lrf_y <= 0.1)
 			{
 				ROS_INFO("lrf_y2:%f", lrf_y);
@@ -126,14 +126,14 @@ int main(int argc, char **argv)
 				pub_acc.publish(msg_acc);
 				flag_y = false;
 			}
-      if(lrf_y < -0.1)
-      {
-        ROS_INFO("-lrf_y:%f", lrf_y);
-        msg_acc.V = 0.2;
-        msg_pid_param.front = 1;
-        pub_acc.publish(msg_acc);
-        flag_y = false;
-      }
+			if(lrf_y < -0.1)
+			{
+				ROS_INFO("-lrf_y:%f", lrf_y);
+				msg_acc.V = 0.2;
+				msg_pid_param.front = 1;
+				pub_acc.publish(msg_acc);
+				flag_y = false;
+			}
 			if(-0.1 <= lrf_y && lrf_y <= -0.01)
 			{
 				ROS_INFO("-lrf_y2:%f", lrf_y);
@@ -151,27 +151,27 @@ int main(int argc, char **argv)
 				pub_acc.publish(msg_acc);
 				if(-0.01 + offsset <= lrf_x && lrf_x <= 0.01 + offsset && t >= 1.0)
 				{
-          ROS_INFO("lrf OK");
+					ROS_INFO("lrf OK");
 					msg_lrf.data = -50;
 					pub_lrf.publish(msg_lrf);
 					flag = false;
 					flag_x = false;
 					flag_y = true;
-          t = 0.0f;
+					t = 0.0f;
 				}
-        else
-        {
-          flag_x = false;
-        }
+				else
+				{
+					flag_x = false;
+				}
 			}
 			else
 			{
 			  flag_y = false;
-        t = 0.0f;
+			  t = 0.0f;
 			}
 		}
 
-    last_time = current_time;
+		last_time = current_time;
 
 		loop_rate.sleep();
 		ros::spinOnce();
