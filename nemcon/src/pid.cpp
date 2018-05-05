@@ -186,7 +186,7 @@ void pid_v(const accel_decel::result& msg)
 	error_x = msg.V - abs(enc_vx);
 	error_y = msg.V - abs(enc_vy);
 
-	if(!(msg.V == 0.0))
+	if(!(msg.V <= 0.000))
 	{
 		vflag = true;
 	}
