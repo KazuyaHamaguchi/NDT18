@@ -81,22 +81,18 @@ float clamp(float input, float min, float max)
 	{
 		output = -5;
 	}
-	if((max > 0 && input <= 0.0) && (min < 0 && 0.0 <= input) && vflag)
+	if(max > 0 && input <= 0.0 && vflag)
 	{
 		output = 8080;
 	}
-	else
+	if(min < 0 && 0.0 <= input && vflag)
+	{
+		output = 8080;
+	}
+	if(!vflag)
 	{
 		output = 0;
 	}
-	/*if(min < 0 && 0.0 <= input && vflag)
-	{
-		output = 8080;
-	}
-	else
-	{
-		output
-	}*/
 	return output;
 }
 float clamp2(float input, float min, float max)
