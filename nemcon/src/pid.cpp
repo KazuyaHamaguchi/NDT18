@@ -50,6 +50,7 @@ float enc_vx = 0.0f, enc_vy = 0.0f;
 float tar_x = 0.0f, tar_y = 0.0f;
 float enc_x = 0.0f;
 
+
 ros::Time current_time , last_time;
 double dt = 0.0;
 
@@ -104,14 +105,14 @@ float clamp2(float input, float min, float max)
 	{
 		output = max;
 	}
-	if(max > 0 && 1 <= input && input < 3)
+	/*if(max > 0 && 1 <= input && input < 3)
 	{
 		output = 2;
 	}
 	if(min < 0 && -3 < input && input <= -1)
 	{
 		output = -2;
-	}
+	}*/
 	return output;
 }
 
@@ -179,8 +180,6 @@ void pid_v(const accel_decel::result& msg)
 
 	error_x = msg.V - abs(enc_vx);
 	error_y = msg.V - abs(enc_vy);
-
-	integral_x += (error_x + lasterror_x) / 2.0 * dt;
 	integral_y += (error_y + lasterror_y) / 2.0 * dt;
 
 	if(!lrf)
@@ -225,7 +224,7 @@ int main(int argc, char **argv)
 	ros::NodeHandle nh;
 	current_time = ros::Time::now();
 	last_time = ros::Time::now();
-	ros::Rate loop_rate(60);
+	ros::Rate loop_rate(40);
 	ros::NodeHandle local_nh("~");
 
 	/*****************************************************************************/
@@ -474,36 +473,44 @@ int main(int argc, char **argv)
 		current_time = ros::Time::now();
 		dt = (current_time - last_time).toSec();
 
+		if(pattern == -1)	//その場旋回
+		{
+			speedFR = clamp2(nearbyint( - turn_imu), -20, 20);
+			speedFL = clamp2(nearbyint( + turn_imu), -20, 20);
+			speedRL = clamp2(nearbyint( + turn_imu), -20, 20);
+			speedRR = clamp2(nearbyint( - turn_imu), -20, 20);
+    }
+
 		if(pattern == 0) //加減速
 		{
 			switch(front)
 			{
 				case 1:	//前
-					speedFR = clamp(nearbyint( speed_Y - turn_imu + turn_enc_x), 0, 60);
-					speedFL = clamp(nearbyint( speed_Y + turn_imu - turn_enc_x), 0, 60);
-					speedRL = clamp(nearbyint( speed_Y + turn_imu + turn_enc_x), 0, 60);
-					speedRR = clamp(nearbyint( speed_Y - turn_imu - turn_enc_x), 0, 60);
+					speedFR = clamp(nearbyint( speed_Y - turn_imu + turn_enc_x), 0, 90);
+					speedFL = clamp(nearbyint( speed_Y + turn_imu - turn_enc_x), 0, 90);
+					speedRL = clamp(nearbyint( speed_Y + turn_imu + turn_enc_x), 0, 90);
+					speedRR = clamp(nearbyint( speed_Y - turn_imu - turn_enc_x), 0, 90);
 					break;
 
 				case 2:	//右
-					speedFR = clamp(nearbyint(-(speed_X + turn_imu + turn_enc_y )), -60, 0);
-					speedFL = clamp(nearbyint( speed_X + turn_imu - turn_enc_y), 0, 60);
-					speedRL = clamp(nearbyint(-(speed_X - turn_imu + turn_enc_y)), -60, 0);
-					speedRR = clamp(nearbyint( speed_X - turn_imu - turn_enc_y), 0, 60);
+					speedFR = clamp(nearbyint(-(speed_X + turn_imu + turn_enc_y )), -90, 0);
+					speedFL = clamp(nearbyint( speed_X + turn_imu - turn_enc_y), 0, 90);
+					speedRL = clamp(nearbyint(-(speed_X - turn_imu + turn_enc_y)), -90, 0);
+					speedRR = clamp(nearbyint( speed_X - turn_imu - turn_enc_y), 0, 90);
 					break;
 
 				case 3:	//後
-					speedFR = clamp(nearbyint( -(speed_Y + turn_imu + turn_enc_x)), -60, 0);
-					speedFL = clamp(nearbyint( -(speed_Y - turn_imu - turn_enc_x)), -60, 0);
-					speedRL = clamp(nearbyint( -(speed_Y - turn_imu + turn_enc_x)), -60, 0);
-					speedRR = clamp(nearbyint( -(speed_Y + turn_imu - turn_enc_x)), -60, 0);
+					speedFR = clamp(nearbyint( -(speed_Y + turn_imu + turn_enc_x)), -90, 0);
+					speedFL = clamp(nearbyint( -(speed_Y - turn_imu - turn_enc_x)), -90, 0);
+					speedRL = clamp(nearbyint( -(speed_Y - turn_imu + turn_enc_x)), -90, 0);
+					speedRR = clamp(nearbyint( -(speed_Y + turn_imu - turn_enc_x)), -90, 0);
 					break;
 
 				case 4:	//左
-					speedFR = clamp(nearbyint( speed_X - turn_imu - turn_enc_y ), 0, 60);
-					speedFL = clamp(nearbyint( -(speed_X - turn_imu + turn_enc_y)), -60, 0);
-					speedRL = clamp(nearbyint( speed_X + turn_imu - turn_enc_y), 0, 60);
-					speedRR = clamp(nearbyint( -(speed_X + turn_imu + turn_enc_y)), -60, 0);
+					speedFR = clamp(nearbyint( speed_X - turn_imu - turn_enc_y ), 0, 90);
+					speedFL = clamp(nearbyint( -(speed_X - turn_imu + turn_enc_y)), -90, 0);
+					speedRL = clamp(nearbyint( speed_X + turn_imu - turn_enc_y), 0, 90);
+					speedRR = clamp(nearbyint( -(speed_X + turn_imu + turn_enc_y)), -90, 0);
 					break;
 
 				default:

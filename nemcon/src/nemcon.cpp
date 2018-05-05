@@ -96,6 +96,8 @@ void switch_cb(const nemcon::switch_in& msg)
 			pub_throw.publish(msg_throw);*/
 			acc_move(0, 3, 0, 2, 0.95, -1.05, 4.42, 4);	//TZ1受け渡しポイント
 			ros::Duration(1.772454 + 0.1).sleep();
+      msg_pid_param.pattern = -1;
+      pub_tar_dis.publish(msg_pid_param);
 
 			/*msg_throw.data = 40;	//受け取り待機
 			pub_throw.publish(msg_throw);*/
