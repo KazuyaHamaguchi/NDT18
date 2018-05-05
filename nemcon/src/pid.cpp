@@ -16,7 +16,7 @@ using namespace std;
 
 float speed_X = 0.0f, speed_Y = 0.0f, speed = 0.0f;
 int front;	//旋回：-1，前：1，右：2，後：3，左：4
-int pattern; //0：加減速，1：等速
+int pattern;	//0：加減速，1：等速
 
 bool lrf = false;
 
@@ -81,11 +81,11 @@ float clamp(float input, float min, float max)
 	{
 		output = -5;
 	}
-	if(max > 0 && input <= 0.0 && )
+	if(max > 0 && input <= 0.0 && vflag)
 	{
 		output = 8080;
 	}
-	if(min < 0 && 0.0 <= input)
+	if(min < 0 && 0.0 <= input && vflag)
 	{
 		output = 8080;
 	}
