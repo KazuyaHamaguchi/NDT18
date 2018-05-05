@@ -50,6 +50,7 @@ float enc_vx = 0.0f, enc_vy = 0.0f;
 float tar_x = 0.0f, tar_y = 0.0f;
 float enc_x = 0.0f;
 
+bool vflag = false;
 
 ros::Time current_time , last_time;
 double dt = 0.0;
@@ -80,7 +81,7 @@ float clamp(float input, float min, float max)
 	{
 		output = -5;
 	}
-	if(max > 0 && input <= 0.0)
+	if(max > 0 && input <= 0.0 && )
 	{
 		output = 8080;
 	}
@@ -180,6 +181,16 @@ void pid_v(const accel_decel::result& msg)
 
 	error_x = msg.V - abs(enc_vx);
 	error_y = msg.V - abs(enc_vy);
+
+	if(!(msg.V == 0.0))
+	{
+		vflag = true;
+	}
+	else
+	{
+		vflag = false;
+	}
+
 	integral_y += (error_y + lasterror_y) / 2.0 * dt;
 
 	if(!lrf)
