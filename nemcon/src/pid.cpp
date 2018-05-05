@@ -60,60 +60,59 @@ nemcon::motor msg_m;
 
 float clamp(float input, float min, float max, int type)
 {
-	float output = 0.00000f;
-	if(type == 0)
+	int output = 0;
+	if(input <= min)
 	{
-		if(input <= min)
-		{
-			output = min;
-		}
-		if(min < input && input < max)
-		{
-			output = input;
-		}
-		if(input >= max)
-		{
-			output = max;
-		}
-		if(max > 0 && 0.1 <= input && input < 3)
+		output = min;
+	}
+	if(min < input && input < max)
+	{
+		output = input;
+	}
+	if(input >= max)
+	{
+		output = max;
+	}
+  if(type == 0)
+  {
+		/*if(max > 0 && 0.1 <= input && input <= 5)
 		{
 			output = 5;
 		}
-		if(min < 0 && -3 < input && input <= -0.1)
+		if(min < 0 && -5 <= input && input <= -0.1)
 		{
 			output = -5;
-		}
-		if(max > 0 && input <= 0.0)
+		}*/
+		if(max > 0 && input <= 0.1)
 		{
 			output = 8080;
 		}
-		if(min < 0 && 0.0 <= input)
+    if(min < 0 && -0.1 <= input)
 		{
 			output = 8080;
 		}
 	}
 	if(type == 1)
 	{
-		if(input <= min)
-		{
-			output = min;
-		}
-		if(min < input && input < max)
-		{
-			output = input;
-		}
-		if(input >= max)
-		{
-			output = max;
-		}
-		/*if(max > 0 && 1 <= input && input < 3)
+		if(max > 0 && 1 <= input && input < 3)
 		{
 			output = 2;
 		}
 		if(min < 0 && -3 < input && input <= -1)
 		{
 			output = -2;
-		}*/
+		}
+	}
+  if(type == 2)
+	{
+		if(max > 0 && 1 <= input && input < 6)
+		{
+			output = 5;
+		}
+		if(min < 0 && -6 < input && input <= -1)
+		{
+			output = -5;
+		}
 	}
 	return output;
 }
@@ -179,17 +178,27 @@ void pid_pose(const geometry_msgs::PoseStamped& msg)
 void pid_v(const accel_decel::result& msg)
 {
 	float lasterror_x = 0, lasterror_y = 0, integral_x = 0, integral_y = 0, error_x = 0, error_y = 0;
+  bool flag = false;
+  int count = 0;
 
 	error_x = msg.V - abs(enc_vx);
 	error_y = msg.V - abs(enc_vy);
 
 	if(!(msg.V <= 0.001))
 	{
-		vflag = 0;
+    if(count == 0)
+    {
+      count ++;
+    }
+    if(count > 0)
+    {
+      vflag = 0;
+    }
 	}
 	else
 	{
-		vflag = 1;
+		vflag = 2;
+    count = 0;
 	}
 
 	integral_y += (error_y + lasterror_y) / 2.0 * dt;
