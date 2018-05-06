@@ -104,14 +104,12 @@ void throw_cb(const std_msgs::Int8& msg)
 	{
 		ROS_INFO("msg_leave");
 		leave = true;
-		leave2 = false;
 		judg - false;
 	}
 	if(msg.data == 52)
 	{
 		ROS_INFO("msg_judg");
 		leave = false;
-		leave2 = false;
 		judg = true;
 	}
 	if(msg.data == 100)
