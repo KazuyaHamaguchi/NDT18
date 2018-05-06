@@ -73,21 +73,13 @@ float clamp(float input, float min, float max, int type)
 	{
 		output = max;
 	}
-  if(type == 0)
-  {
-		/*if(max > 0 && 0.1 <= input && input <= 5)
-		{
-			output = 5;
-		}
-		if(min < 0 && -5 <= input && input <= -0.1)
-		{
-			output = -5;
-		}*/
+	if(type == 0)
+	{
 		if(max > 0 && input <= 0.1)
 		{
 			output = 8080;
 		}
-    if(min < 0 && -0.1 <= input)
+		if(min < 0 && -0.1 <= input)
 		{
 			output = 8080;
 		}
@@ -103,7 +95,7 @@ float clamp(float input, float min, float max, int type)
 			output = -2;
 		}
 	}
-  if(type == 2)
+	if(type == 2)
 	{
 		if(max > 0 && 1 <= input && input < 6)
 		{
@@ -184,23 +176,6 @@ void pid_v(const accel_decel::result& msg)
 	error_x = msg.V - abs(enc_vx);
 	error_y = msg.V - abs(enc_vy);
 
-	if(!(msg.V <= 0.001))
-	{
-    if(count == 0)
-    {
-      count ++;
-    }
-    if(count > 0)
-    {
-      vflag = 0;
-    }
-	}
-	else
-	{
-		vflag = 2;
-    count = 0;
-	}
-
 	integral_y += (error_y + lasterror_y) / 2.0 * dt;
 
 	if(!lrf)
@@ -222,9 +197,27 @@ void pid_v(const accel_decel::result& msg)
 		speed_Y = lrfv_P * error_y + lrfv_I * integral_y + lrfv_D * (error_y - lasterror_y) / dt;
 	}
 
+	if(!(msg.V <= 0.001))
+	{
+		if(count == 0)
+		{
+		  count ++;
+		}
+		if(count > 0)
+		{
+		  vflag = 0;
+		}
+	}
+	else
+	{
+		vflag = 2;
+		count = 0;
+		speed_X = 0;
+		speed_Y = 0;
+	}
+
 	lasterror_x = error_x;
 	lasterror_y = error_y;
-
 }
 
 void mySigintHandler(int sig)
