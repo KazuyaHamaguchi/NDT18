@@ -97,15 +97,15 @@ int main(int argc, char **argv)
 				msg_acc.V = 0;
 				pub_tar_dis.publish(msg_pid_param);
 				pub_acc.publish(msg_acc);
-        if(t >= 0.2)
-        {
-				  flag_x = true;
-        }
+				if(t >= 0.2)
+				{
+					flag_x = true;
+				}
 			}
 			else
 			{
-			  flag_x = false;
-        t = 0;
+				flag_x = false;
+				t = 0;
 			}
 		}
 
