@@ -97,13 +97,13 @@ float clamp(float input, float min, float max, int type)
 	}
 	if(type == 2)
 	{
-		if(max > 0 && 1 <= input && input < 6)
+		if(max > 0 && 1 <= input && input < 4)
 		{
-			output = 5;
+			output = 4;
 		}
-		if(min < 0 && -6 < input && input <= -1)
+		if(min < 0 && -4 < input && input <= -1)
 		{
-			output = -5;
+			output = -4;
 		}
 	}
 	return output;

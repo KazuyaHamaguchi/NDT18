@@ -97,8 +97,8 @@ void switch_cb(const nemcon::switch_in& msg)
 			acc_move(0, 3, 0, 2, 0.95, -1.05, 4.42, 4);	//TZ1受け渡しポイント
 			ros::Duration(1.772454 + 0.1).sleep();
 
-			/*msg_throw.data = 40;	//受け取り待機
-			pub_throw.publish(msg_throw);*/
+			msg_throw.data = 40;	//受け取り待機
+			pub_throw.publish(msg_throw);
 
 			cb_flag = true;
 			end = true;
@@ -132,8 +132,16 @@ void receive_cb(const std_msgs::Int8& msg)
 {
 	if(msg.data == -40)	//CRからの受け取りに成功
 	{
-		msg_judg.data = 52;
-		pub_judg.publish(msg_judg);
+    if(!first)
+    {
+		  msg_judg.data = 50;
+		  pub_judg.publish(msg_judg);
+    }
+    else
+    {
+      msg_judg.data = 52;
+      pub_judg.publish(msg_judg);
+    }
 	}
 
 	if(msg.data == -41)

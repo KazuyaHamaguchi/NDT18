@@ -60,7 +60,7 @@ int main(int argc, char **argv)
 
 		if(judg)
 		{
-			if(!objR && objL)
+			if(objR && !objL)
 			{
 				if(t >= 1.5)
 				{
@@ -70,7 +70,7 @@ int main(int argc, char **argv)
 					judg = false;
 				}
 			}
-			else if(objR && !objL)
+			else if(!objR && objL)
 			{
 				if(t >= 1.5)
 				{
