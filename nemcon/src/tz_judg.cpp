@@ -6,11 +6,9 @@
 ros::Time current_time, last_time;
 
 bool objR = false;
-bool objT = false;
 bool objL = false;
 
 bool leave = false;
-bool leave2 = false;
 bool judg = false;
 
 float t = 0.0f;
@@ -44,9 +42,9 @@ int main(int argc, char **argv)
 
 		if(leave)
 		{
-			if(!objR || !objT || !objL)
+			if(!objR && !objL)
 			{
-				if(t >= 0.5)
+				if(t >= 0.8)
 				{
 					ROS_INFO("leave");
 					msg_judg.data = 1;
@@ -60,52 +58,24 @@ int main(int argc, char **argv)
 			}
 		}
 
-		if(leave2)
-		{
-			if(!objR && !objT && !objL)
-			{
-				if(t >= 0.1)
-				{
-					ROS_INFO("leave2");
-					msg_judg.data = 5;
-					pub_judg.publish(msg_judg);
-					leave2 = false;
-				}
-			}
-			else
-			{
-				t = 0.0f;
-			}
-		}
-
 		if(judg)
 		{
-			if(objR && objT && !objL)
+			if(!objR && objL)
 			{
-				if(t >= 1.0)
+				if(t >= 1.5)
 				{
-					ROS_INFO("TZ1");
+					ROS_INFO("true");
 					msg_judg.data = 2;
 					pub_judg.publish(msg_judg);
 					judg = false;
 				}
 			}
-			else if(!objR && objT && objL)
+			else if(objR && !objL)
 			{
-				if(t >= 1.0)
+				if(t >= 1.5)
 				{
-					ROS_INFO("TZ2");
+					ROS_INFO("false");
 					msg_judg.data = 3;
-					pub_judg.publish(msg_judg);
-					judg = false;
-				}
-			}
-			else if(objR && !objT && objL)
-			{
-				if(t >= 1.0)
-				{
-					ROS_INFO("TZ3");
-					msg_judg.data = 4;
 					pub_judg.publish(msg_judg);
 					judg = false;
 				}
@@ -125,7 +95,6 @@ int main(int argc, char **argv)
 void object_cb(const nemcon::object_in& msg)
 {
 	objR = msg.objR;
-	objT = msg.objT;
 	objL = msg.objL;
 }
 
@@ -137,13 +106,6 @@ void throw_cb(const std_msgs::Int8& msg)
 		leave = true;
 		leave2 = false;
 		judg - false;
-	}
-	if(msg.data == 51)
-	{
-		ROS_INFO("msg_leave2");
-		leave = false;
-		leave2 = true;
-		judg = false;
 	}
 	if(msg.data == 52)
 	{
