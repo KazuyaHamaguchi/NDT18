@@ -132,16 +132,16 @@ void receive_cb(const std_msgs::Int8& msg)
 {
 	if(msg.data == -40)	//CRからの受け取りに成功
 	{
-    if(!first)
-    {
-		  msg_judg.data = 50;
-		  pub_judg.publish(msg_judg);
-    }
-    else
-    {
-      msg_judg.data = 52;
-      pub_judg.publish(msg_judg);
-    }
+		if(!first)
+		{
+			msg_judg.data = 50;
+			pub_judg.publish(msg_judg);
+		}
+		else
+		{
+			msg_judg.data = 52;
+			pub_judg.publish(msg_judg);
+		}
 	}
 
 	if(msg.data == -41)
