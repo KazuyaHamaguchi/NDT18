@@ -538,7 +538,7 @@ int main(int argc, char **argv)
 
 		if(pattern == 1)	//等速
 		{
-			ROS_INFO("pattern:%d", pattern);
+      ROS_INFO("pattern:%d", front);
 			switch(front)
 			{
 				case 1:	//前

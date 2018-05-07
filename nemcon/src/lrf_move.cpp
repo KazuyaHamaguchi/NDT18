@@ -21,6 +21,9 @@ float offsset = 0.0f;
 
 float t = 0.0f;
 
+bool first = false;
+int count = 0;
+
 ros::Time current_time, last_time;
 
 accel_decel::result msg_acc;
@@ -53,12 +56,14 @@ int main(int argc, char **argv)
 		current_time = ros::Time::now();
 		t += (current_time - last_time).toSec();
 
-		if(flag && !flag_x)
+if(flag)
+{
+		if(!flag_x && !flag_y)
 		{
 			if(0.1 + offsset < lrf_x)
 			{
 				ROS_INFO("lrf_x:%f", lrf_x);
-				msg_acc.V = 0.1;
+				msg_acc.V = 0.2;
 				msg_pid_param.front = 4;
 				pub_tar_dis.publish(msg_pid_param);
 				pub_acc.publish(msg_acc);
@@ -76,7 +81,7 @@ int main(int argc, char **argv)
 			if(lrf_x < -0.1 + offsset)
 			{
 				ROS_INFO("-lrf_x:%f", lrf_x);
-				msg_acc.V = 0.1;
+				msg_acc.V = 0.2;
 				msg_pid_param.front = 2;
 				pub_tar_dis.publish(msg_pid_param);
 				pub_acc.publish(msg_acc);
@@ -97,15 +102,11 @@ int main(int argc, char **argv)
 				msg_acc.V = 0;
 				pub_tar_dis.publish(msg_pid_param);
 				pub_acc.publish(msg_acc);
-				if(t >= 0.2)
-				{
-					flag_x = true;
-				}
+				flag_x = true;
 			}
 			else
 			{
 				flag_x = false;
-				t = 0;
 			}
 		}
 
@@ -115,7 +116,7 @@ int main(int argc, char **argv)
 			if(0.1 < lrf_y)
 			{
 				ROS_INFO("lrf_y:%f", lrf_y);
-				msg_acc.V = 0.1;
+				msg_acc.V = 0.2;
 				msg_pid_param.front = 3;
 				pub_tar_dis.publish(msg_pid_param);
 				pub_acc.publish(msg_acc);
@@ -133,8 +134,9 @@ int main(int argc, char **argv)
 			if(lrf_y < -0.1)
 			{
 				ROS_INFO("-lrf_y:%f", lrf_y);
-				msg_acc.V = 0.1;
+				msg_acc.V = 0.2;
 				msg_pid_param.front = 1;
+        pub_tar_dis.publish(msg_pid_param);
 				pub_acc.publish(msg_acc);
 				flag_y = false;
 			}
@@ -153,14 +155,16 @@ int main(int argc, char **argv)
 				msg_acc.V = 0;
 				pub_tar_dis.publish(msg_pid_param);
 				pub_acc.publish(msg_acc);
-				if(-0.01 + offsset <= lrf_x && lrf_x <= 0.01 + offsset && t >= 1.0)
+				if(-0.01 + offsset <= lrf_x && lrf_x <= 0.01 + offsset && t >= 0.2)
 				{
 					ROS_INFO("lrf OK");
+          count ++;
 					msg_lrf.data = -50;
 					pub_lrf.publish(msg_lrf);
 					flag = false;
 					flag_x = false;
 					flag_y = false;
+          first = true;
 					t = 0.0f;
 				}
 				else
@@ -174,6 +178,21 @@ int main(int argc, char **argv)
 			  t = 0.0f;
 			}
 		}
+}
+else
+{
+  flag_x = false;
+  flag_y = false;
+  /*if(count == 1)
+  {
+    ROS_INFO("count: %d", count);
+    msg_acc.V = 0;
+    msg_pid_param.front = 0;
+    pub_tar_dis.publish(msg_pid_param);
+    count = 0;
+    ROS_INFO("count: %d", count);
+  }*/
+}
 
 		last_time = current_time;
 
@@ -193,6 +212,24 @@ void lrf_cb(const geometry_msgs::PoseStamped& msg)
 void flag_cb(const nemcon::lrf_flag& msg)
 {
 	flag = msg.flag;
+  if(!flag)
+  {
+    if(!first)
+    {
+      /*count = 1;
+      ROS_INFO("count: %d", count);*/
+      msg_acc.V = 0;
+      msg_pid_param.front = 0;
+      pub_tar_dis.publish(msg_pid_param);
+      /*count = 0;
+      ROS_INFO("count: %d", count);*/
+      first = true;
+    }
+  }
+  else
+  {
+    first = false;
+  }
 
 	switch(msg.TZ)
 	{
