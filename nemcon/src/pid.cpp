@@ -128,8 +128,8 @@ void param_cb(const nemcon::pid_param& msg)
 
 void enc_cb(const deadreckoning::enc& msg)
 {
-  enc_vx = msg.speed_X;
-  enc_vy = msg.speed_Y;
+	enc_vx = msg.speed_X;
+	enc_vy = msg.speed_Y;
 }
 
 void pid_lrf(const geometry_msgs::PoseStamped& msg)
@@ -170,8 +170,8 @@ void pid_pose(const geometry_msgs::PoseStamped& msg)
 void pid_v(const accel_decel::result& msg)
 {
 	float lasterror_x = 0, lasterror_y = 0, integral_x = 0, integral_y = 0, error_x = 0, error_y = 0;
-  bool flag = false;
-  int count = 0;
+	bool flag = false;
+	int count = 0;
 
 	error_x = msg.V - abs(enc_vx);
 	error_y = msg.V - abs(enc_vy);
@@ -201,11 +201,11 @@ void pid_v(const accel_decel::result& msg)
 	{
 		if(count == 0)
 		{
-		  count ++;
+			count ++;
 		}
 		if(count > 0)
 		{
-		  vflag = 0;
+			vflag = 0;
 		}
 	}
 	else
@@ -538,7 +538,6 @@ int main(int argc, char **argv)
 
 		if(pattern == 1)	//等速
 		{
-      ROS_INFO("pattern:%d", front);
 			switch(front)
 			{
 				case 1:	//前
