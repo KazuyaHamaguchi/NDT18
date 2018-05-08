@@ -5,7 +5,7 @@
 #include <nemcon/lrf_flag.h>
 #include <std_msgs/Int8.h>
 
-void pose_cb(const geometry_msgs::PoseStamped& msg)
+void pose_cb(const geometry_msgs::PoseStamped& msg);
 void lrf_cb(const geometry_msgs::PoseStamped& msg);
 void flag_cb(const nemcon::lrf_flag& msg);
 
