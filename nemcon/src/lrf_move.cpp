@@ -5,13 +5,22 @@
 #include <nemcon/lrf_flag.h>
 #include <std_msgs/Int8.h>
 
+void pose_cb(const geometry_msgs::PoseStamped& msg)
 void lrf_cb(const geometry_msgs::PoseStamped& msg);
 void flag_cb(const nemcon::lrf_flag& msg);
+
+int type = 0;
 
 bool flag = false;
 bool flag_x = false;
 bool flag_y = false;
 bool flag_z = false;
+
+float x = 0.0f;
+float y = 0.0f;
+
+float enc_x = 0.0f;
+float enc_y = 0.0f;
 
 float lrf_x = 0.0f;
 float lrf_y = 0.0f;
@@ -39,6 +48,7 @@ int main(int argc, char **argv)
 
 	ros::Rate loop_rate(40);
 
+	ros::Subscriber sub_enc = nh.subscribe("/robot/pose", 1000, pose_cb);
 	ros::Subscriber sub_lrf = nh.subscribe("/lrf_pose", 1000, lrf_cb);
 	ros::Subscriber sub_flag = nh.subscribe("lrf_flag", 1000, flag_cb);
 
@@ -55,139 +65,159 @@ int main(int argc, char **argv)
 		current_time = ros::Time::now();
 		t += (current_time - last_time).toSec();
 
-if(flag)
-{
-		if(!flag_x && !flag_y)
+		if(flag)
 		{
-			if(0.1 + offsset < lrf_x)
-			{
-				ROS_INFO("lrf_x:%f", lrf_x);
-				msg_acc.V = 0.2;
-				msg_pid_param.front = 4;
-				pub_tar_dis.publish(msg_pid_param);
-				pub_acc.publish(msg_acc);
-				flag_x = false;
-			}
-			if(0.01 + offsset < lrf_x && lrf_x <= 0.1 + offsset)
-			{
-				ROS_INFO("lrf_x2:%f", lrf_x);
-				msg_acc.V = 0.05;
-				msg_pid_param.front = 4;
-				pub_tar_dis.publish(msg_pid_param);
-				pub_acc.publish(msg_acc);
-				flag_x = false;
-			}
-			if(lrf_x < -0.1 + offsset)
-			{
-				ROS_INFO("-lrf_x:%f", lrf_x);
-				msg_acc.V = 0.2;
-				msg_pid_param.front = 2;
-				pub_tar_dis.publish(msg_pid_param);
-				pub_acc.publish(msg_acc);
-				flag_x = false;
-			}
-			if(-0.1 + offsset <= lrf_x && lrf_x < -0.01 + offsset)
-			{
-				ROS_INFO("-lrf_x2:%f", lrf_x);
-				msg_acc.V = 0.05;
-				msg_pid_param.front = 2;
-				pub_tar_dis.publish(msg_pid_param);
-				pub_acc.publish(msg_acc);
-				flag_x = false;
-			}
-			if(-0.01 + offsset <= lrf_x && lrf_x <= 0.01 + offsset)
-			{
-				ROS_INFO("lrf_x OK");
-				msg_acc.V = 0;
-				pub_tar_dis.publish(msg_pid_param);
-				pub_acc.publish(msg_acc);
-				flag_x = true;
-			}
-			else
-			{
-				flag_x = false;
-			}
-		}
+				if(!flag_x && !flag_y)
+				{
+					if(0.1 + offsset < lrf_x)
+					{
+						ROS_INFO("lrf_x:%f", lrf_x);
+						msg_acc.V = 0.2;
+						msg_pid_param.front = 4;
+						pub_tar_dis.publish(msg_pid_param);
+						pub_acc.publish(msg_acc);
+						flag_x = false;
+					}
+					if(0.01 + offsset < lrf_x && lrf_x <= 0.1 + offsset)
+					{
+						ROS_INFO("lrf_x2:%f", lrf_x);
+						msg_acc.V = 0.05;
+						msg_pid_param.front = 4;
+						pub_tar_dis.publish(msg_pid_param);
+						pub_acc.publish(msg_acc);
+						flag_x = false;
+					}
+					if(lrf_x < -0.1 + offsset)
+					{
+						ROS_INFO("-lrf_x:%f", lrf_x);
+						msg_acc.V = 0.2;
+						msg_pid_param.front = 2;
+						pub_tar_dis.publish(msg_pid_param);
+						pub_acc.publish(msg_acc);
+						flag_x = false;
+					}
+					if(-0.1 + offsset <= lrf_x && lrf_x < -0.01 + offsset)
+					{
+						ROS_INFO("-lrf_x2:%f", lrf_x);
+						msg_acc.V = 0.05;
+						msg_pid_param.front = 2;
+						pub_tar_dis.publish(msg_pid_param);
+						pub_acc.publish(msg_acc);
+						flag_x = false;
+					}
+					if(-0.01 + offsset <= lrf_x && lrf_x <= 0.01 + offsset)
+					{
+						if(type == 0)
+						{
+							ROS_INFO("lrf_x OK");
+							msg_acc.V = 0;
+							pub_tar_dis.publish(msg_pid_param);
+							pub_acc.publish(msg_acc);
+							flag_x = true;
+						}
+						if(type == 1)
+						{
+							ROS_INFO("lrf OK");
+							msg_lrf.data = -50;
+							pub_lrf.publish(msg_lrf);
+							flag = false;
+							flag_x = false;
+							flag_y = false;
+							first = true;
+							t = 0.0f;
+						}
+					}
+					else
+					{
+						flag_x = false;
+					}
+				}
 
 
-		if(flag_x && !flag_y)
-		{
-			if(0.1 < lrf_y)
-			{
-				ROS_INFO("lrf_y:%f", lrf_y);
-				msg_acc.V = 0.2;
-				msg_pid_param.front = 3;
-				pub_tar_dis.publish(msg_pid_param);
-				pub_acc.publish(msg_acc);
-				flag_y = false;
-			}
-			if(0.01 < lrf_y && lrf_y <= 0.1)
-			{
-				ROS_INFO("lrf_y2:%f", lrf_y);
-				msg_acc.V = 0.05;
-				msg_pid_param.front = 3;
-				pub_tar_dis.publish(msg_pid_param);
-				pub_acc.publish(msg_acc);
-				flag_y = false;
-			}
-			if(lrf_y < -0.1)
-			{
-				ROS_INFO("-lrf_y:%f", lrf_y);
-				msg_acc.V = 0.2;
-				msg_pid_param.front = 1;
-				pub_tar_dis.publish(msg_pid_param);
-				pub_acc.publish(msg_acc);
-				flag_y = false;
-			}
-			if(-0.1 <= lrf_y && lrf_y <= -0.01)
-			{
-				ROS_INFO("-lrf_y2:%f", lrf_y);
-				msg_acc.V = 0.05;
-				msg_pid_param.front = 1;
-				pub_tar_dis.publish(msg_pid_param);
-				pub_acc.publish(msg_acc);
-				flag_y = false;
-			}
-			if(-0.01 <= lrf_y && lrf_y <= 0.01)
-			{
-				ROS_INFO("lrf_y OK");
-				msg_acc.V = 0;
-				pub_tar_dis.publish(msg_pid_param);
-				pub_acc.publish(msg_acc);
-				if(-0.01 + offsset <= lrf_x && lrf_x <= 0.01 + offsset && t >= 0.2)
+				if(flag_x && !flag_y)
 				{
-					ROS_INFO("lrf OK");
-					msg_lrf.data = -50;
-					pub_lrf.publish(msg_lrf);
-					flag = false;
-					flag_x = false;
-					flag_y = false;
-					first = true;
-					t = 0.0f;
+					if(0.1 < lrf_y)
+					{
+						ROS_INFO("lrf_y:%f", lrf_y);
+						msg_acc.V = 0.2;
+						msg_pid_param.front = 3;
+						pub_tar_dis.publish(msg_pid_param);
+						pub_acc.publish(msg_acc);
+						flag_y = false;
+					}
+					if(0.01 < lrf_y && lrf_y <= 0.1)
+					{
+						ROS_INFO("lrf_y2:%f", lrf_y);
+						msg_acc.V = 0.05;
+						msg_pid_param.front = 3;
+						pub_tar_dis.publish(msg_pid_param);
+						pub_acc.publish(msg_acc);
+						flag_y = false;
+					}
+					if(lrf_y < -0.1)
+					{
+						ROS_INFO("-lrf_y:%f", lrf_y);
+						msg_acc.V = 0.2;
+						msg_pid_param.front = 1;
+						pub_tar_dis.publish(msg_pid_param);
+						pub_acc.publish(msg_acc);
+						flag_y = false;
+					}
+					if(-0.1 <= lrf_y && lrf_y <= -0.01)
+					{
+						ROS_INFO("-lrf_y2:%f", lrf_y);
+						msg_acc.V = 0.05;
+						msg_pid_param.front = 1;
+						pub_tar_dis.publish(msg_pid_param);
+						pub_acc.publish(msg_acc);
+						flag_y = false;
+					}
+					if(-0.01 <= lrf_y && lrf_y <= 0.01)
+					{
+						ROS_INFO("lrf_y OK");
+						msg_acc.V = 0;
+						pub_tar_dis.publish(msg_pid_param);
+						pub_acc.publish(msg_acc);
+						if(-0.01 + offsset <= lrf_x && lrf_x <= 0.01 + offsset && t >= 0.2)
+						{
+							ROS_INFO("lrf OK");
+							msg_lrf.data = -50;
+							pub_lrf.publish(msg_lrf);
+							flag = false;
+							flag_x = false;
+							flag_y = false;
+							first = true;
+							t = 0.0f;
+						}
+						else
+						{
+							flag_x = false;
+						}
+					}
+					else
+					{
+						flag_y = false;
+						t = 0.0f;
+					}
 				}
-				else
-				{
-					flag_x = false;
-				}
-			}
-			else
-			{
-			  flag_y = false;
-			  t = 0.0f;
-			}
 		}
-}
-else
-{
-	flag_x = false;
-	flag_y = false;
-}
+		else
+		{
+			flag_x = false;
+			flag_y = false;
+		}
 
 		last_time = current_time;
 
 		loop_rate.sleep();
 		ros::spinOnce();
 	}
+}
+
+void pose_cb(const geometry_msgs::PoseStamped& msg)
+{
+	enc_x = msg.pose.position.x;
+	enc_y = msg.pose.position.y;
 }
 
 void lrf_cb(const geometry_msgs::PoseStamped& msg)
@@ -216,18 +246,29 @@ void flag_cb(const nemcon::lrf_flag& msg)
 		first = false;
 	}
 
-	switch(msg.TZ)
+	if(msg.type == 0)
 	{
-		case 1: case 3:
-			offsset = 0.0f;
-			break;
+		x = lrf_x;
+		y = lrf_y;
+		switch(msg.TZ)
+		{
+			case 1: case 3:
+				offsset = 0.0f;
+				break;
 
-		case 2:
-			offsset = 3.27503521586;
-			break;
+			case 2:
+				offsset = 3.27503521586;
+				break;
 
-		default:
-			offsset = 0.0f;
-			break;
+			default:
+				offsset = 0.0f;
+				break;
+		}
 	}
+	if(msg.type == 1)
+	{
+		x = enc_x;
+		offsset = -1.15f;
+	}
+
 }
