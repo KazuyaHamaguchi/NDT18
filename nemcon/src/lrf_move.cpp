@@ -136,7 +136,7 @@ if(flag)
 				ROS_INFO("-lrf_y:%f", lrf_y);
 				msg_acc.V = 0.2;
 				msg_pid_param.front = 1;
-        pub_tar_dis.publish(msg_pid_param);
+				pub_tar_dis.publish(msg_pid_param);
 				pub_acc.publish(msg_acc);
 				flag_y = false;
 			}
@@ -181,17 +181,8 @@ if(flag)
 }
 else
 {
-  flag_x = false;
-  flag_y = false;
-  /*if(count == 1)
-  {
-    ROS_INFO("count: %d", count);
-    msg_acc.V = 0;
-    msg_pid_param.front = 0;
-    pub_tar_dis.publish(msg_pid_param);
-    count = 0;
-    ROS_INFO("count: %d", count);
-  }*/
+	flag_x = false;
+	flag_y = false;
 }
 
 		last_time = current_time;
@@ -212,24 +203,20 @@ void lrf_cb(const geometry_msgs::PoseStamped& msg)
 void flag_cb(const nemcon::lrf_flag& msg)
 {
 	flag = msg.flag;
-  if(!flag)
-  {
-    if(!first)
-    {
-      /*count = 1;
-      ROS_INFO("count: %d", count);*/
-      msg_acc.V = 0;
-      msg_pid_param.front = 0;
-      pub_tar_dis.publish(msg_pid_param);
-      /*count = 0;
-      ROS_INFO("count: %d", count);*/
-      first = true;
-    }
-  }
-  else
-  {
-    first = false;
-  }
+	if(!flag)
+	{
+		if(!first)
+		{
+			msg_acc.V = 0;
+			msg_pid_param.front = 0;
+			pub_tar_dis.publish(msg_pid_param);
+			first = true;
+		}
+	}
+	else
+	{
+		first = false;
+	}
 
 	switch(msg.TZ)
 	{
