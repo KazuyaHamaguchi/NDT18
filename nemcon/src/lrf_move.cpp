@@ -22,7 +22,6 @@ float offsset = 0.0f;
 float t = 0.0f;
 
 bool first = false;
-int count = 0;
 
 ros::Time current_time, last_time;
 
@@ -158,13 +157,12 @@ if(flag)
 				if(-0.01 + offsset <= lrf_x && lrf_x <= 0.01 + offsset && t >= 0.2)
 				{
 					ROS_INFO("lrf OK");
-          count ++;
 					msg_lrf.data = -50;
 					pub_lrf.publish(msg_lrf);
 					flag = false;
 					flag_x = false;
 					flag_y = false;
-          first = true;
+					first = true;
 					t = 0.0f;
 				}
 				else
