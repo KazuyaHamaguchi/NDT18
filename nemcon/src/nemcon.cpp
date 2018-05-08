@@ -94,8 +94,12 @@ void switch_cb(const nemcon::switch_in& msg)
 			ros::Duration(3.759942 + 0.1).sleep();
 			msg_throw.data = 30;
 			pub_throw.publish(msg_throw);
-			acc_move(0, 3, 0, 2, 0.95, -1.05, 4.42, 4);	//TZ1受け渡しポイント
+			acc_move(0, 3, 0, 2, 0.95, -1.15, 4.42, 4);	//TZ1受け渡しポイント
 			ros::Duration(1.772454 + 0.1).sleep();
+
+			msg_lrf.flag = true;
+			msg_lrf.type = 1;
+			pub_lrf.publish(msg_lrf);
 
 			msg_throw.data = 40;	//受け取り待機
 			pub_throw.publish(msg_throw);
@@ -215,6 +219,7 @@ void judg_cb(const std_msgs::Int8& msg)
 			acc_move(0, 3, 0, 2, 1.4, -1.15, 4.42, 4);
 			ros::Duration(2.1 + 0.1).sleep();
 			msg_lrf.flag = true;
+			msg_lrf.type = 0;
 			msg_lrf.TZ = 1;
 			pub_lrf.publish(msg_lrf);
 			first = true;
@@ -229,6 +234,7 @@ void judg_cb(const std_msgs::Int8& msg)
 			acc_move(0, 3, 0, 2, 1.3, -1.15, 4.42, 4);
 			ros::Duration(2.020908 + 0.1).sleep();
 			msg_lrf.flag = true;
+			msg_lrf.type = 0;
 			msg_lrf.TZ = 1;
 			pub_lrf.publish(msg_lrf);
 		}
@@ -243,6 +249,7 @@ void judg_cb(const std_msgs::Int8& msg)
 			acc_move(0, 3, 0, 2, 2.25, -1.1, 6.4, 4);
 			ros::Duration(2.65868 + 0.1).sleep();
 			msg_lrf.flag = true;
+			msg_lrf.type = 0;
 			msg_lrf.TZ = 2;
 			pub_lrf.publish(msg_lrf);
 			msg_throw.data = 41;
@@ -257,6 +264,7 @@ void judg_cb(const std_msgs::Int8& msg)
 			acc_move(0, 3, 0, 2, 4.8, -1.15, 6.4, 4);
 			ros::Duration(3.883252 + 0.1).sleep();
 			msg_lrf.flag = true;
+			msg_lrf.type = 0;
 			msg_lrf.TZ = 3;
 			pub_lrf.publish(msg_lrf);
 		}
@@ -277,6 +285,7 @@ void judg_cb(const std_msgs::Int8& msg)
 		acc_move(0, 3, 0, 2, 4.8, -1.15, 6.4, 4);
 		ros::Duration(3.883252 + 0.1).sleep();
 		msg_lrf.flag = true;
+		msg_lrf.type = 0;
 		msg_lrf.TZ = 3;
 		pub_lrf.publish(msg_lrf);
 	}
