@@ -175,6 +175,10 @@ void receive_cb(const std_msgs::Int8& msg)
 		pub_lrf.publish(msg_lrf);
 		set_servo_pulsewidth(pi, pin_servo, 1520);
 		acc_move(0, 3, 0, 2, 1.2, -1, 4.42, 2);
+		ros::Duration(1.941626 + 0.1).sleep();
+		msg_lrf.flag = true;
+		msg_lrf.type = 1;
+		pub_lrf.publish(msg_lrf);
 		pre_TZ = TZ;
 	}
 	if(msg.data == -11)
@@ -183,6 +187,10 @@ void receive_cb(const std_msgs::Int8& msg)
 		pub_lrf.publish(msg_lrf);
 		set_servo_pulsewidth(pi, pin_servo, 1520);
 		acc_move(0, 3, 0, 2, 1.3, -1, 6.5, 2);
+		ros::Duration(2.020908 + 0.1).sleep();
+		msg_lrf.flag = true;
+		msg_lrf.type = 1;
+		pub_lrf.publish(msg_lrf);
 		pre_TZ = TZ;
 	}
 	if(msg.data == -111)
@@ -191,6 +199,10 @@ void receive_cb(const std_msgs::Int8& msg)
 		pub_lrf.publish(msg_lrf);
 		set_servo_pulsewidth(pi, pin_servo, 1520);
 		acc_move(0, 3, 0, 2, 4.8, -1, 6.35, 2);
+		ros::Duration(3.883252 + 0.1).sleep();
+		msg_lrf.flag = true;
+		msg_lrf.type = 1;
+		pub_lrf.publish(msg_lrf);
 		pre_TZ = TZ;
 		TZ_3 = true;
 	}
