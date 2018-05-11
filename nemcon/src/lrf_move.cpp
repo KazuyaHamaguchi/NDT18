@@ -66,16 +66,16 @@ int main(int argc, char **argv)
 		current_time = ros::Time::now();
 		t += (current_time - last_time).toSec();
 
-    if(type == 0)
-    {
-      x = lrf_x;
-      y = lrf_y;
-    }
-    else if(type == 1)
-    {
-      x = enc_x;
-      y = enc_y;
-    }
+	if(type == 0)
+	{
+	  x = lrf_x;
+	  y = lrf_y;
+	}
+	else if(type == 1)
+	{
+	  x = enc_x;
+	  y = enc_y;
+	}
 
 		if(flag)
 		{
@@ -89,6 +89,7 @@ int main(int argc, char **argv)
 						pub_tar_dis.publish(msg_pid_param);
 						pub_acc.publish(msg_acc);
 						flag_x = false;
+						first = false;
 					}
 					if(0.01 + offset_x < x && x <= 0.1 + offset_x)
 					{
@@ -98,6 +99,7 @@ int main(int argc, char **argv)
 						pub_tar_dis.publish(msg_pid_param);
 						pub_acc.publish(msg_acc);
 						flag_x = false;
+						first = false;
 					}
 					if(x < -0.1 + offset_x)
 					{
@@ -107,6 +109,7 @@ int main(int argc, char **argv)
 						pub_tar_dis.publish(msg_pid_param);
 						pub_acc.publish(msg_acc);
 						flag_x = false;
+						first = false;
 					}
 					if(-0.1 + offset_x <= x && x < -0.01 + offset_x)
 					{
@@ -116,6 +119,7 @@ int main(int argc, char **argv)
 						pub_tar_dis.publish(msg_pid_param);
 						pub_acc.publish(msg_acc);
 						flag_x = false;
+						first = false;
 					}
 					if(-0.01 + offset_x <= x && x <= 0.01 + offset_x)
 					{
@@ -128,6 +132,7 @@ int main(int argc, char **argv)
 					else
 					{
 						flag_x = false;
+						first = false;
 					}
 				}
 
@@ -142,6 +147,7 @@ int main(int argc, char **argv)
 						pub_tar_dis.publish(msg_pid_param);
 						pub_acc.publish(msg_acc);
 						flag_y = false;
+						first = false;
 					}
 					if(0.01 + offset_y < y && y <= 0.1 + offset_y)
 					{
@@ -151,6 +157,7 @@ int main(int argc, char **argv)
 						pub_tar_dis.publish(msg_pid_param);
 						pub_acc.publish(msg_acc);
 						flag_y = false;
+						first = false;
 					}
 					if(y < -0.1 + offset_y)
 					{
@@ -160,6 +167,7 @@ int main(int argc, char **argv)
 						pub_tar_dis.publish(msg_pid_param);
 						pub_acc.publish(msg_acc);
 						flag_y = false;
+						first = false;
 					}
 					if(-0.1 + offset_y <= y && y <= -0.01 + offset_y)
 					{
@@ -169,6 +177,7 @@ int main(int argc, char **argv)
 						pub_tar_dis.publish(msg_pid_param);
 						pub_acc.publish(msg_acc);
 						flag_y = false;
+						first = false;
 					}
 					if(-0.01 + offset_y <= y && y <= 0.01 + offset_y)
 					{
@@ -195,6 +204,7 @@ int main(int argc, char **argv)
 					else
 					{
 						flag_y = false;
+						first = false;
 						t = 0.0f;
 					}
 				}
@@ -203,6 +213,7 @@ int main(int argc, char **argv)
 		{
 			flag_x = false;
 			flag_y = false;
+			first = false;
 		}
 
 		last_time = current_time;
@@ -237,6 +248,8 @@ void flag_cb(const nemcon::lrf_flag& msg)
 			msg_acc.V = 0;
 			msg_pid_param.front = 0;
 			pub_tar_dis.publish(msg_pid_param);
+			flag_x = false;
+			flag_y = false;
 			first = true;
 		}
 	}
