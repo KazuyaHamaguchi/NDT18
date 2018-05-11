@@ -31,6 +31,7 @@ float offset_y = 0.0f;
 
 float t = 0.0f;
 
+bool first_x = false;
 bool first = false;
 
 ros::Time current_time, last_time;
@@ -121,7 +122,7 @@ int main(int argc, char **argv)
 						flag_x = false;
 						first = false;
 					}
-					if(-0.01 + offset_x <= x && x <= 0.01 + offset_x)
+					if(-0.01 + offset_x <= x && x <= 0.01 + offset_x && first_x)
 					{
 						ROS_INFO("lrf_x OK");
 						msg_acc.V = 0;
@@ -198,6 +199,7 @@ int main(int argc, char **argv)
 						}
 						else
 						{
+							first_x = true;
 							flag_x = false;
 						}
 					}
@@ -256,6 +258,7 @@ void flag_cb(const nemcon::lrf_flag& msg)
 	else
 	{
 		first = false;
+		first_x = false;
 	}
 
 	if(type == 0)
