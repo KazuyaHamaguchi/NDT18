@@ -13,6 +13,7 @@
 static const int pin_blue = 16;
 static const int pin_yellow = 12;
 static const int pin_servo = 24;
+static const int pin_RESET = 6;
 
 int pi = pigpio_start(0, 0);
 bool cb_flag = false;
@@ -23,6 +24,8 @@ bool lrf = false;
 bool throw_on = false;
 bool TZ_3 = false;
 
+bool flag_RESET = false;
+
 int TZ = 0;
 int pre_TZ = 0;
 
@@ -32,6 +35,7 @@ void switch_cb(const nemcon::switch_in& msg);
 void receive_cb(const std_msgs::Int8& msg);
 void judg_cb(const std_msgs::Int8& msg);
 void lrf_cb(const std_msgs::Int8& msg);
+void Reset();
 
 void led_flash(int num, float time, int color);	//color：blue = 0, yellow = 1
 void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_x, float tar_y, int front); //front：1前 2右 3後 4左
@@ -55,6 +59,7 @@ int main(int argc, char **argv)
 	set_mode(pi, pin_blue, PI_OUTPUT);
 	set_mode(pi, pin_yellow, PI_OUTPUT);
 	set_servo_pulsewidth(pi, pin_servo, 1520);	//0度
+	callback(pi, pin_RESET, 2, Reset);
 
 	ros::Subscriber subSwitch = nh.subscribe("/switch", 1000, switch_cb);
 	ros::Subscriber sub_receive = nh.subscribe("Throw_on", 1000, receive_cb);
@@ -431,4 +436,20 @@ void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_
 
 	pub_move_param.publish(msg_acc_param);
 	pub_tar_dis.publish(msg_pid_param);
+}
+
+void Reset()
+{
+	if(!flag_RESET)
+	{
+		flag_RESET = true;
+		ROS_INFO("RESET!")
+	}
+	else
+	{
+		if(flag_RESET)
+		{
+			flag_RESET = false;
+		}
+	}
 }
