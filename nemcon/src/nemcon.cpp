@@ -443,7 +443,7 @@ void Reset()
 	if(!flag_RESET)
 	{
 		flag_RESET = true;
-		ROS_INFO("RESET!")
+		ROS_INFO("RESET!");
 	}
 	else
 	{
