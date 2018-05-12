@@ -58,7 +58,6 @@ int main(int argc, char **argv)
 	pub_acc = nh.advertise<accel_decel::result>("accel_decel/result", 1000);
 	pub_lrf = nh.advertise<std_msgs::Int8>("lrf", 1000);
 
-	msg_pid_param.pattern = 1;
 	msg_pid_param.speed = 1;
 	msg_acc.Vmax = false;
 
@@ -69,13 +68,15 @@ int main(int argc, char **argv)
 
 	if(type == 0)
 	{
-	  x = lrf_x;
-	  y = lrf_y;
+		x = lrf_x;
+		y = lrf_y;
+		msg_pid_param.pattern = 2;
 	}
 	else if(type == 1)
 	{
-	  x = enc_x;
-	  y = enc_y;
+		x = enc_x;
+		y = enc_y;
+		msg_pid_param.pattern = 1;
 	}
 
 		if(flag)
@@ -242,18 +243,20 @@ void lrf_cb(const geometry_msgs::PoseStamped& msg)
 void flag_cb(const nemcon::lrf_flag& msg)
 {
 	flag = msg.flag;
-  type = msg.type;
+	type = msg.type;
 	if(!flag)
 	{
 		if(!first)
 		{
-      ROS_INFO("lrf_move first!");
+			ROS_INFO("lrf_move first!");
 			msg_acc.V = 0;
 			msg_pid_param.front = 0;
 			pub_tar_dis.publish(msg_pid_param);
 			flag_x = false;
 			flag_y = false;
 			first = true;
+			msg_lrf.data = -50;
+			pub_lrf.publish(msg_lrf);
 		}
 	}
 	else
