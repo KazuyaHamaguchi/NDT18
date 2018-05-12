@@ -35,7 +35,7 @@ void switch_cb(const nemcon::switch_in& msg);
 void receive_cb(const std_msgs::Int8& msg);
 void judg_cb(const std_msgs::Int8& msg);
 void lrf_cb(const std_msgs::Int8& msg);
-void Reset(pi, pin_RESET, unsigned level, uint32_t tick);
+void Reset();
 
 void led_flash(int num, float time, int color);	//color：blue = 0, yellow = 1
 void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_x, float tar_y, int front); //front：1前 2右 3後 4左
@@ -59,7 +59,7 @@ int main(int argc, char **argv)
 	set_mode(pi, pin_blue, PI_OUTPUT);
 	set_mode(pi, pin_yellow, PI_OUTPUT);
 	set_servo_pulsewidth(pi, pin_servo, 1520);	//0度
-	callback(pi, pin_RESET, 2, Reset);
+	callback(pi, pin_RESET, 2, Reset());
 
 	ros::Subscriber subSwitch = nh.subscribe("/switch", 1000, switch_cb);
 	ros::Subscriber sub_receive = nh.subscribe("Throw_on", 1000, receive_cb);
@@ -438,7 +438,7 @@ void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_
 	pub_tar_dis.publish(msg_pid_param);
 }
 
-void Reset(pi, pin_RESET, unsigned level, uint32_t tick)
+void Reset()
 {
 	if(!flag_RESET)
 	{
