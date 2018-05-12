@@ -35,7 +35,7 @@ void switch_cb(const nemcon::switch_in& msg);
 void receive_cb(const std_msgs::Int8& msg);
 void judg_cb(const std_msgs::Int8& msg);
 void lrf_cb(const std_msgs::Int8& msg);
-void Reset();
+void Reset(pi, pin_RESET, level, tick);
 
 void led_flash(int num, float time, int color);	//color：blue = 0, yellow = 1
 void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_x, float tar_y, int front); //front：1前 2右 3後 4左
@@ -438,7 +438,7 @@ void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_
 	pub_tar_dis.publish(msg_pid_param);
 }
 
-void Reset()
+void Reset(pi, pin_RESET, level, tick)
 {
 	if(!flag_RESET)
 	{
