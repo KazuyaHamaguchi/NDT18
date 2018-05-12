@@ -136,7 +136,7 @@ void pid_lrf(const geometry_msgs::PoseStamped& msg)
 {
 	float lasterror = 0, integral = 0, error = 0;
 
-	error = msg.pose.orientation.z - /*0.00000f*/0.0218;
+	error = msg.pose.orientation.z - 0.00000f;
 
 	integral += (error + lasterror) / 2.0 * dt;
 
