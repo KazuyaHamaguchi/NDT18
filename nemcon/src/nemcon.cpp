@@ -59,7 +59,7 @@ int main(int argc, char **argv)
 	set_mode(pi, pin_blue, PI_OUTPUT);
 	set_mode(pi, pin_yellow, PI_OUTPUT);
 	set_servo_pulsewidth(pi, pin_servo, 1520);	//0度
-	callback(pi, pin_RESET, 2, Reset());
+	callback(pi, pin_RESET, 2, Reset);
 
 	ros::Subscriber subSwitch = nh.subscribe("/switch", 1000, switch_cb);
 	ros::Subscriber sub_receive = nh.subscribe("Throw_on", 1000, receive_cb);
