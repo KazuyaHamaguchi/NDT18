@@ -151,6 +151,8 @@ void receive_cb(const std_msgs::Int8& msg)
 	if(msg.data == -41)
 	{
 		set_servo_pulsewidth(pi, pin_servo, 950);	//90度
+		msg_lrf.flag = false;
+		pub_lrf.publish(msg_lrf);
 		ros::Duration(1).sleep();
 		if(TZ == 1)
 		{
@@ -171,8 +173,6 @@ void receive_cb(const std_msgs::Int8& msg)
 
 	if(msg.data == -1)
 	{
-		msg_lrf.flag = false;
-		pub_lrf.publish(msg_lrf);
 		set_servo_pulsewidth(pi, pin_servo, 1520);
 		acc_move(0, 3, 0, 2, 1.2, -1, 4.42, 2);
 		ros::Duration(1.941626 + 0.1).sleep();
@@ -183,8 +183,6 @@ void receive_cb(const std_msgs::Int8& msg)
 	}
 	if(msg.data == -11)
 	{
-		msg_lrf.flag = false;
-		pub_lrf.publish(msg_lrf);
 		set_servo_pulsewidth(pi, pin_servo, 1520);
 		acc_move(0, 3, 0, 2, 1.3, -1, 6.5, 2);
 		ros::Duration(2.020908 + 0.1).sleep();
@@ -195,10 +193,8 @@ void receive_cb(const std_msgs::Int8& msg)
 	}
 	if(msg.data == -111)
 	{
-		msg_lrf.flag = false;
-		pub_lrf.publish(msg_lrf);
 		set_servo_pulsewidth(pi, pin_servo, 1520);
-		acc_move(0, 3, 0, 2, 4.8, -1, 6.35, 2);
+		acc_move(0, 3, 0, 2, 4.8, -1, 6.5, 2);
 		ros::Duration(3.883252 + 0.1).sleep();
 		msg_lrf.flag = true;
 		msg_lrf.type = 1;
@@ -267,12 +263,25 @@ void judg_cb(const std_msgs::Int8& msg)
 			msg_throw.data = 41;
 			pub_throw.publish(msg_throw);
 		}
-		else if(TZ == 3 && (pre_TZ == 2 || pre_TZ == 3))
+		else if(TZ == 3 && pre_TZ == 2)
 		{
 			set_servo_pulsewidth(pi, pin_servo, 1520);
 			ROS_INFO("TZ3 OK!");
+			acc_move(0, 3, 0, 2, 4.8, -1.15, 6.4, 4);
+			ros::Duration(3.883252 + 0.1).sleep();
 			msg_throw.data = 41;
 			pub_throw.publish(msg_throw);
+			msg_lrf.flag = true;
+			msg_lrf.type = 0;
+			msg_lrf.TZ = 3;
+			pub_lrf.publish(msg_lrf);
+		}
+		else if(TZ_3)
+		{
+			TZ = 3;
+			msg_throw.data = 41;
+			pub_throw.publish(msg_throw);
+			ROS_INFO("TZ3 OK!");
 			acc_move(0, 3, 0, 2, 4.8, -1.15, 6.4, 4);
 			ros::Duration(3.883252 + 0.1).sleep();
 			msg_lrf.flag = true;
@@ -285,17 +294,18 @@ void judg_cb(const std_msgs::Int8& msg)
 			set_servo_pulsewidth(pi, pin_servo, 1700);
 			msg_judg.data = 52;
 			pub_judg.publish(msg_judg);
+
 		}
 	}
 
-	if(TZ_3)
+	/*if(TZ_3)
 	{
 		TZ = 3;
-		msg_throw.data = 41;
-		pub_throw.publish(msg_throw);
 		ROS_INFO("TZ3 OK!");
 		acc_move(0, 3, 0, 2, 4.8, -1.15, 6.4, 4);
 		ros::Duration(3.883252 + 0.1).sleep();
+		msg_throw.data = 41;
+		pub_throw.publish(msg_throw);
 		msg_lrf.flag = true;
 		msg_lrf.type = 0;
 		msg_lrf.TZ = 3;
@@ -304,7 +314,7 @@ void judg_cb(const std_msgs::Int8& msg)
 	else
 	{
 		TZ_3 = false;
-	}
+	}*/
 
 	if(msg.data == 2)	//true 投射成功
 	{

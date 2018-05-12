@@ -122,7 +122,7 @@ int main(int argc, char **argv)
 						flag_x = false;
 						first = false;
 					}
-					if(-0.01 + offset_x <= x && x <= 0.01 + offset_x && first_x)
+					if(-0.01 + offset_x <= x && x <= 0.01 + offset_x /*&& first_x*/)
 					{
 						ROS_INFO("lrf_x OK");
 						msg_acc.V = 0;
@@ -247,6 +247,7 @@ void flag_cb(const nemcon::lrf_flag& msg)
 	{
 		if(!first)
 		{
+      ROS_INFO("lrf_move first!");
 			msg_acc.V = 0;
 			msg_pid_param.front = 0;
 			pub_tar_dis.publish(msg_pid_param);
