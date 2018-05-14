@@ -94,7 +94,7 @@ float clamp(float input, float min, float max, int type)
 		{
 			output = -3;
 		}
-    if(max > 0 && input <= 0.1)
+		if(max > 0 && input <= 0.1)
 		{
 			output = 8080;
 		}
@@ -113,7 +113,7 @@ float clamp(float input, float min, float max, int type)
 		{
 			output = -4;
 		}
-    if(max > 0 && input <= 0.1)
+		if(max > 0 && input <= 0.1)
 		{
 			output = 8080;
 		}
