@@ -443,13 +443,14 @@ CBFunc_t Reset()
 	if(!flag_RESET)
 	{
 		flag_RESET = true;
-		ROS_INFO("RESET!");
+		led_flash(-1,0,2);
 	}
 	else
 	{
 		if(flag_RESET)
 		{
 			flag_RESET = false;
+			led_flash(0,0,2);
 		}
 	}
 }
