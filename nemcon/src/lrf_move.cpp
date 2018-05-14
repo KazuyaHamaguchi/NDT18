@@ -254,11 +254,11 @@ void flag_cb(const nemcon::lrf_flag& msg)
 			pub_tar_dis.publish(msg_pid_param);
 			flag_x = false;
 			flag_y = false;
-      msg_lrf.data = -50;
-      pub_lrf.publish(msg_lrf);
-      first = true;
+			msg_lrf.data = -50;
+			pub_lrf.publish(msg_lrf);
+			first = true;
 		}
-    else;
+		else;
 	}
 	else
 	{
@@ -291,5 +291,4 @@ void flag_cb(const nemcon::lrf_flag& msg)
 		offset_x = -2.00f;
 		offset_y = enc_y;
 	}
-
 }
