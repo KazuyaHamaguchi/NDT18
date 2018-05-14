@@ -132,8 +132,8 @@ void lrf_cb(const std_msgs::Int8& msg)
 	{
 		msg_pid_param.pattern = 3;
 		pub_tar_dis.publish(msg_pid_param);
-		msg_lrf.flag = false;
-		pub_lrf.publish(msg_lrf);
+		//msg_lrf.flag = false;
+		//pub_lrf.publish(msg_lrf);
 	}
 }
 
@@ -189,7 +189,7 @@ void receive_cb(const std_msgs::Int8& msg)
 	if(msg.data == -11)
 	{
 		set_servo_pulsewidth(pi, pin_servo, 1520);
-		acc_move(0, 3, 0, 2, 1.3, -1, 6.5, 2);
+		acc_move(0, 3, 0, 2, 1.3, -1, 6.4, 2);
 		ros::Duration(2.020908 + 0.1).sleep();
 		msg_lrf.flag = true;
 		msg_lrf.type = 1;
@@ -199,8 +199,8 @@ void receive_cb(const std_msgs::Int8& msg)
 	if(msg.data == -111)
 	{
 		set_servo_pulsewidth(pi, pin_servo, 1520);
-		acc_move(0, 3, 0, 2, 4.8, -1, 6.5, 2);
-		ros::Duration(3.883252 + 0.1).sleep();
+		acc_move(0, 2.5, 0, 2, 4.8, -1, 6.4, 2);
+		ros::Duration(3.769912 + 0.1).sleep();
 		msg_lrf.flag = true;
 		msg_lrf.type = 1;
 		pub_lrf.publish(msg_lrf);
@@ -255,9 +255,9 @@ void judg_cb(const std_msgs::Int8& msg)
 		{
 			set_servo_pulsewidth(pi, pin_servo, 1520);
 			ROS_INFO("TZ2 OK!");
-			acc_move(0, 3, 0, 2, 1, -1.1, 4.4, 2);
-			ros::Duration(1.772454 + 0.05).sleep();
-			acc_move(0, 3, 0, 2, 2.2, -1.2, 4.4, 1);
+			acc_move(0, 3, 0, 2, 1.25, -1.1, 4.4, 2);
+			ros::Duration(1.981664 + 0.1).sleep();
+			acc_move(0, 3, 0, 2, 2.2, -1.0, 4.4, 1);
 			ros::Duration(2.628974 + 0.1).sleep();
 			acc_move(0, 3, 0, 2, 2.25, -1.1, 6.4, 4);
 			ros::Duration(2.65868 + 0.1).sleep();
@@ -272,8 +272,8 @@ void judg_cb(const std_msgs::Int8& msg)
 		{
 			set_servo_pulsewidth(pi, pin_servo, 1520);
 			ROS_INFO("TZ3 OK!");
-			acc_move(0, 3, 0, 2, 4.8, -1.15, 6.4, 4);
-			ros::Duration(3.883252 + 0.1).sleep();
+			acc_move(0, 2.4, 0, 2, 4.8, -1.15, 6.4, 4);
+			ros::Duration(3.769912 + 0.1).sleep();
 			msg_throw.data = 41;
 			pub_throw.publish(msg_throw);
 			msg_lrf.flag = true;
@@ -287,8 +287,8 @@ void judg_cb(const std_msgs::Int8& msg)
 			msg_throw.data = 41;
 			pub_throw.publish(msg_throw);
 			ROS_INFO("TZ3 OK!");
-			acc_move(0, 3, 0, 2, 4.8, -1.15, 6.4, 4);
-			ros::Duration(3.883252 + 0.1).sleep();
+			acc_move(0, 2.4, 0, 2, 4.8, -1.15, 6.4, 4);
+			ros::Duration(3.769912 + 0.1).sleep();
 			msg_lrf.flag = true;
 			msg_lrf.type = 0;
 			msg_lrf.TZ = 3;

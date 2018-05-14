@@ -88,11 +88,19 @@ float clamp(float input, float min, float max, int type)
 	{
 		if(max > 0 && 1 <= input && input < 3)
 		{
-			output = 2;
+			output = 3;
 		}
 		if(min < 0 && -3 < input && input <= -1)
 		{
-			output = -2;
+			output = -3;
+		}
+    if(max > 0 && input <= 0.1)
+		{
+			output = 8080;
+		}
+		if(min < 0 && -0.1 <= input)
+		{
+			output = 8080;
 		}
 	}
 	if(type == 2)
@@ -104,6 +112,14 @@ float clamp(float input, float min, float max, int type)
 		if(min < 0 && -4 < input && input <= -1)
 		{
 			output = -4;
+		}
+    if(max > 0 && input <= 0.1)
+		{
+			output = 8080;
+		}
+		if(min < 0 && -0.1 <= input)
+		{
+			output = 8080;
 		}
 	}
 	return output;
@@ -136,7 +152,7 @@ void pid_lrf(const geometry_msgs::PoseStamped& msg)
 {
 	float lasterror = 0, integral = 0, error = 0;
 
-	error = msg.pose.orientation.z - 0.00000f;
+	error = msg.pose.orientation.z - /*0.00000f*/0.0218149032444;
 
 	integral += (error + lasterror) / 2.0 * dt;
 
