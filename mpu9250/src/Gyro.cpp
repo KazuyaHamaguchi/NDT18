@@ -80,8 +80,8 @@ int main(int argc, char **argv)
 	//データを取得する
 	while(ros::ok())
 	{
-		current_time = ros::Time::now();
-		dt = (current_time - last_time).toSec();
+		/*current_time = ros::Time::now();
+		dt = (current_time - last_time).toSec();*/
 
 		//ROS_INFO("%f", dt);
 
