@@ -31,7 +31,6 @@ float offset_y = 0.0f;
 
 float t = 0.0f;
 
-bool first_x = false;
 bool first = false;
 
 ros::Time current_time, last_time;
@@ -90,7 +89,6 @@ int main(int argc, char **argv)
 						msg_pid_param.front = 4;
 						pub_tar_dis.publish(msg_pid_param);
 						pub_acc.publish(msg_acc);
-						flag_x = false;
 						first = false;
 					}
 					if(0.01 + offset_x < x && x <= 0.1 + offset_x)
@@ -100,7 +98,6 @@ int main(int argc, char **argv)
 						msg_pid_param.front = 4;
 						pub_tar_dis.publish(msg_pid_param);
 						pub_acc.publish(msg_acc);
-						flag_x = false;
 						first = false;
 					}
 					if(x < -0.1 + offset_x)
@@ -110,7 +107,6 @@ int main(int argc, char **argv)
 						msg_pid_param.front = 2;
 						pub_tar_dis.publish(msg_pid_param);
 						pub_acc.publish(msg_acc);
-						flag_x = false;
 						first = false;
 					}
 					if(-0.1 + offset_x <= x && x < -0.01 + offset_x)
@@ -120,7 +116,6 @@ int main(int argc, char **argv)
 						msg_pid_param.front = 2;
 						pub_tar_dis.publish(msg_pid_param);
 						pub_acc.publish(msg_acc);
-						flag_x = false;
 						first = false;
 					}
 					if(-0.01 + offset_x <= x && x <= 0.01 + offset_x /*&& first_x*/)
@@ -263,7 +258,6 @@ void flag_cb(const nemcon::lrf_flag& msg)
 	else
 	{
 		first = false;
-		first_x = false;
 	}
 
 	if(type == 0)
