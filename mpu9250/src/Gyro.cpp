@@ -22,7 +22,7 @@ float sum[3] = {0.0f, 0.0f, 0.0f};
 int u2s(unsigned unsigneddata);
 void calib();
 
-void Reset_cb(const std_msgs::Int8& msg)
+void Reset_cb(const std_msgs::Bool& msg);
 
 int pi = pigpio_start(0, 0);
 unsigned handle = i2c_open(pi, 1, 0x68, 0);
