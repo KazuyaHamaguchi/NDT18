@@ -83,7 +83,7 @@ int main(int argc, char **argv)
 		current_time = ros::Time::now();
 		dt = (current_time - last_time).toSec();
 
-		ROS_INFO("%f", dt);
+		//ROS_INFO("%f", dt);
 
 		i2c_read_i2c_block_data(pi, handle, 0x43, data, 6);
 		float rawX = gyroCoefficient * u2s(data[0] << 8 | data[1]);
@@ -121,12 +121,12 @@ int main(int argc, char **argv)
 		msg.angular_velocity.z = degreeZ;
 		imu_pub.publish(msg);
 
-		/*printf("%8.7f\t", rawX);
+		printf("%8.7f\t", rawX);
 		printf("%8.7f\t", rawY);
 		printf("%8.7f\t", rawZ);
 		printf("%8.7f\t", degreeX);
 		printf("%8.7f\t", degreeY);
-		printf("%8.7f\n", degreeZ);*/
+		printf("%8.7f\n", degreeZ);
 
 		last_time = current_time;
 
