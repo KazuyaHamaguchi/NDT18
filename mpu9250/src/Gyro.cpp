@@ -19,8 +19,6 @@ bool RESET = false;
 char data[6];
 float sum[3] = {0.0f, 0.0f, 0.0f};
 
-bool first = false;
-
 int u2s(unsigned unsigneddata);
 void calib();
 
@@ -69,10 +67,7 @@ int main(int argc, char **argv)
 		{
 			calib();
 		}
-		else
-		{
-			first = true;
-		}
+		else;
 
 		i2c_read_i2c_block_data(pi, handle, 0x43, data, 6);
 		float rawX = gyroCoefficient * u2s(data[0] << 8 | data[1]);
@@ -126,6 +121,8 @@ int main(int argc, char **argv)
 
 void calib()
 {
+	bool first = false;
+
 	if(!first)
 	{
 		//較正値を算出する
