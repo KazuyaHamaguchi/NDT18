@@ -72,7 +72,7 @@ int main(int argc, char **argv)
 
 	float pregx = 0, pregy = 0, pregz = 0;
 	float degreeX = 0, degreeY = 0, degreeZ = 0;
-	float dt = 0.00;
+	float dt = 0.01;
 	float rad = 3.1415926535 / 180;
 
 
