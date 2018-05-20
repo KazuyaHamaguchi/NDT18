@@ -51,51 +51,49 @@ int main(int argc, char **argv)
 		{
 			calib();
 		}
-		else
-		{
-			i2c_read_i2c_block_data(pi, handle, 0x43, data, 6);
-			float rawX = gyroCoefficient * u2s(data[0] << 8 | data[1]);
-			float rawY = gyroCoefficient * u2s(data[2] << 8 | data[3]);
-			float rawZ = gyroCoefficient * u2s(data[4] << 8 | data[5]);
 
-			float rawX_1 = gyroCoefficient * u2s(data[0] << 8 | data[1]) + offsetGyroX;
-			float rawY_1 = gyroCoefficient * u2s(data[2] << 8 | data[3]) + offsetGyroY;
-			float rawZ_1 = gyroCoefficient * u2s(data[4] << 8 | data[5]) + offsetGyroZ;
+		i2c_read_i2c_block_data(pi, handle, 0x43, data, 6);
+		float rawX = gyroCoefficient * u2s(data[0] << 8 | data[1]);
+		float rawY = gyroCoefficient * u2s(data[2] << 8 | data[3]);
+		float rawZ = gyroCoefficient * u2s(data[4] << 8 | data[5]);
 
-			//角度を計算
-			degreeX += ((pregx + rawX_1) * dt / 2) * rad;
-			degreeY += ((pregy + rawY_1) * dt / 2) * rad;
-			degreeZ += ((pregz + rawZ_1) * dt / 2) * rad;
+		float rawX_1 = gyroCoefficient * u2s(data[0] << 8 | data[1]) + offsetGyroX;
+		float rawY_1 = gyroCoefficient * u2s(data[2] << 8 | data[3]) + offsetGyroY;
+		float rawZ_1 = gyroCoefficient * u2s(data[4] << 8 | data[5]) + offsetGyroZ;
 
-			pregx = rawX_1;
-			pregy = rawY_1;
-			pregz = rawZ_1;
+		//角度を計算
+		degreeX += ((pregx + rawX_1) * dt / 2) * rad;
+		degreeY += ((pregy + rawY_1) * dt / 2) * rad;
+		degreeZ += ((pregz + rawZ_1) * dt / 2) * rad;
 
-			float cr2 = cos(0*0.5);
-			float cp2 = cos(0*0.5);
-			float cy2 = cos(degreeZ*0.5);
-			float sr2 = sin(0*0.5);
-			float sp2 = sin(0*0.5);
-			float sy2 = sin(degreeZ*0.5);
+		pregx = rawX_1;
+		pregy = rawY_1;
+		pregz = rawZ_1;
 
-			msg.orientation.w = cr2*cp2*cy2 + sr2*sp2*sy2;
-			msg.orientation.x = sr2*cp2*cy2 - cr2*sp2*sy2;
-			msg.orientation.y = cr2*sp2*cy2 + sr2*cp2*sy2;
-			msg.orientation.z = cr2*cp2*sy2 - sr2*sp2*cy2;
+		float cr2 = cos(0*0.5);
+		float cp2 = cos(0*0.5);
+		float cy2 = cos(degreeZ*0.5);
+		float sr2 = sin(0*0.5);
+		float sp2 = sin(0*0.5);
+		float sy2 = sin(degreeZ*0.5);
+
+		msg.orientation.w = cr2*cp2*cy2 + sr2*sp2*sy2;
+		msg.orientation.x = sr2*cp2*cy2 - cr2*sp2*sy2;
+		msg.orientation.y = cr2*sp2*cy2 + sr2*cp2*sy2;
+		msg.orientation.z = cr2*cp2*sy2 - sr2*sp2*cy2;
 
 
-			msg.angular_velocity.x = degreeX;
-			msg.angular_velocity.y = degreeY;
-			msg.angular_velocity.z = degreeZ;
-			imu_pub.publish(msg);
+		msg.angular_velocity.x = degreeX;
+		msg.angular_velocity.y = degreeY;
+		msg.angular_velocity.z = degreeZ;
+		imu_pub.publish(msg);
 
-			/*printf("%8.7f\t", rawX);
-			printf("%8.7f\t", rawY);
-			printf("%8.7f\t", rawZ);
-			printf("%8.7f\t", degreeX);
-			printf("%8.7f\t", degreeY);
-			printf("%8.7f\n", degreeZ);*/
-		}
+		/*printf("%8.7f\t", rawX);
+		printf("%8.7f\t", rawY);
+		printf("%8.7f\t", rawZ);
+		printf("%8.7f\t", degreeX);
+		printf("%8.7f\t", degreeY);
+		printf("%8.7f\n", degreeZ);*/
 
 		ros::spinOnce();
 
