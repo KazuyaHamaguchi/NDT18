@@ -120,8 +120,8 @@ void switch_cb(const nemcon::switch_in& msg)
 	}
 	else
 	{
-		led_flash(0, 0, 0);
-		led_flash(-1, 0, 1);
+		led_flash(0, 0, 2);
+		//led_flash(-1, 0, 1);
 		cb_flag = false;
 	}
 }
@@ -445,12 +445,12 @@ CBFunc_t Reset()
 		flag_RESET = true;
 		led_flash(-1,0,2);
 	}
-	else
+	/*else
 	{
 		if(flag_RESET)
 		{
 			flag_RESET = false;
 			led_flash(0,0,2);
 		}
-	}
+	}*/
 }
