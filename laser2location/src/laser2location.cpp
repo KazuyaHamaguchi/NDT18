@@ -314,7 +314,7 @@ void thread_main(){
 			pose.pose.orientation.w = cr2*cp2*cy2 + sr2*sp2*sy2;
 			pose.pose.orientation.x = sr2*cp2*cy2 - cr2*sp2*sy2;
 			pose.pose.orientation.y = cr2*sp2*cy2 + sr2*cp2*sy2;
-			pose.pose.orientation.z = (cr2*cp2*sy2 - sr2*sp2*cy2)/* - 0.0218*/;
+			pose.pose.orientation.z = (cr2*cp2*sy2 - sr2*sp2*cy2);
 
 		}
 
