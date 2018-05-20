@@ -22,12 +22,15 @@ float t3 = 0.0f;
 float X3 = 0.0f;
 float V = 0.0f;
 
+bool flag = true;
 bool cb_flag = false;
 bool first = false;
 bool end = false;
 
 void param_cb(const accel_decel::param& msg)
 {
+	flag = msg.flag;
+
 	if(!cb_flag)
 	{
 		Vs = msg.Vs;
@@ -99,35 +102,55 @@ int main(int argc, char **argv)
 	{
 		current_time = ros::Time::now();
 		t += (current_time - last_time).toSec();
-
-		if(first)
+		if(flag)
 		{
-			if(t <= t1)
+			if(first)
 			{
-				//ROS_INFO("time: %f\t V: %f\t X1", t, accel(t));
-				r_msg.V = ((Vmax - Vs) * (1 - cos(((2 * Amax) * t) / (Vmax - Vs))) / 2) + Vs;
-				r_msg.Vmax = false;
+				if(t <= t1)
+				{
+					//ROS_INFO("time: %f\t V: %f\t X1", t, accel(t));
+					r_msg.V = ((Vmax - Vs) * (1 - cos(((2 * Amax) * t) / (Vmax - Vs))) / 2) + Vs;
+					r_msg.Vmax = false;
+				}
+				if(t1 <= t && t <= (t1 + t2))
+				{
+					//ROS_INFO("time: %f\t V: %f\t X2", t, Vmax);
+					r_msg.V = Vmax;
+					r_msg.Vmax = true;
+				}
+				if((t1 + t2) <= t && t <= (t1 + t2 + t3))
+				{
+					//ROS_INFO("time: %f\t V: %f\t X3", t, decel(t));
+					r_msg.V = ((Vmax - Ve) * (1 - cos(((2 * Amax)  * (t - ((t1 + t2) + (t3 - t1)) - t1)) / (Vmax - Ve))) / 2) + Ve;
+					r_msg.Vmax = false;
+				}
+				if(t >= (t1 + t2 + t3))
+				{
+					first = false;
+					end = true;
+					cb_flag = false;
+				}
+				//printf("%f\t %f\n", t, msg.V);
+				pub.publish(r_msg);
 			}
-			if(t1 <= t && t <= (t1 + t2))
-			{
-				//ROS_INFO("time: %f\t V: %f\t X2", t, Vmax);
-				r_msg.V = Vmax;
-				r_msg.Vmax = true;
-			}
-			if((t1 + t2) <= t && t <= (t1 + t2 + t3))
-			{
-				//ROS_INFO("time: %f\t V: %f\t X3", t, decel(t));
-				r_msg.V = ((Vmax - Ve) * (1 - cos(((2 * Amax)  * (t - ((t1 + t2) + (t3 - t1)) - t1)) / (Vmax - Ve))) / 2) + Ve;
-				r_msg.Vmax = false;
-			}
-			if(t >= (t1 + t2 + t3))
-			{
-				first = false;
-				end = true;
-				cb_flag = false;
-			}
-			//printf("%f\t %f\n", t, msg.V);
-			pub.publish(r_msg);
+		}
+		else
+		{
+			Vs = 0.0f;
+			Vmax = 0.0f;
+			Ve = 0.0f;
+			Amax = 0.0f;
+			Xall = 0.0f;
+			t = 0.0f;
+			t1 = 0.0f;
+			X1 = 0.0f;
+			t2 = 0.0f;
+			X2 = 0.0f;
+			t3 = 0.0f;
+			X3 = 0.0f;
+			V = 0.0f;
+			first = false;
+			cb_flag = false;
 		}
 
 		last_time = current_time;
