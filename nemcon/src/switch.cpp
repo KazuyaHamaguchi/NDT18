@@ -121,8 +121,8 @@ int main(int argc, char **argv)
 		{
 			if(flag_RESET)
 			{
-				msg.RESET = false;
-				pub.publish(msg);
+				/*msg.RESET = false;
+				pub.publish(msg);*/
 				flag_RESET = false;
 			}
 		}
