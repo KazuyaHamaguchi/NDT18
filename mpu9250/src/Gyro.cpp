@@ -2,16 +2,18 @@
 #include <pigpiod_if2.h>
 #include <sensor_msgs/Imu.h>
 
-ros::Time current_time , last_time;
+float offsetGyroX;
+float offsetGyroY;
+float offsetGyroZ;
 
-int u2s(unsigned unsigneddata)
-{
-	if(unsigneddata & (0x01 << 15))
-	{
-		unsigneddata = -1 * ((unsigneddata ^ 0xffff) + 1);
-	}
-	return unsigneddata;
-}
+float pregx = 0, pregy = 0, pregz = 0;
+float degreeX = 0, degreeY = 0, degreeZ = 0;
+float dt = 0.01;
+float rad = 3.1415926535 / 180;
+
+int u2s(unsigned unsigneddata);
+void calib();
+
 
 int main(int argc, char **argv)
 {
@@ -27,64 +29,11 @@ int main(int argc, char **argv)
 	int pi = pigpio_start(0, 0);
 	unsigned handle = i2c_open(pi, 1, 0x68, 0);
 
-	// レジスタをリセットする
-	i2c_write_byte_data(pi, handle, 0x6B, 0x80);
-	time_sleep(0.1);
-
-	//PWR_MGMT_1をクリア
-	i2c_write_byte_data(pi, handle, 0x6B, 0x00);
-	time_sleep(0.1);
-
-	//ジャイロセンサの計測レンジを1000dpsに修正する
-	i2c_write_byte_data(pi, handle, 0x1B, 0x10);
-
-	//low-passフィルタを設定
-	i2c_write_byte_data(pi, handle, 0x1A, 0x02);
-
-	//dpsを算出する係数
-	float gyroCoefficient = 1000 / float(0x8000);
-
-	//較正値を算出する
-	ROS_INFO("Gyro calibration start");
-	float sum[3] = {0, 0, 0};
-
-	//実データのサンプルを取る
-	char data[6];
-
-	for(int i = 0; i < 1000; i++)
-	{
-		i2c_read_i2c_block_data(pi, handle, 0x43, data, 6);
-		sum[0] += gyroCoefficient * u2s(data[0] << 8 | data[1]);
-		sum[1] += gyroCoefficient * u2s(data[2] << 8 | data[3]);
-		sum[2] += gyroCoefficient * u2s(data[4] << 8 | data[5]);
-	}
-
-	//平均値をオフセットにする
-	float offsetGyroX = -1.0 * sum[0] / 1000;
-	float offsetGyroY = -1.0 * sum[1] / 1000;
-	float offsetGyroZ = -1.0 * sum[2] / 1000;
-
-	printf("%6.6f\t", offsetGyroX);
-	printf("%6.6f\t", offsetGyroY);
-	printf("%6.6f\n", offsetGyroZ);
-
-	ROS_INFO("Gyro calibration complete");
-
-	float pregx = 0, pregy = 0, pregz = 0;
-	float degreeX = 0, degreeY = 0, degreeZ = 0;
-	float dt = 0.01;
-	float rad = 3.1415926535 / 180;
-
-
+	calib();
 
 	//データを取得する
 	while(ros::ok())
 	{
-		/*current_time = ros::Time::now();
-		dt = (current_time - last_time).toSec();*/
-
-		//ROS_INFO("%f", dt);
-
 		i2c_read_i2c_block_data(pi, handle, 0x43, data, 6);
 		float rawX = gyroCoefficient * u2s(data[0] << 8 | data[1]);
 		float rawY = gyroCoefficient * u2s(data[2] << 8 | data[3]);
@@ -121,18 +70,78 @@ int main(int argc, char **argv)
 		msg.angular_velocity.z = degreeZ;
 		imu_pub.publish(msg);
 
-		printf("%8.7f\t", rawX);
+		/*printf("%8.7f\t", rawX);
 		printf("%8.7f\t", rawY);
 		printf("%8.7f\t", rawZ);
 		printf("%8.7f\t", degreeX);
 		printf("%8.7f\t", degreeY);
-		printf("%8.7f\n", degreeZ);
-
-		last_time = current_time;
+		printf("%8.7f\n", degreeZ);*/
 
 		ros::spinOnce();
 
 		loop_rate.sleep();
 	}
 	return 0;
+}
+
+void calib()
+{
+	bool first = false;
+
+	if(!first)
+	{
+		// レジスタをリセットする
+		i2c_write_byte_data(pi, handle, 0x6B, 0x80);
+		time_sleep(0.1);
+
+		//PWR_MGMT_1をクリア
+		i2c_write_byte_data(pi, handle, 0x6B, 0x00);
+		time_sleep(0.1);
+
+		//ジャイロセンサの計測レンジを1000dpsに修正する
+		i2c_write_byte_data(pi, handle, 0x1B, 0x10);
+
+		//low-passフィルタを設定
+		i2c_write_byte_data(pi, handle, 0x1A, 0x02);
+
+		//dpsを算出する係数
+		float gyroCoefficient = 1000 / float(0x8000);
+
+		//較正値を算出する
+		ROS_INFO("Gyro calibration start");
+		float sum[3] = {0, 0, 0};
+
+		//実データのサンプルを取る
+		char data[6];
+
+		for(int i = 0; i < 1000; i++)
+		{
+			i2c_read_i2c_block_data(pi, handle, 0x43, data, 6);
+			sum[0] += gyroCoefficient * u2s(data[0] << 8 | data[1]);
+			sum[1] += gyroCoefficient * u2s(data[2] << 8 | data[3]);
+			sum[2] += gyroCoefficient * u2s(data[4] << 8 | data[5]);
+		}
+
+		first = true;
+	}
+
+	//平均値をオフセットにする
+	offsetGyroX = -1.0 * sum[0] / 1000;
+	offsetGyroY = -1.0 * sum[1] / 1000;
+	offsetGyroZ = -1.0 * sum[2] / 1000;
+
+	printf("%6.6f\t", offsetGyroX);
+	printf("%6.6f\t", offsetGyroY);
+	printf("%6.6f\n", offsetGyroZ);
+
+	ROS_INFO("Gyro calibration complete");
+}
+
+int u2s(unsigned unsigneddata)
+{
+	if(unsigneddata & (0x01 << 15))
+	{
+		unsigneddata = -1 * ((unsigneddata ^ 0xffff) + 1);
+	}
+	return unsigneddata;
 }
