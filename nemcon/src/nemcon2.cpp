@@ -57,7 +57,7 @@ ros::Publisher pub_switch;
 
 int main(int argc, char **argv)
 {
-	ros::init(argc, argv, "nemcon");
+	ros::init(argc, argv, "nemcon2");
 	ros::NodeHandle nh;
 
 	set_mode(pi, pin_blue, PI_OUTPUT);
