@@ -16,6 +16,7 @@ static const int pin_servo = 24;
 static const int pin_RESET = 6;
 
 int pi = pigpio_start(0, 0);
+bool RESET = false;
 bool cb_flag = false;
 bool enc_flag = false;
 bool end = false;
@@ -46,6 +47,7 @@ accel_decel::param msg_acc_param;
 std_msgs::Int8 msg_throw;
 nemcon::lrf_flag msg_lrf;
 std_msgs::Int8 msg_judg;
+nemcon::switch_in msg_switch;
 ros::Publisher pub_tar_dis;
 ros::Publisher pub_move_param;
 ros::Publisher pub_throw;
