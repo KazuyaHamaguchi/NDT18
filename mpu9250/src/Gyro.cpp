@@ -1,5 +1,5 @@
 #include "ros/ros.h"
-#include <std_msgs/Bool.h>
+#include <nemcon/switch_in.h>
 #include <pigpiod_if2.h>
 #include <sensor_msgs/Imu.h>
 
@@ -36,7 +36,7 @@ int main(int argc, char **argv)
 	ros::Rate loop_rate(100);
 
 	ros::Publisher imu_pub = nh.advertise<sensor_msgs::Imu>("imu/data_raw", 10);
-	ros::Subscriber sub_Reset = nh.subscribe("Reset", 1000, Reset_cb);
+	ros::Subscriber sub_Switch = nh.subscribe("switch", 1000, switch_cb);
 
 	sensor_msgs::Imu msg;
 
@@ -155,11 +155,11 @@ void calib()
 	}
 }
 
-void Reset_cb(const std_msgs::Bool& msg)
+void switch_cb(const nemcon::switch_in& msg)
 {
-	RESET = msg.data;
+	RESET = msg.RESET;
 
-	if(msg.data == true)
+	if(msg.RESET == true)
 	{
 		first = false;
 	}
