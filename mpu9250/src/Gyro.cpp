@@ -2,6 +2,7 @@
 #include <pigpiod_if2.h>
 #include <sensor_msgs/Imu.h>
 
+ros::Time current_time , last_time;
 
 int u2s(unsigned unsigneddata)
 {
@@ -63,7 +64,7 @@ int main(int argc, char **argv)
 	float offsetGyroY = -1.0 * sum[1] / 1000;
 	float offsetGyroZ = -1.0 * sum[2] / 1000;
 
-	printf("%6.6f\t", offsetGyroX);
+	printf("%s\n", );("%6.6f\t", offsetGyroX);
 	printf("%6.6f\t", offsetGyroY);
 	printf("%6.6f\n", offsetGyroZ);
 
@@ -71,7 +72,7 @@ int main(int argc, char **argv)
 
 	float pregx = 0, pregy = 0, pregz = 0;
 	float degreeX = 0, degreeY = 0, degreeZ = 0;
-	float dt = 0.01;
+	float dt = 0.00;
 	float rad = 3.1415926535 / 180;
 
 
@@ -79,6 +80,9 @@ int main(int argc, char **argv)
 	//データを取得する
 	while(ros::ok())
 	{
+		current_time = ros::Time::now();
+		dt = (current_time - last_time).toSec();
+
 		i2c_read_i2c_block_data(pi, handle, 0x43, data, 6);
 		float rawX = gyroCoefficient * u2s(data[0] << 8 | data[1]);
 		float rawY = gyroCoefficient * u2s(data[2] << 8 | data[3]);
@@ -121,6 +125,8 @@ int main(int argc, char **argv)
 		printf("%8.7f\t", degreeX);
 		printf("%8.7f\t", degreeY);
 		printf("%8.7f\n", degreeZ);*/
+
+		last_time = current_time;
 
 		ros::spinOnce();
 
