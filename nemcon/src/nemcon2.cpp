@@ -37,7 +37,7 @@ void receive_cb(const std_msgs::Int8& msg);
 void judg_cb(const std_msgs::Int8& msg);
 void lrf_cb(const std_msgs::Int8& msg);
 
-void rese();
+void reset();
 
 void led_flash(int num, float time, int color);	//color：blue = 0, yellow = 1
 void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_x, float tar_y, int front); //front：1前 2右 3後 4左
@@ -78,7 +78,7 @@ int main(int argc, char **argv)
 
 	ros::Rate loop_rate(10);
 
-	while(ROS::ok())
+	while(ros::ok())
 	{
 		if(!RESET)
 		{
