@@ -1,4 +1,5 @@
 #include "ros/ros.h"
+#include <std_msgs/Bool.h>
 #include <pigpiod_if2.h>
 #include <sensor_msgs/Imu.h>
 
@@ -13,11 +14,15 @@ float degreeX = 0.0f, degreeY = 0.0f, degreeZ = 0.0f;
 float dt = 0.01;
 float rad = 3.1415926535 / 180;
 
+bool RESET = false;
+
 char data[6];
 float sum[3] = {0.0f, 0.0f, 0.0f};
 
 int u2s(unsigned unsigneddata);
 void calib();
+
+void Reset_cb(const std_msgs::Int8& msg)
 
 int pi = pigpio_start(0, 0);
 unsigned handle = i2c_open(pi, 1, 0x68, 0);
@@ -30,6 +35,8 @@ int main(int argc, char **argv)
 	ros::Rate loop_rate(100);
 
 	ros::Publisher imu_pub = nh.advertise<sensor_msgs::Imu>("imu/data_raw", 10);
+	ros::Subscriber sub_Reset = nh.subscribe("Reset", 1000, Reset_cb);
+
 	sensor_msgs::Imu msg;
 
 	msg.header.frame_id = "imu";
@@ -39,6 +46,12 @@ int main(int argc, char **argv)
 	//データを取得する
 	while(ros::ok())
 	{
+		if(RESET)
+		{
+			calib();
+		}
+		else;
+
 		i2c_read_i2c_block_data(pi, handle, 0x43, data, 6);
 		float rawX = gyroCoefficient * u2s(data[0] << 8 | data[1]);
 		float rawY = gyroCoefficient * u2s(data[2] << 8 | data[3]);
@@ -137,6 +150,11 @@ void calib()
 	printf("%6.6f\n", offsetGyroZ);
 
 	ROS_INFO("Gyro calibration complete");
+}
+
+void Reset_cb(const std_msgs::Bool& msg)
+{
+	RESET = msg->data
 }
 
 int u2s(unsigned unsigneddata)
