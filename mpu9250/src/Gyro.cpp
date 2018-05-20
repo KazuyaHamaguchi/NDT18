@@ -2,17 +2,19 @@
 #include <pigpiod_if2.h>
 #include <sensor_msgs/Imu.h>
 
-float offsetGyroX;
-float offsetGyroY;
-float offsetGyroZ;
+float offsetGyroX = 0.0f;
+float offsetGyroY = 0.0f;
+float offsetGyroZ = 0.0f;
 
-float pregx = 0, pregy = 0, pregz = 0;
-float degreeX = 0, degreeY = 0, degreeZ = 0;
+float gyroCoefficient = 0.0f;
+
+float pregx = 0.0f, pregy = 0.0f, pregz = 0.0f;
+float degreeX = 0.0f, degreeY = 0.0f, degreeZ = 0.0f;
 float dt = 0.01;
 float rad = 3.1415926535 / 180;
 
 char data[6];
-float sum[3] = {0, 0, 0};
+float sum[3] = {0.0f, 0.0f, 0.0f};
 
 int u2s(unsigned unsigneddata);
 void calib();
@@ -108,7 +110,7 @@ void calib()
 		i2c_write_byte_data(pi, handle, 0x1A, 0x02);
 
 		//dpsを算出する係数
-		float gyroCoefficient = 1000 / float(0x8000);
+		gyroCoefficient = 1000 / float(0x8000);
 
 		//較正値を算出する
 		ROS_INFO("Gyro calibration start");
