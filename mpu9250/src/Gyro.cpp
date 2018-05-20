@@ -41,6 +41,23 @@ int main(int argc, char **argv)
 
 	msg.header.frame_id = "imu";
 
+	// レジスタをリセットする
+	i2c_write_byte_data(pi, handle, 0x6B, 0x80);
+	time_sleep(0.1);
+
+	//PWR_MGMT_1をクリア
+	i2c_write_byte_data(pi, handle, 0x6B, 0x00);
+	time_sleep(0.1);
+
+	//ジャイロセンサの計測レンジを1000dpsに修正する
+	i2c_write_byte_data(pi, handle, 0x1B, 0x10);
+
+	//low-passフィルタを設定
+	i2c_write_byte_data(pi, handle, 0x1A, 0x02);
+
+	//dpsを算出する係数
+	gyroCoefficient = 1000 / float(0x8000);
+
 	calib();
 
 	//データを取得する
@@ -108,23 +125,6 @@ void calib()
 
 	if(!first)
 	{
-		// レジスタをリセットする
-		i2c_write_byte_data(pi, handle, 0x6B, 0x80);
-		time_sleep(0.1);
-
-		//PWR_MGMT_1をクリア
-		i2c_write_byte_data(pi, handle, 0x6B, 0x00);
-		time_sleep(0.1);
-
-		//ジャイロセンサの計測レンジを1000dpsに修正する
-		i2c_write_byte_data(pi, handle, 0x1B, 0x10);
-
-		//low-passフィルタを設定
-		i2c_write_byte_data(pi, handle, 0x1A, 0x02);
-
-		//dpsを算出する係数
-		gyroCoefficient = 1000 / float(0x8000);
-
 		//較正値を算出する
 		ROS_INFO("Gyro calibration start");
 
