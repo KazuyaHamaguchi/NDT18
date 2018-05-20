@@ -195,7 +195,6 @@ int main(int argc, char **argv)
 						}
 						else
 						{
-							first_x = true;
 							flag_x = false;
 						}
 					}
