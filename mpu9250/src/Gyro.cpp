@@ -154,7 +154,7 @@ void calib()
 
 void Reset_cb(const std_msgs::Bool& msg)
 {
-	RESET = msg->data
+	RESET = msg->data;
 }
 
 int u2s(unsigned unsigneddata)
