@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 
 	while(ros::ok())
 	{
-		if(gpio_read(pi, pin_START) == 1)
+		/*if(gpio_read(pi, pin_START) == 1)
 		{
 			if(!flag_START)
 			{
@@ -83,6 +83,25 @@ int main(int argc, char **argv)
 				msg.SZ = false;
 				pub.publish(msg);
 				flag_SZ = false;
+			}
+		}*/
+
+		if(gpio_read(pi, pin_START) == 1)
+		{
+			if(!flag_START)
+			{
+				flag_START = true;
+				msg.START = true;
+				pub.publish(msg);
+			}
+		}
+		else
+		{
+			if(flag_START)
+			{
+				msg.START = false;
+				pub.publish(msg);
+				flag_START = false;
 			}
 		}
 
