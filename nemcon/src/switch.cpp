@@ -4,6 +4,7 @@
 #include <pigpiod_if2.h>
 
 static const int pin_START = 5;
+static const int pin_RESET = 6;
 static const int pin_SZ = 19;
 static const int pin_TZ1 = 26;
 static const int pin_TZ2 = 21;
@@ -11,6 +12,7 @@ static const int pin_TZ3 = 20;
 static const int pin_SC = 13;
 
 bool flag_START = false;
+bool flag_RESET = false;
 bool flag_SZ = false;
 bool flag_TZ1 = false;
 bool flag_TZ2 = false;
@@ -31,6 +33,7 @@ int main(int argc, char **argv)
 
 	int pi = pigpio_start(0, 0);
 	set_mode(pi, pin_START, PI_INPUT);
+	set_mode(pi, pin_RESET, PI_INPUT);
 	set_mode(pi, pin_SZ, PI_INPUT);
 	set_mode(pi, pin_TZ1, PI_INPUT);
 	set_mode(pi, pin_TZ2, PI_INPUT);
@@ -102,6 +105,25 @@ int main(int argc, char **argv)
 				msg.START = false;
 				pub.publish(msg);
 				flag_START = false;
+			}
+		}
+
+		if(gpio_read(pi, pin_RESET) == 1)
+		{
+			if(!flag_RESET)
+			{
+				flag_RESET = true;
+				msg.RESET = true;
+				pub.publish(msg);
+			}
+		}
+		else
+		{
+			if(flag_RESET)
+			{
+				msg.RESET = false;
+				pub.publish(msg);
+				flag_RESET = false;
 			}
 		}
 
