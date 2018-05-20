@@ -8,6 +8,7 @@
 #include <nemcon/lrf_flag.h>
 #include <nemcon/TZ_judg.h>
 
+
 #include <pigpiod_if2.h>
 
 static const int pin_blue = 16;
