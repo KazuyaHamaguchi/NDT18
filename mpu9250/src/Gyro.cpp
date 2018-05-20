@@ -64,7 +64,7 @@ int main(int argc, char **argv)
 	float offsetGyroY = -1.0 * sum[1] / 1000;
 	float offsetGyroZ = -1.0 * sum[2] / 1000;
 
-	printf("%s\n", );("%6.6f\t", offsetGyroX);
+	printf("%6.6f\t", offsetGyroX);
 	printf("%6.6f\t", offsetGyroY);
 	printf("%6.6f\n", offsetGyroZ);
 
