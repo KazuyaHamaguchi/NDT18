@@ -64,7 +64,11 @@ int main(int argc, char **argv)
 	//データを取得する
 	while(ros::ok())
 	{
-		while(!RESET)
+		if(RESET)
+		{
+			calib();
+		}
+		else
 		{
 			i2c_read_i2c_block_data(pi, handle, 0x43, data, 6);
 			float rawX = gyroCoefficient * u2s(data[0] << 8 | data[1]);
@@ -108,16 +112,7 @@ int main(int argc, char **argv)
 			printf("%8.7f\t", degreeX);
 			printf("%8.7f\t", degreeY);
 			printf("%8.7f\n", degreeZ);*/
-			if(RESET)
-			{
-				break;
-			}
 		}
-		if(RESET)
-		{
-			calib();
-		}
-		else;
 
 		ros::spinOnce();
 
