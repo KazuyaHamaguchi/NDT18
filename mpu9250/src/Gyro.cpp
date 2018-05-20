@@ -150,6 +150,8 @@ void calib()
 		printf("%6.6f\n", offsetGyroZ);
 
 		ROS_INFO("Gyro calibration complete");
+
+		first = true;
 	}
 }
 
