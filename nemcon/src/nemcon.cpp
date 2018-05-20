@@ -8,7 +8,6 @@
 #include <nemcon/lrf_flag.h>
 #include <nemcon/TZ_judg.h>
 
-
 #include <pigpiod_if2.h>
 
 static const int pin_blue = 16;
@@ -125,8 +124,8 @@ void switch_cb(const nemcon::switch_in& msg)
 	}
 	else
 	{
-		led_flash(0, 0, 2);
-		//led_flash(-1, 0, 1);
+		led_flash(0, 0, 0);
+		led_flash(-1, 0, 1);
 		cb_flag = false;
 	}
 }
@@ -457,23 +456,3 @@ void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_
 	pub_move_param.publish(msg_acc_param);
 	pub_tar_dis.publish(msg_pid_param);
 }
-<<<<<<< HEAD
-
-CBFunc_t Reset()
-{
-	if(!flag_RESET)
-	{
-		flag_RESET = true;
-		led_flash(-1,0,2);
-	}
-	/*else
-	{
-		if(flag_RESET)
-		{
-			flag_RESET = false;
-			led_flash(0,0,2);
-		}
-	}*/
-}
-=======
->>>>>>> 4f2e0dd1a13b07d340581e454cbc8ca784c9e4ec
