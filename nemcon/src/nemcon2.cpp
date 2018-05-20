@@ -100,11 +100,7 @@ int main(int argc, char **argv)
 
 void switch_cb(const nemcon::switch_in& msg)
 {
-	if (msg.RESET)
-	{
-		RESET = true;
-	}
-	else;
+	RESET = msg.RESET;
 
 	if(msg.START)
 	{
@@ -396,7 +392,7 @@ void reset()
 		msg_switch.RESET = false;
 		pub_switch.publish(msg_switch);
 
-		RESET = false;
+		//RESET = false;
 		first = true;
 	}
 	else;
