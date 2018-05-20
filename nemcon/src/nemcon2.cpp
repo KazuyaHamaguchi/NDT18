@@ -374,28 +374,19 @@ void judg_cb(const std_msgs::Int8& msg)
 
 void reset()
 {
-	bool first = false;
+	ROS_INFO("first OK!");
 
-	if(!first)
-	{
-		ROS_INFO("first OK!");
+	msg_lrf.flag = false;
+	pub_lrf.publish(msg_lrf);
 
-		msg_lrf.flag = false;
-		pub_lrf.publish(msg_lrf);
+	msg_acc_param.flag = false;
+	pub_move_param.publish(msg_acc_param);
 
-		msg_acc_param.flag = false;
-		pub_move_param.publish(msg_acc_param);
+	msg_pid_param.pattern = 100;
+	pub_tar_dis.publish(msg_pid_param);
 
-		msg_pid_param.pattern = 100;
-		pub_tar_dis.publish(msg_pid_param);
-
-		msg_switch.RESET = false;
-		pub_switch.publish(msg_switch);
-
-		//RESET = false;
-		first = true;
-	}
-	else;
+	msg_switch.RESET = false;
+	pub_switch.publish(msg_switch);
 }
 
 void led_flash(int num, float time, int color)
