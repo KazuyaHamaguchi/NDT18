@@ -11,8 +11,14 @@ float degreeX = 0, degreeY = 0, degreeZ = 0;
 float dt = 0.01;
 float rad = 3.1415926535 / 180;
 
+char data[6];
+float sum[3] = {0, 0, 0};
+
 int u2s(unsigned unsigneddata);
 void calib();
+
+int pi = pigpio_start(0, 0);
+unsigned handle = i2c_open(pi, 1, 0x68, 0);
 
 
 int main(int argc, char **argv)
@@ -25,9 +31,6 @@ int main(int argc, char **argv)
 	sensor_msgs::Imu msg;
 
 	msg.header.frame_id = "imu";
-
-	int pi = pigpio_start(0, 0);
-	unsigned handle = i2c_open(pi, 1, 0x68, 0);
 
 	calib();
 
@@ -109,11 +112,8 @@ void calib()
 
 		//較正値を算出する
 		ROS_INFO("Gyro calibration start");
-		float sum[3] = {0, 0, 0};
 
 		//実データのサンプルを取る
-		char data[6];
-
 		for(int i = 0; i < 1000; i++)
 		{
 			i2c_read_i2c_block_data(pi, handle, 0x43, data, 6);
