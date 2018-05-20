@@ -57,14 +57,14 @@ ros::Publisher pub_switch;
 
 int main(int argc, char **argv)
 {
-	ros::init(argc, argv, "nemcon");
+	ros::init(argc, argv, "nemcon2");
 	ros::NodeHandle nh;
 
 	set_mode(pi, pin_blue, PI_OUTPUT);
 	set_mode(pi, pin_yellow, PI_OUTPUT);
 	set_servo_pulsewidth(pi, pin_servo, 1520);	//0度
 
-	ros::Subscriber subSwitch = nh.subscribe("/switch", 1000, switch_cb);
+	ros::Subscriber sub_Switch = nh.subscribe("switch", 1000, switch_cb);
 	ros::Subscriber sub_receive = nh.subscribe("Throw_on", 1000, receive_cb);
 	ros::Subscriber sub_judg = nh.subscribe("TZ_judg", 1000, judg_cb);
 	ros::Subscriber sub_lrf = nh.subscribe("lrf", 1000, lrf_cb);
@@ -76,19 +76,37 @@ int main(int argc, char **argv)
 	pub_judg = nh.advertise<std_msgs::Int8>("judg_call", 1000);
 	pub_switch = nh.advertise<nemcon::switch_in>("switch", 1000);
 
-	ros::spin();
+	ros::Rate loop_rate(10);
+
+	while(ros::ok())
+	{
+		if(!RESET)
+		{
+			led_flash(-1, 0, 2);
+		}
+		else
+		{
+			led_flash(-1, 0, 1);
+			reset();
+			led_flash(-1 , 0, 0);
+		}
+
+		loop_rate.sleep();
+		ros::spinOnce();
+	}
+	return 0;
 }
 
 
 void switch_cb(const nemcon::switch_in& msg)
 {
+	RESET = msg.RESET;
+
 	if(msg.START)
 	{
-		RESET = msg.RESET;
-
 		if(msg.SZ && !msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
 		{
-			msg_throw.data = 3;
+			/*msg_throw.data = 3;
 			pub_throw.publish(msg_throw);
 			msg_throw.data = 43;
 			pub_throw.publish(msg_throw);
@@ -116,7 +134,7 @@ void switch_cb(const nemcon::switch_in& msg)
 			pub_throw.publish(msg_throw);
 
 			cb_flag = true;
-			end = true;
+			end = true;*/
 		}
 		if(!msg.SZ && msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
 		{
@@ -367,6 +385,8 @@ void reset()
 
 	msg_switch.RESET = false;
 	pub_switch.publish(msg_switch);
+
+	ROS_INFO("RESET Complete");
 }
 
 void led_flash(int num, float time, int color)
@@ -377,6 +397,7 @@ void led_flash(int num, float time, int color)
 		{
 			if(color == 0)
 			{
+				gpio_write(pi, pin_yellow, 0);
 				gpio_write(pi, pin_blue, 1);
 				ros::Duration(time / 2).sleep();
 				gpio_write(pi, pin_blue, 0);
@@ -384,6 +405,7 @@ void led_flash(int num, float time, int color)
 			}
 			if(color == 1)
 			{
+				gpio_write(pi, pin_blue, 0);
 				gpio_write(pi, pin_yellow, 1);
 				ros::Duration(time / 2).sleep();
 				gpio_write(pi, pin_yellow, 0);
