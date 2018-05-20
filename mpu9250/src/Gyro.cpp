@@ -108,7 +108,10 @@ void calib()
 {
 	if(!first)
 	{
-		sum = {};
+		for (i = 0; i < 3; i++)
+		{
+			sum[i] = 0;
+		}
 
 		// レジスタをリセットする
 		i2c_write_byte_data(pi, handle, 0x6B, 0x80);
