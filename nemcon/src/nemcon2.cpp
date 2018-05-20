@@ -382,6 +382,7 @@ void reset()
 
 	if(!first)
 	{
+		ROS_INFO("first OK!");
 
 		msg_lrf.flag = false;
 		pub_lrf.publish(msg_lrf);
