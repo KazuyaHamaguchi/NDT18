@@ -82,7 +82,7 @@ int main(int argc, char **argv)
 	{
 		if(!RESET)
 		{
-			switch
+			led_flash(-1, 0, 2);
 		}
 		else
 		{
