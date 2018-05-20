@@ -82,7 +82,7 @@ int main(int argc, char **argv)
 	{
 		current_time = ros::Time::now();
 		dt = (current_time - last_time).toSec();
-		_
+
 		ROS_INFO("%f", dt);
 
 		i2c_read_i2c_block_data(pi, handle, 0x43, data, 6);
