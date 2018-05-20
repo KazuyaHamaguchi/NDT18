@@ -61,7 +61,7 @@ int main(int argc, char **argv)
 			}
 		}
 
-		if(gpio_read(pi, pin_RESET) == 1)
+		if(gpio_read(pi, pin_RESET) == 0)
 		{
 			if(!flag_RESET)
 			{
@@ -75,6 +75,25 @@ int main(int argc, char **argv)
 			if(flag_RESET)
 			{
 				flag_RESET = false;
+			}
+		}
+
+		if(gpio_read(pi, pin_SZ) == 1)
+		{
+			if(!flag_SZ)
+			{
+				flag_SZ = true;
+				msg.SZ = true;
+				pub.publish(msg);
+			}
+		}
+		else
+		{
+			if(flag_SZ)
+			{
+				msg.SZ = false;
+				pub.publish(msg);
+				flag_SZ = false;
 			}
 		}
 
