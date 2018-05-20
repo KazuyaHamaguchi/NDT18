@@ -19,6 +19,8 @@ bool RESET = false;
 char data[6];
 float sum[3] = {0.0f, 0.0f, 0.0f};
 
+bool first = false;
+
 int u2s(unsigned unsigneddata);
 void calib();
 
@@ -67,7 +69,10 @@ int main(int argc, char **argv)
 		{
 			calib();
 		}
-		else;
+		else
+		{
+			first = true;
+		}
 
 		i2c_read_i2c_block_data(pi, handle, 0x43, data, 6);
 		float rawX = gyroCoefficient * u2s(data[0] << 8 | data[1]);
@@ -121,8 +126,6 @@ int main(int argc, char **argv)
 
 void calib()
 {
-	bool first = false;
-
 	if(!first)
 	{
 		//較正値を算出する
@@ -137,19 +140,17 @@ void calib()
 			sum[2] += gyroCoefficient * u2s(data[4] << 8 | data[5]);
 		}
 
-		first = true;
+		//平均値をオフセットにする
+		offsetGyroX = -1.0 * sum[0] / 1000;
+		offsetGyroY = -1.0 * sum[1] / 1000;
+		offsetGyroZ = -1.0 * sum[2] / 1000;
+
+		printf("%6.6f\t", offsetGyroX);
+		printf("%6.6f\t", offsetGyroY);
+		printf("%6.6f\n", offsetGyroZ);
+
+		ROS_INFO("Gyro calibration complete");
 	}
-
-	//平均値をオフセットにする
-	offsetGyroX = -1.0 * sum[0] / 1000;
-	offsetGyroY = -1.0 * sum[1] / 1000;
-	offsetGyroZ = -1.0 * sum[2] / 1000;
-
-	printf("%6.6f\t", offsetGyroX);
-	printf("%6.6f\t", offsetGyroY);
-	printf("%6.6f\n", offsetGyroZ);
-
-	ROS_INFO("Gyro calibration complete");
 }
 
 void Reset_cb(const std_msgs::Bool& msg)
