@@ -1,4 +1,5 @@
 bool START
+bool RESET
 bool SZ
 bool TZ1
 bool TZ2
