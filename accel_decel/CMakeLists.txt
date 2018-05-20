@@ -201,5 +201,5 @@ include_directories(
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
-#add_executable(accel_decel src/accel_decel.cpp)
-#target_link_libraries(accel_decel ${catkin_LIBRARIES})
+add_executable(accel_decel src/accel_decel.cpp)
+target_link_libraries(accel_decel ${catkin_LIBRARIES})
