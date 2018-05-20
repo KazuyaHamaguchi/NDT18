@@ -108,7 +108,7 @@ void calib()
 {
 	if(!first)
 	{
-		for (i = 0; i < 3; i++)
+		for (int i = 0; i < 3; i++)
 		{
 			sum[i] = 0;
 		}
