@@ -15,6 +15,7 @@ float dt = 0.01;
 float rad = 3.1415926535 / 180;
 
 bool RESET = false;
+bool first = false;
 
 char data[6];
 float sum[3] = {0.0f, 0.0f, 0.0f};
@@ -121,8 +122,6 @@ int main(int argc, char **argv)
 
 void calib()
 {
-	bool first = false;
-
 	if(!first)
 	{
 		//較正値を算出する
@@ -155,6 +154,12 @@ void calib()
 void Reset_cb(const std_msgs::Bool& msg)
 {
 	RESET = msg.data;
+
+	if(msg.data == true)
+	{
+		first = false;
+	}
+	else;
 }
 
 int u2s(unsigned unsigneddata)
