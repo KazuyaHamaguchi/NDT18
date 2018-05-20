@@ -8,6 +8,7 @@
 #include <nemcon/lrf_flag.h>
 #include <nemcon/TZ_judg.h>
 
+
 #include <pigpiod_if2.h>
 
 static const int pin_blue = 16;
@@ -35,7 +36,8 @@ void switch_cb(const nemcon::switch_in& msg);
 void receive_cb(const std_msgs::Int8& msg);
 void judg_cb(const std_msgs::Int8& msg);
 void lrf_cb(const std_msgs::Int8& msg);
-CBFunc_t Reset();
+
+void reset();
 
 void led_flash(int num, float time, int color);	//color：blue = 0, yellow = 1
 void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_x, float tar_y, int front); //front：1前 2右 3後 4左
@@ -50,6 +52,7 @@ ros::Publisher pub_move_param;
 ros::Publisher pub_throw;
 ros::Publisher pub_lrf;
 ros::Publisher pub_judg;
+ros::Publisher pub_switch;
 
 int main(int argc, char **argv)
 {
@@ -59,7 +62,6 @@ int main(int argc, char **argv)
 	set_mode(pi, pin_blue, PI_OUTPUT);
 	set_mode(pi, pin_yellow, PI_OUTPUT);
 	set_servo_pulsewidth(pi, pin_servo, 1520);	//0度
-	callback(pi, pin_RESET, 2, Reset());
 
 	ros::Subscriber subSwitch = nh.subscribe("/switch", 1000, switch_cb);
 	ros::Subscriber sub_receive = nh.subscribe("Throw_on", 1000, receive_cb);
@@ -71,6 +73,7 @@ int main(int argc, char **argv)
 	pub_throw = nh.advertise<std_msgs::Int8>("Throw_on_1", 1000);
 	pub_lrf = nh.advertise<nemcon::lrf_flag>("lrf_flag", 1000);
 	pub_judg = nh.advertise<std_msgs::Int8>("judg_call", 1000);
+	pub_switch = nh.advertise<nemcon::switch_in>("switch", 1000);
 
 	ros::spin();
 }
@@ -80,6 +83,8 @@ void switch_cb(const nemcon::switch_in& msg)
 {
 	if(msg.START)
 	{
+		RESET = msg.RESET;
+
 		if(msg.SZ && !msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
 		{
 			msg_throw.data = 3;
@@ -132,8 +137,6 @@ void lrf_cb(const std_msgs::Int8& msg)
 	{
 		msg_pid_param.pattern = 3;
 		pub_tar_dis.publish(msg_pid_param);
-		//msg_lrf.flag = false;
-		//pub_lrf.publish(msg_lrf);
 	}
 }
 
@@ -350,6 +353,21 @@ void judg_cb(const std_msgs::Int8& msg)
 	ROS_INFO("pre_TZ: %d, TZ: %d", pre_TZ, TZ);
 }
 
+void reset()
+{
+	msg_lrf.flag = false;
+	pub_lrf.publish(msg_lrf);
+
+	msg_acc_param.flag = false;
+	pub_move_param.publish(msg_acc_param);
+
+	msg_pid_param.pattern = 100;
+	pub_tar_dis.publish(msg_pid_param);
+
+	msg_switch.RESET = false;
+	pub_switch.publish(msg_switch);
+}
+
 void led_flash(int num, float time, int color)
 {
 	if(num > 0)		//点滅
@@ -405,10 +423,12 @@ void led_flash(int num, float time, int color)
 		if(color == 0)
 		{
 			gpio_write(pi, pin_blue, 1);
+			gpio_write(pi, pin_yellow, 0);
 			ros::Duration(time).sleep();
 		}
 		if(color == 1)
 		{
+			gpio_write(pi, pin_blue, 0);
 			gpio_write(pi, pin_yellow, 1);
 			ros::Duration(time).sleep();
 		}
@@ -437,6 +457,7 @@ void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_
 	pub_move_param.publish(msg_acc_param);
 	pub_tar_dis.publish(msg_pid_param);
 }
+<<<<<<< HEAD
 
 CBFunc_t Reset()
 {
@@ -454,3 +475,5 @@ CBFunc_t Reset()
 		}
 	}*/
 }
+=======
+>>>>>>> 4f2e0dd1a13b07d340581e454cbc8ca784c9e4ec
