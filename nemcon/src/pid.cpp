@@ -505,13 +505,13 @@ int main(int argc, char **argv)
 
 		if(pattern == -1)	//その場旋回
 		{
-			speedFR = clamp(nearbyint( - turn_imu), -20, 20, 1);
-			speedFL = clamp(nearbyint( + turn_imu), -20, 20, 1);
-			speedRL = clamp(nearbyint( + turn_imu), -20, 20, 1);
-			speedRR = clamp(nearbyint( - turn_imu), -20, 20, 1);
+			speedFR = clamp(nearbyint(- (speed_X + turn_imu)), -20, 20, 1);
+			speedFL = clamp(nearbyint( speed_X + turn_imu), -20, 20, 1);
+			speedRL = clamp(nearbyint( speed_X + turn_imu), -20, 20, 1);
+			speedRR = clamp(nearbyint(- (speed_X +  turn_imu)), -20, 20, 1);
 		}
 
-		if(pattern == 0) //加減速
+		else if(pattern == 0) //加減速
 		{
 			switch(front)
 			{
@@ -552,7 +552,7 @@ int main(int argc, char **argv)
 			}
 		}
 
-		if(pattern == 1)	//等速
+		else if(pattern == 1)	//受け渡し位置微調整用
 		{
 			switch(front)
 			{
@@ -593,7 +593,7 @@ int main(int argc, char **argv)
 			}
 		}
 
-		if(pattern == 2)	//等速
+		else if(pattern == 2)	//lrf微調整用
 		{
 			switch(front)
 			{
@@ -634,12 +634,20 @@ int main(int argc, char **argv)
 			}
 		}
 
-		if(pattern == 3)
+		else if(pattern == 3) //足ロック
 		{
 			speedFR = 8080;
 			speedFL = 8080;
 			speedRL = 8080;
 			speedRR = 8080;
+		}
+
+		else //その他および緊急停止時
+		{
+			speedFR = 0000;
+			speedFL = 0000;
+			speedRL = 0000;
+			speedRR = 0000;
 		}
 
 		msg_m.motor_FR = speedFR;
