@@ -151,6 +151,7 @@ int main(int argc, char **argv)
 			V = 0.0f;
 			first = false;
 			cb_flag = false;
+			ROS_INFO("acc_decel Reset complete");
 		}
 
 		last_time = current_time;
