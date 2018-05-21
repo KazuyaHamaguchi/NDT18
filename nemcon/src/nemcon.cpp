@@ -152,7 +152,7 @@ void switch_cb(const nemcon::switch_in& msg)
 
 void lrf_cb(const std_msgs::Int8& msg)
 {
-	if(msg.data == -50)
+	if(!RESET && msg.data == -50)
 	{
 		msg_pid_param.pattern = 3;
 		pub_tar_dis.publish(msg_pid_param);
