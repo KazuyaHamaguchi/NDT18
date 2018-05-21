@@ -467,6 +467,7 @@ void led_flash(int num, float time, int color)
 
 void acc_move(float Vs, float Vmax, float Ve, float Amax, float Xall, float tar_x, float tar_y, int front)
 {
+	msg_acc_param.flag = true;
 	msg_acc_param.Vs = Vs;
 	msg_acc_param.Vmax = Vmax;
 	msg_acc_param.Ve = Ve;
