@@ -154,6 +154,7 @@ int main(int argc, char **argv)
 			first = false;
 			cb_flag = false;
 			reset_first = true;
+			ROS_INFO("else");
 		}
 
 		last_time = current_time;
