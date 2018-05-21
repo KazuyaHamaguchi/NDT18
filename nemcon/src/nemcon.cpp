@@ -380,10 +380,10 @@ void reset()
 	msg_acc_param.flag = false;
 	pub_move_param.publish(msg_acc_param);
 
-	ros::Duration(0.5).sleep();
-
 	msg_pid_param.pattern = 100;
 	pub_tar_dis.publish(msg_pid_param);
+
+	ros::Duration(2).sleep();
 
 	msg_switch.RESET = false;
 	pub_switch.publish(msg_switch);
