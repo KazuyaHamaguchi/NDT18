@@ -37,7 +37,7 @@ void param_cb(const accel_decel::param& msg)
 		reset_first = false;
 	}
 
-	if(flag && !cb_flag)
+	if(!cb_flag)
 	{
 		Vs = msg.Vs;
 		Vmax = msg.Vmax;
