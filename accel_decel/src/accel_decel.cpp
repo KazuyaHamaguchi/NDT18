@@ -63,7 +63,6 @@ void param_cb(const accel_decel::param& msg)
 
 		cb_flag = true;
 		first = true;
-		reset_first = false;
 		t = 0.0f;
 	}
 	else
@@ -139,6 +138,7 @@ int main(int argc, char **argv)
 		}
 		else
 		{
+			reset_first = false;
 			if(!reset_first)
 			{
 				Vs = 0.0f;
