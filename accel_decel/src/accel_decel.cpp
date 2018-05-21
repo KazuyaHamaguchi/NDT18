@@ -32,6 +32,10 @@ bool reset_first = false;
 void param_cb(const accel_decel::param& msg)
 {
 	flag = msg.flag;
+	if(!flag)
+	{
+		reset_first = false;
+	}
 
 	if(flag && !cb_flag)
 	{
