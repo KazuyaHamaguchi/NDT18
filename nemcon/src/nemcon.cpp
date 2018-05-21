@@ -106,7 +106,7 @@ void switch_cb(const nemcon::switch_in& msg)
 	{
 		if(msg.SZ && !msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
 		{
-			/*msg_throw.data = 3;
+			msg_throw.data = 3;
 			pub_throw.publish(msg_throw);
 			msg_throw.data = 43;
 			pub_throw.publish(msg_throw);
@@ -134,7 +134,7 @@ void switch_cb(const nemcon::switch_in& msg)
 			pub_throw.publish(msg_throw);
 
 			cb_flag = true;
-			end = true;*/
+			end = true;
 		}
 		if(!msg.SZ && msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
 		{

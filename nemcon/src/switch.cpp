@@ -57,6 +57,8 @@ int main(int argc, char **argv)
 		{
 			if(flag_START)
 			{
+				msg.START = false;
+				pub.publish(msg);
 				flag_START = false;
 			}
 		}
@@ -74,6 +76,8 @@ int main(int argc, char **argv)
 		{
 			if(flag_RESET)
 			{
+				msg.RESET = false;
+				pub.publish(msg);
 				flag_RESET = false;
 			}
 		}

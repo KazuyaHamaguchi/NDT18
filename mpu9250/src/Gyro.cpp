@@ -29,16 +29,17 @@ int pi = pigpio_start(0, 0);
 unsigned handle = i2c_open(pi, 1, 0x68, 0);
 
 
+ros::Publisher imu_pub;
+sensor_msgs::Imu msg;
+
 int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "Gyro");
 	ros::NodeHandle nh;
 	ros::Rate loop_rate(100);
 
-	ros::Publisher imu_pub = nh.advertise<sensor_msgs::Imu>("imu/data_raw", 10);
+	imu_pub = nh.advertise<sensor_msgs::Imu>("imu/data_raw", 10);
 	ros::Subscriber sub_Switch = nh.subscribe("switch", 1000, switch_cb);
-
-	sensor_msgs::Imu msg;
 
 	msg.header.frame_id = "imu";
 
@@ -110,6 +111,25 @@ void calib()
 		{
 			sum[i] = 0;
 		}
+    offsetGyroX = 0.0f;
+    offsetGyroY = 0.0f;
+    offsetGyroZ = 0.0f;
+
+    gyroCoefficient = 0.0f;
+    
+    pregx = 0.0f, pregy = 0.0f, pregz = 0.0f;
+    degreeX = 0.0f, degreeY = 0.0f, degreeZ = 0.0f;
+
+    msg.orientation.w = 0;
+		msg.orientation.x = 0;
+		msg.orientation.y = 0;
+		msg.orientation.z = 0;
+
+
+		msg.angular_velocity.x = 0;
+		msg.angular_velocity.y = 0;
+		msg.angular_velocity.z = 0;
+		imu_pub.publish(msg);
 
 		// レジスタをリセットする
 		i2c_write_byte_data(pi, handle, 0x6B, 0x80);
