@@ -138,27 +138,22 @@ int main(int argc, char **argv)
 		}
 		else
 		{
-			reset_first = false;
-			if(!reset_first)
-			{
-				Vs = 0.0f;
-				Vmax = 0.0f;
-				Ve = 0.0f;
-				Amax = 0.0f;
-				Xall = 0.0f;
-				t = 0.0f;
-				t1 = 0.0f;
-				X1 = 0.0f;
-				t2 = 0.0f;
-				X2 = 0.0f;
-				t3 = 0.0f;
-				X3 = 0.0f;
-				V = 0.0f;
-				first = false;
-				cb_flag = false;
-				reset_first = true;
-				ROS_INFO("acc_decel Reset complete");
-			}
+			Vs = 0.0f;
+			Vmax = 0.0f;
+			Ve = 0.0f;
+			Amax = 0.0f;
+			Xall = 0.0f;
+			t = 0.0f;
+			t1 = 0.0f;
+			X1 = 0.0f;
+			t2 = 0.0f;
+			X2 = 0.0f;
+			t3 = 0.0f;
+			X3 = 0.0f;
+			V = 0.0f;
+			first = false;
+			cb_flag = false;
+			reset_first = true;
 		}
 
 		last_time = current_time;
