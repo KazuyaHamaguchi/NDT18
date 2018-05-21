@@ -27,6 +27,8 @@ bool cb_flag = false;
 bool first = false;
 bool end = false;
 
+bool reset_first = false;
+
 void param_cb(const accel_decel::param& msg)
 {
 	flag = msg.flag;
@@ -61,6 +63,7 @@ void param_cb(const accel_decel::param& msg)
 
 		cb_flag = true;
 		first = true;
+		reset_first = false;
 		t = 0.0f;
 	}
 	else
@@ -136,22 +139,26 @@ int main(int argc, char **argv)
 		}
 		else
 		{
-			Vs = 0.0f;
-			Vmax = 0.0f;
-			Ve = 0.0f;
-			Amax = 0.0f;
-			Xall = 0.0f;
-			t = 0.0f;
-			t1 = 0.0f;
-			X1 = 0.0f;
-			t2 = 0.0f;
-			X2 = 0.0f;
-			t3 = 0.0f;
-			X3 = 0.0f;
-			V = 0.0f;
-			first = false;
-			cb_flag = false;
-			ROS_INFO("acc_decel Reset complete");
+			if(!reset_first)
+			{
+				Vs = 0.0f;
+				Vmax = 0.0f;
+				Ve = 0.0f;
+				Amax = 0.0f;
+				Xall = 0.0f;
+				t = 0.0f;
+				t1 = 0.0f;
+				X1 = 0.0f;
+				t2 = 0.0f;
+				X2 = 0.0f;
+				t3 = 0.0f;
+				X3 = 0.0f;
+				V = 0.0f;
+				first = false;
+				cb_flag = false;
+				reset_first = true;
+				ROS_INFO("acc_decel Reset complete");
+			}
 		}
 
 		last_time = current_time;
