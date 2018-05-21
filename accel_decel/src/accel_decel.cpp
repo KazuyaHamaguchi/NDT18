@@ -32,10 +32,6 @@ bool reset_first = false;
 void param_cb(const accel_decel::param& msg)
 {
 	flag = msg.flag;
-	if(!flag)
-	{
-		reset_first = false;
-	}
 
 	if(flag && !cb_flag)
 	{
@@ -73,6 +69,7 @@ void param_cb(const accel_decel::param& msg)
 	{
 		if(end)
 		{
+			reset_first = false;
 			Vs = 0.0f;
 			Vmax = 0.0f;
 			Ve = 0.0f;
