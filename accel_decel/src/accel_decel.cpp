@@ -142,7 +142,7 @@ int main(int argc, char **argv)
 		}
 		else
 		{
-			if(reset_first)
+			if(!reset_first)
 			{
 				ROS_INFO("else");
 				Vs = 0.0f;
