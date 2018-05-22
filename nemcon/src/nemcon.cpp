@@ -17,6 +17,7 @@ static const int pin_RESET = 6;
 
 int pi = pigpio_start(0, 0);
 bool RESET = false;
+bool ERROR = false;
 bool cb_flag = false;
 bool enc_flag = false;
 bool end = false;
@@ -59,6 +60,7 @@ ros::Publisher pub_lrf;
 ros::Publisher pub_judg;
 ros::Publisher pub_switch;
 ros::Publisher pub_receive;
+ros::Publisher pub_judg2;
 ros::Publisher pub_lrf2;
 
 int main(int argc, char **argv)
@@ -82,10 +84,10 @@ int main(int argc, char **argv)
 	pub_judg = nh.advertise<std_msgs::Int8>("judg_call", 1000);
 	pub_switch = nh.advertise<nemcon::switch_in>("switch", 1000);
 	pub_receive = nh.advertise<std_msgs::Int8>("Throw_on", 1000);
-	pub_judg = nh.advertise<std_msgs::Int8>("TZ_judg", 1000);
+	pub_judg2 = nh.advertise<std_msgs::Int8>("TZ_judg", 1000);
 	pub_lrf2 = nh.advertise<std_msgs::Int8>("lrf", 1000);
 
-	ros::Rate loop_rate(10);
+	ros::Rate loop_rate(20);
 
 	while(ros::ok())
 	{
@@ -95,9 +97,9 @@ int main(int argc, char **argv)
 		}
 		else
 		{
-			led_flash(-1, 0, 1);
-			reset();
-			led_flash(-1 , 0, 0);
+        led_flash(-1, 0, 1);
+        reset();
+			  led_flash(-1 , 0, 0);
 		}
 
 		loop_rate.sleep();
@@ -109,14 +111,16 @@ int main(int argc, char **argv)
 
 void switch_cb(const nemcon::switch_in& msg)
 {
-	RESET = msg.RESET;
+	if(msg.RESET)
+  {
+    RESET = true;
+  }
 
 	if(msg.START)
 	{
+    RESET = false;
 		if(msg.SZ && !msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
 		{
-			msg_throw.data = 3;
-			pub_throw.publish(msg_throw);
 			msg_throw.data = 43;
 			pub_throw.publish(msg_throw);
 			msg_throw.data = 4;
@@ -130,8 +134,6 @@ void switch_cb(const nemcon::switch_in& msg)
 			//ros::Duration(3.632449 + 0.05).sleep();
 			acc_move(0, 3, 0, 2, 4.5, -1.15, 0, 1);	//TZ1横
 			ros::Duration(3.759942 + 0.1).sleep();
-			msg_throw.data = 30;
-			pub_throw.publish(msg_throw);
 			acc_move(0, 3, 0, 2, 0.95, -1.15, 4.42, 4);	//TZ1受け渡しポイント
 			ros::Duration(1.772454 + 0.1).sleep();
 
@@ -161,15 +163,18 @@ void switch_cb(const nemcon::switch_in& msg)
 
 void lrf_cb(const std_msgs::Int8& msg)
 {
-	if(!RESET && msg.data == -50)
+  if(!RESET && msg.data == -50)
 	{
 		msg_pid_param.pattern = 3;
 		pub_tar_dis.publish(msg_pid_param);
 	}
 	else
 	{
+    msg_pid_param.pattern = 99;
+    pub_tar_dis.publish(msg_pid_param);
 		ROS_INFO("lrf_2 OK");
 	}
+  ROS_INFO("lrf_cb: %d", msg.data);
 }
 
 void receive_cb(const std_msgs::Int8& msg)
@@ -255,8 +260,18 @@ void receive_cb(const std_msgs::Int8& msg)
 	}
 	else
 	{
+    /*if(!msg.data == 0)
+    {
+    //ROS_INFO("%d", msg.data);
+      ERROR = true;
+    }
+    else
+    {
+      ERROR = false;
+    }*/
 		ROS_INFO("Receive OK");
 	}
+  ROS_INFO("receive_cb: %d", msg.data);
 }
 
 void judg_cb(const std_msgs::Int8& msg)
@@ -351,7 +366,6 @@ void judg_cb(const std_msgs::Int8& msg)
 			set_servo_pulsewidth(pi, pin_servo, 1700);
 			msg_judg.data = 52;
 			pub_judg.publish(msg_judg);
-
 		}
 	}
 
@@ -373,7 +387,7 @@ void judg_cb(const std_msgs::Int8& msg)
 		TZ_3 = false;
 	}*/
 
-	else if(msg.data == 2)	//true 投射成功
+  else if(msg.data == 2)	//true 投射成功
 	{
 		set_servo_pulsewidth(pi, pin_servo, 1450);
 		ROS_INFO("true");
@@ -390,7 +404,7 @@ void judg_cb(const std_msgs::Int8& msg)
 		msg_judg.data = 50;
 		pub_judg.publish(msg_judg);
 	}
-	else if(msg.data == 3)	//false 投射失敗
+  else if(msg.data == 3)	//false 投射失敗
 	{
 		set_servo_pulsewidth(pi, pin_servo, 1450);
 		ROS_INFO("false");
@@ -398,40 +412,77 @@ void judg_cb(const std_msgs::Int8& msg)
 		msg_judg.data = 50;
 		pub_judg.publish(msg_judg);
 	}
-	else
-	{
-		ROS_INFO("judg OK");
-	}
+  else
+  {
+    if(RESET && msg.data == 99)
+    {
+      //ROS_INFO("%d", msg.data);
+      ERROR = true;
+      }
+      else
+      {
+        ERROR = false;
+        }
+    ROS_INFO("judg ok");
+  }
+  ROS_INFO("judg_cb: %d", msg.data);
 
 	ROS_INFO("pre_TZ: %d, TZ: %d", pre_TZ, TZ);
 }
 
 void reset()
 {
+  set_servo_pulsewidth(pi, pin_servo, 1520);
+
+  /*msg_switch.RESET = true;
+  pub_switch.publish(msg_switch);*/
+
 	msg_lrf.flag = false;
 	pub_lrf.publish(msg_lrf);
 
 	msg_acc_param.flag = false;
 	pub_move_param.publish(msg_acc_param);
 
-	msg_pid_param.pattern = 100;
+	msg_pid_param.pattern = 99;
 	pub_tar_dis.publish(msg_pid_param);
 
-	msg_TZ_judg.data = 100;
-	pub_judg.publish(msg_TZ_judg);
+	msg_TZ_judg.data = 99;
+	pub_judg2.publish(msg_TZ_judg);
 
-	msg_throw_on.data = 100;
+  msg_judg.data = 99;
+  pub_judg.publish(msg_judg);
+
+	msg_throw_on.data = 99;
 	pub_receive.publish(msg_throw_on);
 
-	msg_lrf2.data = 100;
+  ros::Duration(1).sleep();
+
+	msg_lrf2.data = 99;
 	pub_lrf2.publish(msg_lrf2);
 
-	ros::Duration(2).sleep();
+  //ros::Duration(2).sleep();
 
-	msg_switch.RESET = false;
-	pub_switch.publish(msg_switch);
+  msg_throw.data = 99;
+  pub_throw.publish(msg_throw);
 
-	ROS_INFO("RESET Complete");
+  cb_flag = false;
+  enc_flag = false;
+  end = false;
+  first = false;
+  lrf = false;
+  throw_on = false;
+  TZ_3 = false;
+
+  flag_RESET = false;
+  
+  TZ = 0;
+  pre_TZ = 0;
+
+  acc_t = 0.0f;
+
+	//ros::Duration(2).sleep();
+
+  RESET = false;
 }
 
 void led_flash(int num, float time, int color)

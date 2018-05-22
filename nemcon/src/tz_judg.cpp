@@ -11,6 +11,8 @@ bool objL = false;
 bool leave = false;
 bool judg = false;
 
+bool flag = false;
+
 float t = 0.0f;
 
 void object_cb(const nemcon::object_in& msg);
@@ -40,6 +42,8 @@ int main(int argc, char **argv)
 		current_time = ros::Time::now();
 		t += (current_time - last_time).toSec();
 
+    if(!flag)
+    {
 		if(leave)
 		{
 			if(!objR && !objL)
@@ -85,6 +89,8 @@ int main(int argc, char **argv)
 				t = 0.0f;
 			}
 		}
+    }
+    else;
 
 		last_time = current_time;
 		loop_rate.sleep();
@@ -100,21 +106,31 @@ void object_cb(const nemcon::object_in& msg)
 
 void throw_cb(const std_msgs::Int8& msg)
 {
+  ROS_INFO("%d", msg.data);
 	if(msg.data == 50)
 	{
 		ROS_INFO("msg_leave");
+    flag = false;
 		leave = true;
 		judg - false;
 	}
-	if(msg.data == 52)
+	else if(msg.data == 52)
 	{
 		ROS_INFO("msg_judg");
+    flag = false;
 		leave = false;
 		judg = true;
 	}
-	if(msg.data == 100)
+	else if(msg.data == 100)
 	{
 		msg_throw.data = -41;
 		pub_throw.publish(msg_throw);
 	}
+  else
+  {
+    flag = true;
+    leave = false;
+    judg - false;
+    ROS_INFO("msg_judg false");
+  }
 }
