@@ -100,7 +100,6 @@ int main(int argc, char **argv)
 		}
 		else
 		{
-			end = true;
 			led_flash(-1, 0, 2);
 		}
 
@@ -151,7 +150,6 @@ void switch_cb(const nemcon::switch_in& msg)
 			pub_throw.publish(msg_throw);
 
 			cb_flag = true;
-			end = true;
 		}
 		if(!msg.SZ && msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
 		{
