@@ -505,10 +505,19 @@ int main(int argc, char **argv)
 
 		if(pattern == -1)	//その場旋回
 		{
-			speedFR = clamp(nearbyint(- (speed_X + turn_imu)), -20, 20, 1);
-			speedFL = clamp(nearbyint( speed_X + turn_imu), -20, 20, 1);
-			speedRL = clamp(nearbyint( speed_X + turn_imu), -20, 20, 1);
-			speedRR = clamp(nearbyint(- (speed_X +  turn_imu)), -20, 20, 1);
+			switch(front)
+			{
+				case 2:	//右旋回
+					speedFR = clamp(nearbyint(- (speed_X + turn_imu)), -20, 20, 1);
+					speedFL = clamp(nearbyint( speed_X + turn_imu), -20, 20, 1);
+					speedRL = clamp(nearbyint( speed_X + turn_imu), -20, 20, 1);
+					speedRR = clamp(nearbyint(- (speed_X +  turn_imu)), -20, 20, 1);
+
+				case 4:	//左旋回
+					speedFR = clamp(nearbyint( (speed_X + turn_imu)), -20, 20, 1);
+					speedFL = clamp(nearbyint(- speed_X + turn_imu), -20, 20, 1);
+					speedRL = clamp(nearbyint(- speed_X + turn_imu), -20, 20, 1);
+					speedRR = clamp(nearbyint( (speed_X +  turn_imu)), -20, 20, 1);
 		}
 
 		else if(pattern == 0) //加減速
