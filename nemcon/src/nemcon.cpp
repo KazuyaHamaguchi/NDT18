@@ -93,20 +93,13 @@ int main(int argc, char **argv)
 	{
 		if(!end && RESET)
 		{
-      msg_switch.RESET = true;
-      pub_switch.publish(msg_switch);
-      ROS_INFO("end: %d", end);
+			ROS_INFO("end: %d", end);
 			led_flash(-1, 0, 1);
 			reset();
 			led_flash(-1 , 0, 0);
-       end = false;
-       msg_switch.RESET = false;
 		}
 		else
 		{
-      end = true;
-      /*msg_switch.RESET = false;
-      pub_switch.publish(msg_switch);*/
 			led_flash(-1, 0, 2);
 		}
 
@@ -180,14 +173,14 @@ void lrf_cb(const std_msgs::Int8& msg)
 	{
 		msg_pid_param.pattern = 99;
 		pub_tar_dis.publish(msg_pid_param);
-    if(msg.data == 99)
-    {
-      end = true;
-    }
-    else
-    {
-      end - false;
-    }
+		if(msg.data == 99)
+		{
+			end = true;
+		}
+		else
+		{
+			end - false;
+		}
 		ROS_INFO("lrf_2 OK");
 	}
 	ROS_INFO("lrf_cb: %d", msg.data);
@@ -277,23 +270,14 @@ void receive_cb(const std_msgs::Int8& msg)
 	}
 	else
 	{
-	/*if(!msg.data == 0)
-	{
-		//ROS_INFO("%d", msg.data);
-		ERROR = true;
-	}
-	else
-	{
-		ERROR = false;
-	}*/
-    if(msg.data == 99)
-    {
-      end = true;
-    }
-    else
-    {
-      end = false;
-    }
+		if(msg.data == 99)
+		{
+			end = true;
+		}
+		else
+		{
+			end = false;
+		}
 		ROS_INFO("Receive OK");
 	}
 	ROS_INFO("receive_cb: %d", msg.data);
@@ -460,8 +444,8 @@ void reset()
 {
 	set_servo_pulsewidth(pi, pin_servo, 1520);
 
-	/*msg_switch.RESET = true;
-	pub_switch.publish(msg_switch);*/
+	msg_switch.RESET = true;
+	pub_switch.publish(msg_switch);
 
 	msg_lrf.flag = false;
 	pub_lrf.publish(msg_lrf);
@@ -488,6 +472,12 @@ void reset()
 
 	//ros::Duration(2).sleep();
 
+	msg_throw.data = 2;
+	pub_throw.publish(msg_throw);
+
+	msg_throw.data = 20;
+	pub_throw.publish(msg_throw);
+
 	msg_throw.data = 99;
 	pub_throw.publish(msg_throw);
 
@@ -507,6 +497,9 @@ void reset()
 	acc_t = 0.0f;
 
 	//ros::Duration(2).sleep();
+
+	msg_switch.RESET = false;
+	pub_switch.publish(msg_switch);
 
 	RESET = false;
 }
