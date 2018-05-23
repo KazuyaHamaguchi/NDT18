@@ -502,6 +502,7 @@ void reset()
 	pub_switch.publish(msg_switch);
 
 	RESET = false;
+	end = false;
 }
 
 void led_flash(int num, float time, int color)
