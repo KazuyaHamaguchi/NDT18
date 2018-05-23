@@ -91,14 +91,22 @@ int main(int argc, char **argv)
 
 	while(ros::ok())
 	{
-		if(end && RESET)
+		if(!end && RESET)
 		{
+      msg_switch.RESET = true;
+      pub_switch.publish(msg_switch);
+      ROS_INFO("end: %d", end);
 			led_flash(-1, 0, 1);
 			reset();
 			led_flash(-1 , 0, 0);
+       end = false;
+       msg_switch.RESET = false;
 		}
 		else
 		{
+      end = true;
+      /*msg_switch.RESET = false;
+      pub_switch.publish(msg_switch);*/
 			led_flash(-1, 0, 2);
 		}
 
@@ -172,10 +180,17 @@ void lrf_cb(const std_msgs::Int8& msg)
 	{
 		msg_pid_param.pattern = 99;
 		pub_tar_dis.publish(msg_pid_param);
+    if(msg.data == 99)
+    {
+      end = true;
+    }
+    else
+    {
+      end - false;
+    }
 		ROS_INFO("lrf_2 OK");
 	}
 	ROS_INFO("lrf_cb: %d", msg.data);
-	end = true;
 }
 
 void receive_cb(const std_msgs::Int8& msg)
@@ -271,10 +286,17 @@ void receive_cb(const std_msgs::Int8& msg)
 	{
 		ERROR = false;
 	}*/
+    if(msg.data == 99)
+    {
+      end = true;
+    }
+    else
+    {
+      end = false;
+    }
 		ROS_INFO("Receive OK");
 	}
 	ROS_INFO("receive_cb: %d", msg.data);
-	end = true;
 }
 
 void judg_cb(const std_msgs::Int8& msg)
@@ -418,21 +440,20 @@ void judg_cb(const std_msgs::Int8& msg)
 	}
 	else
 	{
-		if(RESET && msg.data == 99)
+		if(msg.data == 99)
 		{
 			//ROS_INFO("%d", msg.data);
-			ERROR = true;
+			end = true;
 		}
 		else
 		{
-			ERROR = false;
+			end = false;
 		}
 		ROS_INFO("judg ok");
 	}
 	ROS_INFO("judg_cb: %d", msg.data);
 
 	ROS_INFO("pre_TZ: %d, TZ: %d", pre_TZ, TZ);
-	end = true;
 }
 
 void reset()
