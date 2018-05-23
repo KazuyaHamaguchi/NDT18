@@ -91,15 +91,15 @@ int main(int argc, char **argv)
 
 	while(ros::ok())
 	{
-		if(!RESET)
+		if(end && RESET)
 		{
-			led_flash(-1, 0, 2);
+			led_flash(-1, 0, 1);
+			reset();
+			led_flash(-1 , 0, 0);
 		}
 		else
 		{
-        led_flash(-1, 0, 1);
-        reset();
-			  led_flash(-1 , 0, 0);
+			led_flash(-1, 0, 2);
 		}
 
 		loop_rate.sleep();
@@ -112,14 +112,15 @@ int main(int argc, char **argv)
 void switch_cb(const nemcon::switch_in& msg)
 {
 	if(msg.RESET)
-  {
-    RESET = true;
-  }
+	{
+		RESET = true;
+	}
 
 	if(msg.START)
 	{
-    RESET = false;
-		if(msg.SZ && !msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
+		end = false;
+		RESET = false;
+		if(msg.SZ && !msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)	//SZから通常通り
 		{
 			msg_throw.data = 43;
 			pub_throw.publish(msg_throw);
@@ -137,6 +138,9 @@ void switch_cb(const nemcon::switch_in& msg)
 			acc_move(0, 3, 0, 2, 0.95, -1.15, 4.42, 4);	//TZ1受け渡しポイント
 			ros::Duration(1.772454 + 0.1).sleep();
 
+			msg_throw.data = 3;
+			pub_throw.publish(msg_throw);
+
 			msg_lrf.flag = true;
 			msg_lrf.type = 1;
 			pub_lrf.publish(msg_lrf);
@@ -153,32 +157,30 @@ void switch_cb(const nemcon::switch_in& msg)
 			cb_flag = true;
 		}
 	}
-	else
-	{
-		led_flash(0, 0, 0);
-		led_flash(-1, 0, 1);
-		cb_flag = false;
-	}
+	end = true;
 }
 
 void lrf_cb(const std_msgs::Int8& msg)
 {
-  if(!RESET && msg.data == -50)
+	end = false;
+	if(!RESET && msg.data == -50)
 	{
 		msg_pid_param.pattern = 3;
 		pub_tar_dis.publish(msg_pid_param);
 	}
 	else
 	{
-    msg_pid_param.pattern = 99;
-    pub_tar_dis.publish(msg_pid_param);
+		msg_pid_param.pattern = 99;
+		pub_tar_dis.publish(msg_pid_param);
 		ROS_INFO("lrf_2 OK");
 	}
-  ROS_INFO("lrf_cb: %d", msg.data);
+	ROS_INFO("lrf_cb: %d", msg.data);
+	end = true;
 }
 
 void receive_cb(const std_msgs::Int8& msg)
 {
+	end = false;
 	if(msg.data == -40)	//CRからの受け取りに成功
 	{
 		if(!first)
@@ -260,22 +262,24 @@ void receive_cb(const std_msgs::Int8& msg)
 	}
 	else
 	{
-    /*if(!msg.data == 0)
-    {
-    //ROS_INFO("%d", msg.data);
-      ERROR = true;
-    }
-    else
-    {
-      ERROR = false;
-    }*/
+	/*if(!msg.data == 0)
+	{
+		//ROS_INFO("%d", msg.data);
+		ERROR = true;
+	}
+	else
+	{
+		ERROR = false;
+	}*/
 		ROS_INFO("Receive OK");
 	}
-  ROS_INFO("receive_cb: %d", msg.data);
+	ROS_INFO("receive_cb: %d", msg.data);
+	end = true;
 }
 
 void judg_cb(const std_msgs::Int8& msg)
 {
+	end = false;
 	if(msg.data == 1)	//CRが離れた
 	{
 		if(!first)	//1回だけTZ1
@@ -387,7 +391,7 @@ void judg_cb(const std_msgs::Int8& msg)
 		TZ_3 = false;
 	}*/
 
-  else if(msg.data == 2)	//true 投射成功
+	else if(msg.data == 2)	//true 投射成功
 	{
 		set_servo_pulsewidth(pi, pin_servo, 1450);
 		ROS_INFO("true");
@@ -404,7 +408,7 @@ void judg_cb(const std_msgs::Int8& msg)
 		msg_judg.data = 50;
 		pub_judg.publish(msg_judg);
 	}
-  else if(msg.data == 3)	//false 投射失敗
+	else if(msg.data == 3)	//false 投射失敗
 	{
 		set_servo_pulsewidth(pi, pin_servo, 1450);
 		ROS_INFO("false");
@@ -412,30 +416,31 @@ void judg_cb(const std_msgs::Int8& msg)
 		msg_judg.data = 50;
 		pub_judg.publish(msg_judg);
 	}
-  else
-  {
-    if(RESET && msg.data == 99)
-    {
-      //ROS_INFO("%d", msg.data);
-      ERROR = true;
-      }
-      else
-      {
-        ERROR = false;
-        }
-    ROS_INFO("judg ok");
-  }
-  ROS_INFO("judg_cb: %d", msg.data);
+	else
+	{
+		if(RESET && msg.data == 99)
+		{
+			//ROS_INFO("%d", msg.data);
+			ERROR = true;
+		}
+		else
+		{
+			ERROR = false;
+		}
+		ROS_INFO("judg ok");
+	}
+	ROS_INFO("judg_cb: %d", msg.data);
 
 	ROS_INFO("pre_TZ: %d, TZ: %d", pre_TZ, TZ);
+	end = true;
 }
 
 void reset()
 {
-  set_servo_pulsewidth(pi, pin_servo, 1520);
+	set_servo_pulsewidth(pi, pin_servo, 1520);
 
-  /*msg_switch.RESET = true;
-  pub_switch.publish(msg_switch);*/
+	/*msg_switch.RESET = true;
+	pub_switch.publish(msg_switch);*/
 
 	msg_lrf.flag = false;
 	pub_lrf.publish(msg_lrf);
@@ -449,40 +454,40 @@ void reset()
 	msg_TZ_judg.data = 99;
 	pub_judg2.publish(msg_TZ_judg);
 
-  msg_judg.data = 99;
-  pub_judg.publish(msg_judg);
+	msg_judg.data = 99;
+	pub_judg.publish(msg_judg);
 
 	msg_throw_on.data = 99;
 	pub_receive.publish(msg_throw_on);
 
-  ros::Duration(1).sleep();
+	ros::Duration(1).sleep();
 
 	msg_lrf2.data = 99;
 	pub_lrf2.publish(msg_lrf2);
 
-  //ros::Duration(2).sleep();
+	//ros::Duration(2).sleep();
 
-  msg_throw.data = 99;
-  pub_throw.publish(msg_throw);
+	msg_throw.data = 99;
+	pub_throw.publish(msg_throw);
 
-  cb_flag = false;
-  enc_flag = false;
-  end = false;
-  first = false;
-  lrf = false;
-  throw_on = false;
-  TZ_3 = false;
+	cb_flag = false;
+	enc_flag = false;
+	end = false;
+	first = false;
+	lrf = false;
+	throw_on = false;
+	TZ_3 = false;
 
-  flag_RESET = false;
-  
-  TZ = 0;
-  pre_TZ = 0;
+	flag_RESET = false;
 
-  acc_t = 0.0f;
+	TZ = 0;
+	pre_TZ = 0;
+
+	acc_t = 0.0f;
 
 	//ros::Duration(2).sleep();
 
-  RESET = false;
+	RESET = false;
 }
 
 void led_flash(int num, float time, int color)
