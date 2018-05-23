@@ -100,6 +100,7 @@ int main(int argc, char **argv)
 		}
 		else
 		{
+			end = true;
 			led_flash(-1, 0, 2);
 		}
 
