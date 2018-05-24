@@ -518,6 +518,7 @@ int main(int argc, char **argv)
 					speedFL = clamp(nearbyint(- speed_X + turn_imu), -20, 20, 1);
 					speedRL = clamp(nearbyint(- speed_X + turn_imu), -20, 20, 1);
 					speedRR = clamp(nearbyint( (speed_X +  turn_imu)), -20, 20, 1);
+			}
 		}
 
 		else if(pattern == 0) //加減速
