@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 
 	while(ros::ok())
 	{
-		if(!end && RESET)
+		if(RESET)
 		{
 			ROS_INFO("end: %d", end);
 			led_flash(-1, 0, 1);
@@ -102,6 +102,7 @@ int main(int argc, char **argv)
 		}
 		else
 		{
+      //end = false;
 			led_flash(-1, 0, 2);
 		}
 
@@ -317,7 +318,7 @@ void receive_cb(const std_msgs::Int8& msg)
 	}
 	else
 	{
-		if(msg.data == 99)
+		if(msg.data == -20)
 		{
 			end = true;
 		}
@@ -528,11 +529,6 @@ void reset()
 	msg_throw_on.data = 99;
 	pub_receive.publish(msg_throw_on);
 
-	ros::Duration(1).sleep();
-
-	msg_lrf2.data = 99;
-	pub_lrf2.publish(msg_lrf2);
-
 	//ros::Duration(2).sleep();
 
 	msg_throw.data = 2;
@@ -540,6 +536,11 @@ void reset()
 
 	msg_throw.data = 20;
 	pub_throw.publish(msg_throw);
+
+  ros::Duration(1).sleep();
+
+  msg_lrf2.data = 99;
+  pub_lrf2.publish(msg_lrf2);
 
 	msg_throw.data = 99;
 	pub_throw.publish(msg_throw);
@@ -565,8 +566,14 @@ void reset()
 	msg_switch.RESET = false;
 	pub_switch.publish(msg_switch);
 
-	RESET = false;
-	end = false;
+  if(!end)
+  {
+	  RESET = true;
+  }
+  else
+  {
+    RESET = false;
+  }
 }
 
 void led_flash(int num, float time, int color)
