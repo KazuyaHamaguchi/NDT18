@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 
 	while(ros::ok())
 	{
-		if(RESET)
+		if(!end && RESET)
 		{
 			ROS_INFO("end: %d", end);
 			led_flash(-1, 0, 1);
@@ -102,7 +102,6 @@ int main(int argc, char **argv)
 		}
 		else
 		{
-      //end = false;
 			led_flash(-1, 0, 2);
 		}
 
@@ -166,11 +165,11 @@ void switch_cb(const nemcon::switch_in& msg)
 void lrf_cb(const std_msgs::Int8& msg)
 {
 	end = false;
-	if(msg.data == -50)
+	if(msg.data == -50)	//lrf終了時
 	{
-		msg_pid_param.pattern = 3;
+		msg_pid_param.pattern = 3;	//ブレーキかける
 		pub_tar_dis.publish(msg_pid_param);
-		if(TZ == 3 && pre_TZ == 2)
+		if(TZ == 3 && pre_TZ == 2)	//TZ2 → TZ3時に投射へ
 		{
 			set_servo_pulsewidth(pi, pin_servo, 950);	//90度
 			ros::Duration(1).sleep();
@@ -213,10 +212,10 @@ void receive_cb(const std_msgs::Int8& msg)
 		}
 	}
 
-	else if(msg.data == -41)
+	else if(msg.data == -41)	//TR内での受け渡しに成功
 	{
 
-		if(TZ == 1)
+		if(TZ == 1)			//TZ1投射指示
 		{
 			set_servo_pulsewidth(pi, pin_servo, 950);	//90度
 			msg_lrf.flag = false;
@@ -225,7 +224,7 @@ void receive_cb(const std_msgs::Int8& msg)
 			msg_throw.data = 1;
 			pub_throw.publish(msg_throw);
 		}
-		else if(TZ == 2)
+		else if(TZ == 2)	//TZ2投射指示
 		{
 			set_servo_pulsewidth(pi, pin_servo, 950);	//90度
 			msg_lrf.flag = false;
@@ -234,9 +233,9 @@ void receive_cb(const std_msgs::Int8& msg)
 			msg_throw.data = 11;
 			pub_throw.publish(msg_throw);
 		}
-		else if(TZ == 3)
+		else if(TZ == 3)	//TZ3投射指示
 		{
-			if(!TZ_3_receive)
+			if(!TZ_3_receive)	//
 			{
 				msg_throw.data = 44;
 				pub_throw.publish(msg_throw);
@@ -318,7 +317,7 @@ void receive_cb(const std_msgs::Int8& msg)
 	}
 	else
 	{
-		if(msg.data == -20)
+		if(msg.data == 99)
 		{
 			end = true;
 		}
@@ -350,7 +349,7 @@ void judg_cb(const std_msgs::Int8& msg)
 			first = true;
 		}
 
-		else if(TZ == 1 && pre_TZ == 1)
+		else if(TZ == 1 && pre_TZ == 1)	//TZ1 → TZ1
 		{
 			set_servo_pulsewidth(pi, pin_servo, 1520);
 			msg_throw.data = 41;
@@ -363,7 +362,7 @@ void judg_cb(const std_msgs::Int8& msg)
 			msg_lrf.TZ = 1;
 			pub_lrf.publish(msg_lrf);
 		}
-		else if(TZ == 2 && pre_TZ == 1)
+		else if(TZ == 2 && pre_TZ == 1)	//TZ1 → TZ2
 		{
 			set_servo_pulsewidth(pi, pin_servo, 1520);
 			ROS_INFO("TZ2 OK!");
@@ -380,7 +379,7 @@ void judg_cb(const std_msgs::Int8& msg)
 			msg_throw.data = 41;
 			pub_throw.publish(msg_throw);
 		}
-		else if(TZ == 2 && pre_TZ == 2)
+		else if(TZ == 2 && pre_TZ == 2)	//TZ2 → TZ2
 		{
 			set_servo_pulsewidth(pi, pin_servo, 1520);
 			ROS_INFO("TZ2 OK!");
@@ -393,7 +392,7 @@ void judg_cb(const std_msgs::Int8& msg)
 			msg_throw.data = 41;
 			pub_throw.publish(msg_throw);
 		}
-		else if(TZ == 3 && pre_TZ == 2)
+		else if(TZ == 3 && pre_TZ == 2)	//TZ2 → TZ3
 		{
 			if(!TZ_3_receive)
 			{
@@ -422,7 +421,7 @@ void judg_cb(const std_msgs::Int8& msg)
 			msg_throw.data = 41;
 			pub_throw.publish(msg_throw);*/
 		}
-		else if(TZ_3)
+		else if(TZ_3)	//TZ3 → TZ3
 		{
 			TZ = 3;
 			ROS_INFO("TZ3 OK!");
@@ -529,18 +528,12 @@ void reset()
 	msg_throw_on.data = 99;
 	pub_receive.publish(msg_throw_on);
 
+	ros::Duration(1).sleep();
+
+	msg_lrf2.data = 99;
+	pub_lrf2.publish(msg_lrf2);
+
 	//ros::Duration(2).sleep();
-
-	msg_throw.data = 2;
-	pub_throw.publish(msg_throw);
-
-	msg_throw.data = 20;
-	pub_throw.publish(msg_throw);
-
-  ros::Duration(1).sleep();
-
-  msg_lrf2.data = 99;
-  pub_lrf2.publish(msg_lrf2);
 
 	msg_throw.data = 99;
 	pub_throw.publish(msg_throw);
@@ -563,17 +556,8 @@ void reset()
 
 	//ros::Duration(2).sleep();
 
-	msg_switch.RESET = false;
-	pub_switch.publish(msg_switch);
-
-  if(!end)
-  {
-	  RESET = true;
-  }
-  else
-  {
-    RESET = false;
-  }
+	RESET = false;
+	end = false;
 }
 
 void led_flash(int num, float time, int color)
