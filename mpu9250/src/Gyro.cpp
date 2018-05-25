@@ -105,6 +105,8 @@ int main(int argc, char **argv)
 
 void calib()
 {
+  gpio_write(pi, 16, 0);
+  gpio_write(pi, 12, 1);
 	if(!first)
 	{
 		for (int i = 0; i < 3; i++)
@@ -170,6 +172,9 @@ void calib()
 		printf("%6.6f\n", offsetGyroZ);
 
 		ROS_INFO("Gyro calibration complete");
+
+    gpio_write(pi, 16, 1);
+    gpio_write(pi, 12, 0);
 
 		first = true;
 	}

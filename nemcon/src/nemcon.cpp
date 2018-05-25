@@ -96,14 +96,9 @@ int main(int argc, char **argv)
 		if(!end && RESET)
 		{
 			ROS_INFO("end: %d", end);
-			led_flash(-1, 0, 1);
 			reset();
-			led_flash(-1 , 0, 0);
 		}
-		else
-		{
-			led_flash(-1, 0, 2);
-		}
+		else;
 
 		loop_rate.sleep();
 		ros::spinOnce();
@@ -140,6 +135,9 @@ void switch_cb(const nemcon::switch_in& msg)
 			ros::Duration(3.759942 + 0.1).sleep();
 			acc_move(0, 3, 0, 2, 0.95, -1.15, 4.42, 4);	//TZ1受け渡しポイント
 			ros::Duration(1.772454 + 0.1).sleep();
+
+      msg_throw.data = 30;
+      pub_throw.publish(msg_throw);
 
 			msg_throw.data = 3;
 			pub_throw.publish(msg_throw);
@@ -185,6 +183,7 @@ void lrf_cb(const std_msgs::Int8& msg)
 		if(msg.data == 99)
 		{
 			end = true;
+      ROS_INFO("aaasdfghjklresas");
 		}
 		else
 		{
@@ -237,12 +236,13 @@ void receive_cb(const std_msgs::Int8& msg)
 		{
 			if(!TZ_3_receive)	//
 			{
-				msg_throw.data = 44;
+				msg_throw.data = 45;
 				pub_throw.publish(msg_throw);
 				TZ_3_receive = true;
 			}
 			else
 			{
+        ROS_INFO("TZ_3_receive: %d", TZ_3_receive);
 				set_servo_pulsewidth(pi, pin_servo, 950);	//90度
 				msg_lrf.flag = false;
 				pub_lrf.publish(msg_lrf);
@@ -253,7 +253,7 @@ void receive_cb(const std_msgs::Int8& msg)
 		}
 	}
 
-	else if(msg.data == -44)
+	else if(msg.data == -45)
 	{
 		msg_throw.data = 40;	//受け取り待機
 		pub_throw.publish(msg_throw);
@@ -284,13 +284,13 @@ void receive_cb(const std_msgs::Int8& msg)
 		if(TZ == 3 && pre_TZ == 2)
 		{
 			set_servo_pulsewidth(pi, pin_servo, 1520);
-			msg_throw.data = 41;
-			pub_throw.publish(msg_throw);
-			msg_lrf.flag = true;
-			msg_lrf.type = 0;
-			msg_lrf.TZ = 3;
-			pub_lrf.publish(msg_lrf);
-			pre_TZ = TZ;
+			//msg_throw.data = 41;
+			//pub_throw.publish(msg_throw);
+			//msg_lrf.flag = true;
+			//msg_lrf.type = 0;
+			//msg_lrf.TZ = 3;
+			//pub_lrf.publish(msg_lrf);
+			//pre_TZ = TZ;
 		}
 		else
 		{
@@ -307,8 +307,22 @@ void receive_cb(const std_msgs::Int8& msg)
 
 	else if(msg.data == -100)
 	{
-		msg_throw.data = 40;
-		pub_throw.publish(msg_throw);
+    if(TZ == 3 && pre_TZ == 2)
+    {
+      ROS_INFO("sdfgih;lj.nm,bvncxhdfuygihl");
+      msg_throw.data = 41;
+      pub_throw.publish(msg_throw);
+      msg_lrf.flag = true;
+      msg_lrf.type = 0;
+      msg_lrf.TZ = 3;
+      pub_lrf.publish(msg_lrf);
+      pre_TZ = TZ;
+    }
+    else
+    {
+		  msg_throw.data = 40;
+		  pub_throw.publish(msg_throw);
+    }
 	}
 	else if(msg.data == -44)
 	{
@@ -511,6 +525,7 @@ void reset()
 	pub_switch.publish(msg_switch);
 
 	msg_lrf.flag = false;
+  msg_lrf.type = 99;
 	pub_lrf.publish(msg_lrf);
 
 	msg_acc_param.flag = false;
@@ -528,7 +543,7 @@ void reset()
 	msg_throw_on.data = 99;
 	pub_receive.publish(msg_throw_on);
 
-	ros::Duration(1).sleep();
+	//ros::Duration(2).sleep();
 
 	msg_lrf2.data = 99;
 	pub_lrf2.publish(msg_lrf2);
@@ -555,6 +570,9 @@ void reset()
 	acc_t = 0.0f;
 
 	//ros::Duration(2).sleep();
+
+  msg_switch.RESET = true;
+  pub_switch.publish(msg_switch);
 
 	RESET = false;
 	end = false;
