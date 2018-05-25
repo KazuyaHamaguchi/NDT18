@@ -183,7 +183,6 @@ void lrf_cb(const std_msgs::Int8& msg)
 		if(msg.data == 99)
 		{
 			end = true;
-      ROS_INFO("aaasdfghjklresas");
 		}
 		else
 		{
@@ -478,7 +477,7 @@ void judg_cb(const std_msgs::Int8& msg)
 	}
 	else if(msg.data == 3)	//false 投射失敗
 	{
-		set_servo_pulsewidth(pi, pin_servo, 1450);
+		set_servo_pulsewidth(pi, pin_servo, 1700);
 		ROS_INFO("false");
 		TZ = pre_TZ;
 		msg_judg.data = 50;
