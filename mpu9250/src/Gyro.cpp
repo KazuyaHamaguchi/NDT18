@@ -105,8 +105,8 @@ int main(int argc, char **argv)
 
 void calib()
 {
-  gpio_write(pi, 16, 0);
-  gpio_write(pi, 12, 1);
+	gpio_write(pi, 16, 0);
+	gpio_write(pi, 12, 1);
 	if(!first)
 	{
 		for (int i = 0; i < 3; i++)
@@ -118,7 +118,7 @@ void calib()
     offsetGyroZ = 0.0f;
 
     gyroCoefficient = 0.0f;
-    
+
     pregx = 0.0f, pregy = 0.0f, pregz = 0.0f;
     degreeX = 0.0f, degreeY = 0.0f, degreeZ = 0.0f;
 
@@ -173,8 +173,8 @@ void calib()
 
 		ROS_INFO("Gyro calibration complete");
 
-    gpio_write(pi, 16, 1);
-    gpio_write(pi, 12, 0);
+		gpio_write(pi, 16, 1);
+		gpio_write(pi, 12, 0);
 
 		first = true;
 	}
