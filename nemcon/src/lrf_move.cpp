@@ -240,27 +240,27 @@ void flag_cb(const nemcon::lrf_flag& msg)
 	type = msg.type;
 	if(!flag)
 	{
-    if(type == 99)
-    {
-      ROS_INFO("lrf_move first!");
-      flag_x = false;
-      flag_y = false;
-      first = true;
-    }
-    else
-    {
-		if(!first)
+		if(type == 99)
 		{
 			ROS_INFO("lrf_move first!");
-      msg_pid_param.pattern = 99;
-      pub_tar_dis.publish(msg_pid_param);
-			msg_lrf.data = -50;
-			pub_lrf.publish(msg_lrf);
 			flag_x = false;
 			flag_y = false;
 			first = true;
 		}
-    }
+		else
+		{
+			if(!first)
+			{
+				ROS_INFO("lrf_move first!");
+				msg_pid_param.pattern = 99;
+				pub_tar_dis.publish(msg_pid_param);
+				msg_lrf.data = -50;
+				pub_lrf.publish(msg_lrf);
+				flag_x = false;
+				flag_y = false;
+				first = true;
+			}
+		}
 	}
 	else
 	{
