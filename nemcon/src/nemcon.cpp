@@ -136,8 +136,8 @@ void switch_cb(const nemcon::switch_in& msg)
 			acc_move(0, 3, 0, 2, 0.95, -1.15, 4.42, 4);	//TZ1受け渡しポイント
 			ros::Duration(1.772454 + 0.1).sleep();
 
-      msg_throw.data = 30;
-      pub_throw.publish(msg_throw);
+			msg_throw.data = 30;
+			pub_throw.publish(msg_throw);
 
 			msg_throw.data = 3;
 			pub_throw.publish(msg_throw);
@@ -242,7 +242,7 @@ void receive_cb(const std_msgs::Int8& msg)
 			}
 			else
 			{
-        ROS_INFO("TZ_3_receive: %d", TZ_3_receive);
+				ROS_INFO("TZ_3_receive: %d", TZ_3_receive);
 				set_servo_pulsewidth(pi, pin_servo, 950);	//90度
 				msg_lrf.flag = false;
 				pub_lrf.publish(msg_lrf);
@@ -281,48 +281,33 @@ void receive_cb(const std_msgs::Int8& msg)
 	}
 	else if(msg.data == -111)
 	{
-		if(TZ == 3 && pre_TZ == 2)
-		{
-			set_servo_pulsewidth(pi, pin_servo, 1520);
-			//msg_throw.data = 41;
-			//pub_throw.publish(msg_throw);
-			//msg_lrf.flag = true;
-			//msg_lrf.type = 0;
-			//msg_lrf.TZ = 3;
-			//pub_lrf.publish(msg_lrf);
-			//pre_TZ = TZ;
-		}
-		else
-		{
-			set_servo_pulsewidth(pi, pin_servo, 1520);
-			acc_move(0, 2.5, 0, 2, 4.8, -1, 6.4, 2);
-			ros::Duration(3.769912 + 0.1).sleep();
-			msg_lrf.flag = true;
-			msg_lrf.type = 1;
-			pub_lrf.publish(msg_lrf);
-			pre_TZ = TZ;
-			TZ_3 = true;
-		}
+		set_servo_pulsewidth(pi, pin_servo, 1520);
+		acc_move(0, 2.5, 0, 2, 4.8, -1, 6.4, 2);
+		ros::Duration(3.769912 + 0.1).sleep();
+		msg_lrf.flag = true;
+		msg_lrf.type = 1;
+		pub_lrf.publish(msg_lrf);
+		pre_TZ = TZ;
+		TZ_3 = true;
 	}
 
 	else if(msg.data == -100)
 	{
-    if(TZ == 3 && pre_TZ == 2)
-    {
-      ROS_INFO("sdfgih;lj.nm,bvncxhdfuygihl");
-      msg_throw.data = 41;
-      pub_throw.publish(msg_throw);
-      msg_lrf.flag = true;
-      msg_lrf.type = 0;
-      msg_lrf.TZ = 3;
-      pub_lrf.publish(msg_lrf);
-      pre_TZ = TZ;
-    }
-    else
-    {
-		  msg_throw.data = 40;
-		  pub_throw.publish(msg_throw);
-    }
+		if(TZ == 3 && pre_TZ == 2)
+		{
+			msg_throw.data = 41;
+			pub_throw.publish(msg_throw);
+			msg_lrf.flag = true;
+			msg_lrf.type = 0;
+			msg_lrf.TZ = 3;
+			pub_lrf.publish(msg_lrf);
+			pre_TZ = TZ;
+		}
+		else
+		{
+			msg_throw.data = 40;
+			pub_throw.publish(msg_throw);
+		}
 	}
 	else if(msg.data == -44)
 	{
@@ -525,7 +510,7 @@ void reset()
 	pub_switch.publish(msg_switch);
 
 	msg_lrf.flag = false;
-  msg_lrf.type = 99;
+	msg_lrf.type = 99;
 	pub_lrf.publish(msg_lrf);
 
 	msg_acc_param.flag = false;
@@ -571,8 +556,8 @@ void reset()
 
 	//ros::Duration(2).sleep();
 
-  msg_switch.RESET = true;
-  pub_switch.publish(msg_switch);
+	msg_switch.RESET = true;
+	pub_switch.publish(msg_switch);
 
 	RESET = false;
 	end = false;
