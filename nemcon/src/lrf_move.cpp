@@ -252,10 +252,14 @@ void flag_cb(const nemcon::lrf_flag& msg)
 			if(!first)
 			{
 				ROS_INFO("lrf_move first!");
-				msg_pid_param.pattern = 99;
-				pub_tar_dis.publish(msg_pid_param);
-				msg_lrf.data = -50;
-				pub_lrf.publish(msg_lrf);
+        if(type == 0)
+        {
+				  msg_pid_param.pattern = 99;
+				  pub_tar_dis.publish(msg_pid_param);
+				  msg_lrf.data = -50;
+				  pub_lrf.publish(msg_lrf);
+        }
+        else;
 				flag_x = false;
 				flag_y = false;
 				first = true;

@@ -118,7 +118,7 @@ void switch_cb(const nemcon::switch_in& msg)
 	{
 		end = false;
 		RESET = false;
-		if(msg.SZ && !msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)	//SZから通常通り
+		if(msg.SZ && !msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC/* && !cb_flag*/)	//SZから通常通り
 		{
 			msg_throw.data = 43;
 			pub_throw.publish(msg_throw);
@@ -280,6 +280,8 @@ void receive_cb(const std_msgs::Int8& msg)
 	}
 	else if(msg.data == -111)
 	{
+    if(!(TZ == 3 && pre_TZ == 2))
+    {
 		set_servo_pulsewidth(pi, pin_servo, 1520);
 		acc_move(0, 2.5, 0, 2, 4.8, -1, 6.4, 2);
 		ros::Duration(3.769912 + 0.1).sleep();
@@ -288,6 +290,11 @@ void receive_cb(const std_msgs::Int8& msg)
 		pub_lrf.publish(msg_lrf);
 		pre_TZ = TZ;
 		TZ_3 = true;
+    }
+    else
+    {
+      set_servo_pulsewidth(pi, pin_servo, 1520);
+    }
 	}
 
 	else if(msg.data == -100)
@@ -555,7 +562,7 @@ void reset()
 
 	//ros::Duration(2).sleep();
 
-	msg_switch.RESET = true;
+	msg_switch.RESET = false;
 	pub_switch.publish(msg_switch);
 
 	RESET = false;
