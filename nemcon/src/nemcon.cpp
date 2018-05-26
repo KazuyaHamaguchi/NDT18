@@ -149,7 +149,7 @@ void switch_cb(const nemcon::switch_in& msg)
 			msg_throw.data = 40;	//受け取り待機
 			pub_throw.publish(msg_throw);
 
-			cb_flag = true;
+			//cb_flag = true;
 		}
 		if(!msg.SZ && msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
 		{
@@ -280,21 +280,21 @@ void receive_cb(const std_msgs::Int8& msg)
 	}
 	else if(msg.data == -111)
 	{
-    if(!(TZ == 3 && pre_TZ == 2))
-    {
-		set_servo_pulsewidth(pi, pin_servo, 1520);
-		acc_move(0, 2.5, 0, 2, 4.8, -1, 6.4, 2);
-		ros::Duration(3.769912 + 0.1).sleep();
-		msg_lrf.flag = true;
-		msg_lrf.type = 1;
-		pub_lrf.publish(msg_lrf);
-		pre_TZ = TZ;
-		TZ_3 = true;
-    }
-    else
-    {
-      set_servo_pulsewidth(pi, pin_servo, 1520);
-    }
+		if(!(TZ == 3 && pre_TZ == 2))
+		{
+			set_servo_pulsewidth(pi, pin_servo, 1520);
+			acc_move(0, 2.5, 0, 2, 4.8, -1, 6.4, 2);
+			ros::Duration(3.769912 + 0.1).sleep();
+			msg_lrf.flag = true;
+			msg_lrf.type = 1;
+			pub_lrf.publish(msg_lrf);
+			pre_TZ = TZ;
+			TZ_3 = true;
+		}
+		else
+		{
+			set_servo_pulsewidth(pi, pin_servo, 1520);
+		}
 	}
 
 	else if(msg.data == -100)
@@ -565,7 +565,7 @@ void reset()
 	msg_switch.RESET = false;
 	pub_switch.publish(msg_switch);
 
-	RESET = false;
+	//RESET = false;
 	end = false;
 }
 
