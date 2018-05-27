@@ -520,12 +520,14 @@ int main(int argc, char **argv)
 					speedFL = clamp(nearbyint(  speed_X), 0, 20, 1);
 					speedRL = clamp(nearbyint(  speed_X), 0, 20, 1);
 					speedRR = clamp(nearbyint(- speed_X), -20, 0, 1);
+          break;
 
 				case 4:	//左旋回
 					speedFR = clamp(nearbyint(  speed_X), 0, 20, 1);
 					speedFL = clamp(nearbyint(- speed_X), -20, 0, 1);
 					speedRL = clamp(nearbyint(- speed_X), -20, 0, 1);
 					speedRR = clamp(nearbyint(  speed_X), 0, 20, 1);
+          break;
 
 				default:
 					speedFR = 0;
@@ -669,11 +671,12 @@ int main(int argc, char **argv)
 
 		else //その他および緊急停止時
 		{
-			speedFR = 0000;
-			speedFL = 0000;
-			speedRL = 0000;
-			speedRR = 0000;
+			speedFR = 0;
+			speedFL = 0;
+			speedRL = 0;
+			speedRR = 0;
 		}
+
 
 		msg_m.motor_FR = speedFR;
 		msg_m.motor_FL = speedFL;
