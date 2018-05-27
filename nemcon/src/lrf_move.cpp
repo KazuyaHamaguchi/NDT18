@@ -66,232 +66,232 @@ int main(int argc, char **argv)
 		current_time = ros::Time::now();
 		t += (current_time - last_time).toSec();
 
-	if(type == 0)
-	{
-		x = lrf_x;
-		y = lrf_y;
-		z = lrf_z;
-		msg_pid_param.pattern = 2;
-	}
-	else if(type == 1)
-	{
-		x = enc_x;
-		y = enc_y;
-		msg_pid_param.pattern = 1;
-	}
+		if(type == 0)
+		{
+			x = lrf_x;
+			y = lrf_y;
+			z = lrf_z;
+			msg_pid_param.pattern = 2;
+		}
+		else if(type == 1)
+		{
+			x = enc_x;
+			y = enc_y;
+			msg_pid_param.pattern = 1;
+		}
 
 		if(flag)
 		{
-				if(!flag_x && !flag_y && !flag_z)
+			if(!flag_x && !flag_y && !flag_z)
+			{
+				if(0.1 + offset_x < x)
 				{
-					if(0.1 + offset_x < x)
+					ROS_INFO("lrf_x:%f", x);
+					msg_acc.V = 0.15;
+					msg_pid_param.front = 4;
+					pub_tar_dis.publish(msg_pid_param);
+					pub_acc.publish(msg_acc);
+					first = false;
+				}
+				if(0.01 + offset_x < x && x <= 0.1 + offset_x)
+				{
+					ROS_INFO("lrf_x2:%f", x);
+					msg_acc.V = 0.03;
+					msg_pid_param.front = 4;
+					pub_tar_dis.publish(msg_pid_param);
+					pub_acc.publish(msg_acc);
+					first = false;
+				}
+				if(x < -0.1 + offset_x)
+				{
+					ROS_INFO("-lrf_x:%f", x);
+					msg_acc.V = 0.15;
+					msg_pid_param.front = 2;
+					pub_tar_dis.publish(msg_pid_param);
+					pub_acc.publish(msg_acc);
+					first = false;
+				}
+				if(-0.1 + offset_x <= x && x < -0.01 + offset_x)
+				{
+					ROS_INFO("-lrf_x2:%f", x);
+					msg_acc.V = 0.03;
+					msg_pid_param.front = 2;
+					pub_tar_dis.publish(msg_pid_param);
+					pub_acc.publish(msg_acc);
+					first = false;
+				}
+				if(-0.01 + offset_x <= x && x <= 0.01 + offset_x /*&& first_x*/)
+				{
+					ROS_INFO("lrf_x OK");
+					if(type == 0)
 					{
-						ROS_INFO("lrf_x:%f", x);
-						msg_acc.V = 0.15;
-						msg_pid_param.front = 4;
+						msg_acc.V = 0;
 						pub_tar_dis.publish(msg_pid_param);
 						pub_acc.publish(msg_acc);
-						first = false;
 					}
-					if(0.01 + offset_x < x && x <= 0.1 + offset_x)
+					else if(type == 1)
 					{
-						ROS_INFO("lrf_x2:%f", x);
-						msg_acc.V = 0.03;
-						msg_pid_param.front = 4;
+						msg_pid_param.pattern = -2;
+						msg_pid_param.speed = 0;
 						pub_tar_dis.publish(msg_pid_param);
-						pub_acc.publish(msg_acc);
-						first = false;
+						flag_y = true;
+						flag_z = true;
 					}
-					if(x < -0.1 + offset_x)
+					first = false;
+					flag_x = true;
+				}
+				else
+				{
+					flag_x = false;
+					first = false;
+				}
+			}
+
+
+			if(flag_x && !flag_y && !flag_z)
+			{
+				if(0.1 + offset_y < y)
+				{
+					ROS_INFO("lrf_y:%f", y);
+					msg_acc.V = 0.15;
+					msg_pid_param.front = 3;
+					pub_tar_dis.publish(msg_pid_param);
+					pub_acc.publish(msg_acc);
+					flag_y = false;
+					first = false;
+				}
+				if(0.01 + offset_y < y && y <= 0.1 + offset_y)
+				{
+					ROS_INFO("lrf_y2:%f", y);
+					msg_acc.V = 0.03;
+					msg_pid_param.front = 3;
+					pub_tar_dis.publish(msg_pid_param);
+					pub_acc.publish(msg_acc);
+					flag_y = false;
+					first = false;
+				}
+				if(y < -0.1 + offset_y)
+				{
+					ROS_INFO("-lrf_y:%f", y);
+					msg_acc.V = 0.15;
+					msg_pid_param.front = 1;
+					pub_tar_dis.publish(msg_pid_param);
+					pub_acc.publish(msg_acc);
+					flag_y = false;
+					first = false;
+				}
+				if(-0.1 + offset_y <= y && y <= -0.01 + offset_y)
+				{
+					ROS_INFO("-lrf_y2:%f", lrf_y);
+					msg_acc.V = 0.03;
+					msg_pid_param.front = 1;
+					pub_tar_dis.publish(msg_pid_param);
+					pub_acc.publish(msg_acc);
+					flag_y = false;
+					first = false;
+				}
+				if(-0.01 + offset_y <= y && y <= 0.01 + offset_y)
+				{
+					ROS_INFO("lrf_y OK");
+					msg_acc.V = 0;
+					pub_tar_dis.publish(msg_pid_param);
+					pub_acc.publish(msg_acc);
+					if(-0.01 + offset_x <= x && x <= 0.01 + offset_x && t >= 0.2)
 					{
-						ROS_INFO("-lrf_x:%f", x);
-						msg_acc.V = 0.15;
-						msg_pid_param.front = 2;
-						pub_tar_dis.publish(msg_pid_param);
-						pub_acc.publish(msg_acc);
-						first = false;
-					}
-					if(-0.1 + offset_x <= x && x < -0.01 + offset_x)
-					{
-						ROS_INFO("-lrf_x2:%f", x);
-						msg_acc.V = 0.03;
-						msg_pid_param.front = 2;
-						pub_tar_dis.publish(msg_pid_param);
-						pub_acc.publish(msg_acc);
-						first = false;
-					}
-					if(-0.01 + offset_x <= x && x <= 0.01 + offset_x /*&& first_x*/)
-					{
-						ROS_INFO("lrf_x OK");
-						if(type == 0)
-						{
-							msg_acc.V = 0;
-							pub_tar_dis.publish(msg_pid_param);
-							pub_acc.publish(msg_acc);
-						}
-						else if(type == 1)
-						{
-							msg_pid_param.pattern = -2;
-							msg_pid_param.speed = 0;
-							pub_tar_dis.publish(msg_pid_param);
-							flag_y = true;
-							flag_z = true;
-						}
-						first = false;
-						flag_x = true;
+						ROS_INFO("lrf_xy OK");
+						t = 0.0f;
 					}
 					else
 					{
 						flag_x = false;
-						first = false;
 					}
+					flag_y = true;
+					first = false;
 				}
-
-
-				if(flag_x && !flag_y && !flag_z)
+				else
 				{
-					if(0.1 + offset_y < y)
-					{
-						ROS_INFO("lrf_y:%f", y);
-						msg_acc.V = 0.15;
-						msg_pid_param.front = 3;
-						pub_tar_dis.publish(msg_pid_param);
-						pub_acc.publish(msg_acc);
-						flag_y = false;
-						first = false;
-					}
-					if(0.01 + offset_y < y && y <= 0.1 + offset_y)
-					{
-						ROS_INFO("lrf_y2:%f", y);
-						msg_acc.V = 0.03;
-						msg_pid_param.front = 3;
-						pub_tar_dis.publish(msg_pid_param);
-						pub_acc.publish(msg_acc);
-						flag_y = false;
-						first = false;
-					}
-					if(y < -0.1 + offset_y)
-					{
-						ROS_INFO("-lrf_y:%f", y);
-						msg_acc.V = 0.15;
-						msg_pid_param.front = 1;
-						pub_tar_dis.publish(msg_pid_param);
-						pub_acc.publish(msg_acc);
-						flag_y = false;
-						first = false;
-					}
-					if(-0.1 + offset_y <= y && y <= -0.01 + offset_y)
-					{
-						ROS_INFO("-lrf_y2:%f", lrf_y);
-						msg_acc.V = 0.03;
-						msg_pid_param.front = 1;
-						pub_tar_dis.publish(msg_pid_param);
-						pub_acc.publish(msg_acc);
-						flag_y = false;
-						first = false;
-					}
-					if(-0.01 + offset_y <= y && y <= 0.01 + offset_y)
-					{
-						ROS_INFO("lrf_y OK");
-						msg_acc.V = 0;
-						pub_tar_dis.publish(msg_pid_param);
-						pub_acc.publish(msg_acc);
-						if(-0.01 + offset_x <= x && x <= 0.01 + offset_x && t >= 0.2)
-						{
-							ROS_INFO("lrf_xy OK");
-							t = 0.0f;
-						}
-						else
-						{
-							flag_x = false;
-						}
-						flag_y = true;
-						first = false;
-					}
-					else
-					{
-						flag_y = false;
-						first = false;
-					}
+					flag_y = false;
+					first = false;
 				}
+			}
 
-				if(flag_x && flag_y && !flag_z)
+			if(flag_x && flag_y && !flag_z)
+			{
+				if(0.1 + offset_z < z)
 				{
-					if(0.1 + offset_z < z)
+					ROS_INFO("lrf_z:%f", z);
+					msg_acc.V = 0.15;
+					msg_pid_param.pattern = -1;
+					msg_pid_param.front = 2;
+					pub_tar_dis.publish(msg_pid_param);
+					pub_acc.publish(msg_acc);
+					flag_z = false;
+					first = false;
+				}
+				if(0.01 + offset_z < z && z <= 0.1 + offset_z)
+				{
+					ROS_INFO("lrf_z2:%f", z);
+					msg_acc.V = 0.03;
+					msg_pid_param.pattern = -1;
+					msg_pid_param.front = 2;
+					pub_tar_dis.publish(msg_pid_param);
+					pub_acc.publish(msg_acc);
+					flag_z = false;
+					first = false;
+				}
+				if(z < -0.1 + offset_z)
+				{
+					ROS_INFO("-lrf_z:%f", z);
+					msg_acc.V = 0.15;
+					msg_pid_param.pattern = -1;
+					msg_pid_param.front = 4;
+					pub_tar_dis.publish(msg_pid_param);
+					pub_acc.publish(msg_acc);
+					flag_z = false;
+					first = false;
+				}
+				if(-0.1 + offset_z <= z && z <= -0.01 + offset_z)
+				{
+					ROS_INFO("-lrf_z2:%f", lrf_z);
+					msg_acc.V = 0.03;
+					msg_pid_param.pattern = -1;
+					msg_pid_param.front = 4;
+					pub_tar_dis.publish(msg_pid_param);
+					pub_acc.publish(msg_acc);
+					flag_z = false;
+					first = false;
+				}
+				if(-0.01 + offset_z <= z && z <= 0.01 + offset_z)
+				{
+					ROS_INFO("lrf_z OK");
+					msg_acc.V = 0;
+					pub_tar_dis.publish(msg_pid_param);
+					pub_acc.publish(msg_acc);
+					if(-0.01 + offset_x <= x && x <= 0.01 + offset_x && -0.01 + offset_y <= y && y <= 0.01 + offset_y && t >= 0.2)
 					{
-						ROS_INFO("lrf_z:%f", z);
-						msg_acc.V = 0.15;
-						msg_pid_param.pattern = -1;
-						msg_pid_param.front = 2;
-						pub_tar_dis.publish(msg_pid_param);
-						pub_acc.publish(msg_acc);
+						ROS_INFO("lrf OK");
+						msg_lrf.data = -50;
+						pub_lrf.publish(msg_lrf);
+						flag = false;
+						flag_x = false;
+						flag_y = false;
 						flag_z = false;
-						first = false;
-					}
-					if(0.01 + offset_z < z && z <= 0.1 + offset_z)
-					{
-						ROS_INFO("lrf_z2:%f", z);
-						msg_acc.V = 0.03;
-						msg_pid_param.pattern = -1;
-						msg_pid_param.front = 2;
-						pub_tar_dis.publish(msg_pid_param);
-						pub_acc.publish(msg_acc);
-						flag_z = false;
-						first = false;
-					}
-					if(z < -0.1 + offset_z)
-					{
-						ROS_INFO("-lrf_z:%f", z);
-						msg_acc.V = 0.15;
-						msg_pid_param.pattern = -1;
-						msg_pid_param.front = 4;
-						pub_tar_dis.publish(msg_pid_param);
-						pub_acc.publish(msg_acc);
-						flag_z = false;
-						first = false;
-					}
-					if(-0.1 + offset_z <= z && z <= -0.01 + offset_z)
-					{
-						ROS_INFO("-lrf_z2:%f", lrf_z);
-						msg_acc.V = 0.03;
-						msg_pid_param.pattern = -1;
-						msg_pid_param.front = 4;
-						pub_tar_dis.publish(msg_pid_param);
-						pub_acc.publish(msg_acc);
-						flag_z = false;
-						first = false;
-					}
-					if(-0.01 + offset_z <= z && z <= 0.01 + offset_z)
-					{
-						ROS_INFO("lrf_z OK");
-						msg_acc.V = 0;
-						pub_tar_dis.publish(msg_pid_param);
-						pub_acc.publish(msg_acc);
-						if(-0.01 + offset_x <= x && x <= 0.01 + offset_x && -0.01 + offset_y <= y && y <= 0.01 + offset_y && t >= 0.2)
-						{
-							ROS_INFO("lrf OK");
-							msg_lrf.data = -50;
-							pub_lrf.publish(msg_lrf);
-							flag = false;
-							flag_x = false;
-							flag_y = false;
-							flag_z = false;
-							first = true;
-							t = 0.0f;
-						}
-						else
-						{
-							flag_x = false;
-							flag_y = false;
-						}
-					}
-					else
-					{
-						flag_z = false;
-						first = false;
+						first = true;
 						t = 0.0f;
 					}
-
+					else
+					{
+						flag_x = false;
+						flag_y = false;
+					}
+				}
+				else
+				{
+					flag_z = false;
+					first = false;
+					t = 0.0f;
+				}
+			}
 		}
 		else
 		{
