@@ -503,21 +503,36 @@ int main(int argc, char **argv)
 		current_time = ros::Time::now();
 		dt = (current_time - last_time).toSec();
 
-		if(pattern == -1)	//その場旋回
+		if(pattern == -2)	//その場Yaw角補正
+		{
+				speedFR = clamp(nearbyint(- (speed + turn_imu)), -20, 20, 1);
+				speedFL = clamp(nearbyint( speed + turn_imu), -20, 20, 1);
+				speedRL = clamp(nearbyint( speed + turn_imu), -20, 20, 1);
+				speedRR = clamp(nearbyint(- (speed +  turn_imu)), -20, 20, 1);
+		}
+
+		else if(pattern == -1)	//lrfその場旋回
 		{
 			switch(front)
 			{
 				case 2:	//右旋回
-					speedFR = clamp(nearbyint(- (speed_X + turn_imu)), -20, 20, 1);
-					speedFL = clamp(nearbyint( speed_X + turn_imu), -20, 20, 1);
-					speedRL = clamp(nearbyint( speed_X + turn_imu), -20, 20, 1);
-					speedRR = clamp(nearbyint(- (speed_X +  turn_imu)), -20, 20, 1);
+					speedFR = clamp(nearbyint(- (speed_X + turn_lrf)), -20, 0, 1);
+					speedFL = clamp(nearbyint( speed_X + turn_lrf), 0, 20, 1);
+					speedRL = clamp(nearbyint( speed_X + turn_lrf), 0, 20, 1);
+					speedRR = clamp(nearbyint(- (speed_X +  turn_lrf)), -20, 0, 1);
 
 				case 4:	//左旋回
-					speedFR = clamp(nearbyint( (speed_X + turn_imu)), -20, 20, 1);
-					speedFL = clamp(nearbyint(- speed_X + turn_imu), -20, 20, 1);
-					speedRL = clamp(nearbyint(- speed_X + turn_imu), -20, 20, 1);
-					speedRR = clamp(nearbyint( (speed_X +  turn_imu)), -20, 20, 1);
+					speedFR = clamp(nearbyint( (speed_X + turn_lrf)), 0, 20, 1);
+					speedFL = clamp(nearbyint(- speed_X + turn_lrf), -20, 0, 1);
+					speedRL = clamp(nearbyint(- speed_X + turn_lrf), -20, 0, 1);
+					speedRR = clamp(nearbyint( (speed_X +  turn_lrf)), 0, 20, 1);
+
+				default:
+					speedFR = 0;
+					speedFL = 0;
+					speedRL = 0;
+					speedRR = 0;
+					break;
 			}
 		}
 
