@@ -85,7 +85,7 @@ int main(int argc, char **argv)
 					if(0.1 + offset_x < x)
 					{
 						ROS_INFO("lrf_x:%f", x);
-						msg_acc.V = 0.2;
+						msg_acc.V = 0.15;
 						msg_pid_param.front = 4;
 						pub_tar_dis.publish(msg_pid_param);
 						pub_acc.publish(msg_acc);
@@ -94,7 +94,7 @@ int main(int argc, char **argv)
 					if(0.01 + offset_x < x && x <= 0.1 + offset_x)
 					{
 						ROS_INFO("lrf_x2:%f", x);
-						msg_acc.V = 0.05;
+						msg_acc.V = 0.03;
 						msg_pid_param.front = 4;
 						pub_tar_dis.publish(msg_pid_param);
 						pub_acc.publish(msg_acc);
@@ -103,7 +103,7 @@ int main(int argc, char **argv)
 					if(x < -0.1 + offset_x)
 					{
 						ROS_INFO("-lrf_x:%f", x);
-						msg_acc.V = 0.2;
+						msg_acc.V = 0.15;
 						msg_pid_param.front = 2;
 						pub_tar_dis.publish(msg_pid_param);
 						pub_acc.publish(msg_acc);
@@ -112,7 +112,7 @@ int main(int argc, char **argv)
 					if(-0.1 + offset_x <= x && x < -0.01 + offset_x)
 					{
 						ROS_INFO("-lrf_x2:%f", x);
-						msg_acc.V = 0.05;
+						msg_acc.V = 0.03;
 						msg_pid_param.front = 2;
 						pub_tar_dis.publish(msg_pid_param);
 						pub_acc.publish(msg_acc);
@@ -125,6 +125,10 @@ int main(int argc, char **argv)
 						pub_tar_dis.publish(msg_pid_param);
 						pub_acc.publish(msg_acc);
 						flag_x = true;
+            if(type == 1)
+            {
+              flag_y = true;
+            }
 					}
 					else
 					{
@@ -139,7 +143,7 @@ int main(int argc, char **argv)
 					if(0.1 + offset_y < y)
 					{
 						ROS_INFO("lrf_y:%f", y);
-						msg_acc.V = 0.2;
+						msg_acc.V = 0.15;
 						msg_pid_param.front = 3;
 						pub_tar_dis.publish(msg_pid_param);
 						pub_acc.publish(msg_acc);
@@ -149,7 +153,7 @@ int main(int argc, char **argv)
 					if(0.01 + offset_y < y && y <= 0.1 + offset_y)
 					{
 						ROS_INFO("lrf_y2:%f", y);
-						msg_acc.V = 0.05;
+						msg_acc.V = 0.03;
 						msg_pid_param.front = 3;
 						pub_tar_dis.publish(msg_pid_param);
 						pub_acc.publish(msg_acc);
@@ -159,7 +163,7 @@ int main(int argc, char **argv)
 					if(y < -0.1 + offset_y)
 					{
 						ROS_INFO("-lrf_y:%f", y);
-						msg_acc.V = 0.2;
+						msg_acc.V = 0.15;
 						msg_pid_param.front = 1;
 						pub_tar_dis.publish(msg_pid_param);
 						pub_acc.publish(msg_acc);
@@ -169,7 +173,7 @@ int main(int argc, char **argv)
 					if(-0.1 + offset_y <= y && y <= -0.01 + offset_y)
 					{
 						ROS_INFO("-lrf_y2:%f", lrf_y);
-						msg_acc.V = 0.05;
+						msg_acc.V = 0.03;
 						msg_pid_param.front = 1;
 						pub_tar_dis.publish(msg_pid_param);
 						pub_acc.publish(msg_acc);
@@ -273,6 +277,9 @@ void flag_cb(const nemcon::lrf_flag& msg)
 
 	if(type == 0)
 	{
+    flag_x = false;
+    flag_y = false;
+    first = false;
 		switch(msg.TZ)
 		{
 			case 1: case 3:
@@ -293,6 +300,9 @@ void flag_cb(const nemcon::lrf_flag& msg)
 	}
 	if(type == 1)
 	{
+    flag_x = false;
+    flag_y = false;
+    first = false;
 		offset_x = -2.00f;
 		offset_y = enc_y;
 	}
