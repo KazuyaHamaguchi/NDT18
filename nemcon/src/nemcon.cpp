@@ -109,21 +109,21 @@ int main(int argc, char **argv)
 
 void switch_cb(const nemcon::switch_in& msg)
 {
-  //RESET = msg.RESET;
+	//RESET = msg.RESET;
 	if(msg.RESET)
 	{
 		RESET = true;
-    pub_lrf.publish(msg_lrf);
-pub_lrf.publish(msg_lrf);
-pub_move_param.publish(msg_acc_param);
-pub_tar_dis.publish(msg_pid_param);
-pub_judg2.publish(msg_TZ_judg);
-pub_judg.publish(msg_judg);
-pub_receive.publish(msg_throw_on);
-pub_lrf2.publish(msg_lrf2);
-pub_throw.publish(msg_throw);
+		pub_lrf.publish(msg_lrf);
+		pub_lrf.publish(msg_lrf);
+		pub_move_param.publish(msg_acc_param);
+		pub_tar_dis.publish(msg_pid_param);
+		pub_judg2.publish(msg_TZ_judg);
+		pub_judg.publish(msg_judg);
+		pub_receive.publish(msg_throw_on);
+		pub_lrf2.publish(msg_lrf2);
+		pub_throw.publish(msg_throw);
 	}
-  else;
+	else;
 
 	if(msg.START)
 	{
@@ -131,7 +131,7 @@ pub_throw.publish(msg_throw);
 		RESET = false;
 		if(msg.SZ && !msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC/* && !cb_flag*/)	//SZから通常通り
 		{
-      first = false;
+			first = false;
 			msg_throw.data = 43;
 			pub_throw.publish(msg_throw);
 			msg_throw.data = 4;
