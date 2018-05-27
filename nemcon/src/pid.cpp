@@ -516,16 +516,16 @@ int main(int argc, char **argv)
 			switch(front)
 			{
 				case 2:	//右旋回
-					speedFR = clamp(nearbyint(- (speed_X + turn_lrf)), -20, 0, 1);
-					speedFL = clamp(nearbyint( speed_X + turn_lrf), 0, 20, 1);
-					speedRL = clamp(nearbyint( speed_X + turn_lrf), 0, 20, 1);
-					speedRR = clamp(nearbyint(- (speed_X +  turn_lrf)), -20, 0, 1);
+					speedFR = clamp(nearbyint(- speed_X), -20, 0, 1);
+					speedFL = clamp(nearbyint(  speed_X), 0, 20, 1);
+					speedRL = clamp(nearbyint(  speed_X), 0, 20, 1);
+					speedRR = clamp(nearbyint(- speed_X), -20, 0, 1);
 
 				case 4:	//左旋回
-					speedFR = clamp(nearbyint( (speed_X + turn_lrf)), 0, 20, 1);
-					speedFL = clamp(nearbyint(- speed_X + turn_lrf), -20, 0, 1);
-					speedRL = clamp(nearbyint(- speed_X + turn_lrf), -20, 0, 1);
-					speedRR = clamp(nearbyint( (speed_X +  turn_lrf)), 0, 20, 1);
+					speedFR = clamp(nearbyint(  speed_X), 0, 20, 1);
+					speedFL = clamp(nearbyint(- speed_X), -20, 0, 1);
+					speedRL = clamp(nearbyint(- speed_X), -20, 0, 1);
+					speedRR = clamp(nearbyint(  speed_X), 0, 20, 1);
 
 				default:
 					speedFR = 0;
