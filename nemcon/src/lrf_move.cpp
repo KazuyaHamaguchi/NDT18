@@ -18,6 +18,7 @@ bool flag_z = false;
 
 float x = 0.0f;
 float y = 0.0f;
+float y = 0.0f;
 
 float enc_x = 0.0f;
 float enc_y = 0.0f;
@@ -68,6 +69,7 @@ int main(int argc, char **argv)
 	{
 		x = lrf_x;
 		y = lrf_y;
+		z = lrf_z;
 		msg_pid_param.pattern = 2;
 	}
 	else if(type == 1)
@@ -330,6 +332,7 @@ void flag_cb(const nemcon::lrf_flag& msg)
 			ROS_INFO("lrf_move first!");
 			flag_x = false;
 			flag_y = false;
+			flag_z = false;
 			first = true;
 		}
 		else
@@ -347,6 +350,7 @@ void flag_cb(const nemcon::lrf_flag& msg)
 				else;
 				flag_x = false;
 				flag_y = false;
+				flag_z = false;
 				first = true;
 			}
 		}
@@ -360,6 +364,7 @@ void flag_cb(const nemcon::lrf_flag& msg)
 	{
 		flag_x = false;
 		flag_y = false;
+		flag_z = false;
 		first = false;
 		switch(msg.TZ)
 		{
