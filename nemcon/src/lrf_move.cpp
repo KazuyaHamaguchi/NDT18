@@ -57,7 +57,6 @@ int main(int argc, char **argv)
 	pub_acc = nh.advertise<accel_decel::result>("accel_decel/result", 1000);
 	pub_lrf = nh.advertise<std_msgs::Int8>("lrf", 1000);
 
-	msg_pid_param.speed = 1;
 	msg_acc.Vmax = false;
 
 	while(ros::ok())
@@ -80,7 +79,7 @@ int main(int argc, char **argv)
 
 		if(flag)
 		{
-				if(!flag_x && !flag_y)
+				if(!flag_x && !flag_y && !flag_z)
 				{
 					if(0.1 + offset_x < x)
 					{
@@ -121,14 +120,22 @@ int main(int argc, char **argv)
 					if(-0.01 + offset_x <= x && x <= 0.01 + offset_x /*&& first_x*/)
 					{
 						ROS_INFO("lrf_x OK");
-						msg_acc.V = 0;
-						pub_tar_dis.publish(msg_pid_param);
-						pub_acc.publish(msg_acc);
-						flag_x = true;
-						if(type == 1)
+						if(type == 0)
 						{
-							flag_y = true;
+							msg_acc.V = 0;
+							pub_tar_dis.publish(msg_pid_param);
+							pub_acc.publish(msg_acc);
 						}
+						else if(type == 1)
+						{
+							msg_pid_param.pattern = -2;
+							msg_pid_param.speed = 0;
+							pub_tar_dis.publish(msg_pid_param);
+							flag_y = true;
+							flag_z = true;
+						}
+						first = false;
+						flag_x = true;
 					}
 					else
 					{
@@ -138,7 +145,7 @@ int main(int argc, char **argv)
 				}
 
 
-				if(flag_x && !flag_y)
+				if(flag_x && !flag_y && !flag_z)
 				{
 					if(0.1 + offset_y < y)
 					{
@@ -188,32 +195,106 @@ int main(int argc, char **argv)
 						pub_acc.publish(msg_acc);
 						if(-0.01 + offset_x <= x && x <= 0.01 + offset_x && t >= 0.2)
 						{
-							ROS_INFO("lrf OK");
-							msg_lrf.data = -50;
-							pub_lrf.publish(msg_lrf);
-							flag = false;
-							flag_x = false;
-							flag_y = false;
-							first = true;
+							ROS_INFO("lrf_xy OK");
 							t = 0.0f;
 						}
 						else
 						{
 							flag_x = false;
 						}
+						flag_y = true;
+						first = false;
 					}
 					else
 					{
 						flag_y = false;
 						first = false;
-						t = 0.0f;
 					}
 				}
+
+				if(flag_x && flag_y && !flag_z)
+				{
+					if(0.1 + offset_z < z)
+					{
+						ROS_INFO("lrf_z:%f", z);
+						msg_acc.V = 0.15;
+						msg_pid_param.pattern = -1;
+						msg_pid_param.front = 2;
+						pub_tar_dis.publish(msg_pid_param);
+						pub_acc.publish(msg_acc);
+						flag_z = false;
+						first = false;
+					}
+					if(0.01 + offset_z < z && z <= 0.1 + offset_z)
+					{
+						ROS_INFO("lrf_z2:%f", z);
+						msg_acc.V = 0.03;
+						msg_pid_param.pattern = -1;
+						msg_pid_param.front = 2;
+						pub_tar_dis.publish(msg_pid_param);
+						pub_acc.publish(msg_acc);
+						flag_z = false;
+						first = false;
+					}
+					if(z < -0.1 + offset_z)
+					{
+						ROS_INFO("-lrf_z:%f", z);
+						msg_acc.V = 0.15;
+						msg_pid_param.pattern = -1;
+						msg_pid_param.front = 4;
+						pub_tar_dis.publish(msg_pid_param);
+						pub_acc.publish(msg_acc);
+						flag_z = false;
+						first = false;
+					}
+					if(-0.1 + offset_z <= z && z <= -0.01 + offset_z)
+					{
+						ROS_INFO("-lrf_z2:%f", lrf_z);
+						msg_acc.V = 0.03;
+						msg_pid_param.pattern = -1;
+						msg_pid_param.front = 4;
+						pub_tar_dis.publish(msg_pid_param);
+						pub_acc.publish(msg_acc);
+						flag_z = false;
+						first = false;
+					}
+					if(-0.01 + offset_z <= z && z <= 0.01 + offset_z)
+					{
+						ROS_INFO("lrf_z OK");
+						msg_acc.V = 0;
+						pub_tar_dis.publish(msg_pid_param);
+						pub_acc.publish(msg_acc);
+						if(-0.01 + offset_x <= x && x <= 0.01 + offset_x && -0.01 + offset_y <= y && y <= 0.01 + offset_y && t >= 0.2)
+						{
+							ROS_INFO("lrf OK");
+							msg_lrf.data = -50;
+							pub_lrf.publish(msg_lrf);
+							flag = false;
+							flag_x = false;
+							flag_y = false;
+							flag_z = false;
+							first = true;
+							t = 0.0f;
+						}
+						else
+						{
+							flag_x = false;
+							flag_y = false;
+						}
+					}
+					else
+					{
+						flag_z = false;
+						first = false;
+						t = 0.0f;
+					}
+
 		}
 		else
 		{
 			flag_x = false;
 			flag_y = false;
+			flag_z = false;
 			first = false;
 		}
 
@@ -285,16 +366,19 @@ void flag_cb(const nemcon::lrf_flag& msg)
 			case 1: case 3:
 				offset_x = 0.0f;
 				offset_y = 0.0f;
+				offset_z = 0.0f;
 				break;
 
 			case 2:
 				offset_x = 3.27503521586;
 				offset_y = 0.0f;
+				offset_z = 0.0f;
 				break;
 
 			default:
 				offset_x = 0.0f;
 				offset_y = 0.0f;
+				offset_z = 0.0f;
 				break;
 		}
 	}
@@ -302,6 +386,7 @@ void flag_cb(const nemcon::lrf_flag& msg)
 	{
 		flag_x = false;
 		flag_y = false;
+		flag_z = false;
 		first = false;
 		offset_x = -2.00f;
 		offset_y = enc_y;
