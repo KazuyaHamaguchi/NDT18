@@ -29,6 +29,7 @@ float lrf_z = 0.0f;
 
 float offset_x = 0.0f;
 float offset_y = 0.0f;
+float offset_z = 0.0f;
 
 float t = 0.0f;
 
