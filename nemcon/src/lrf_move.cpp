@@ -18,7 +18,7 @@ bool flag_z = false;
 
 float x = 0.0f;
 float y = 0.0f;
-float y = 0.0f;
+float z = 0.0f;
 
 float enc_x = 0.0f;
 float enc_y = 0.0f;
