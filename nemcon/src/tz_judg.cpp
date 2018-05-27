@@ -54,6 +54,7 @@ int main(int argc, char **argv)
 					msg_judg.data = 1;
 					pub_judg.publish(msg_judg);
 					leave = false;
+          //flag = true;
 				}
 			}
 			else
@@ -72,6 +73,7 @@ int main(int argc, char **argv)
 					msg_judg.data = 2;
 					pub_judg.publish(msg_judg);
 					judg = false;
+          //flag = true;
 				}
 			}
 			else if(!objR && objL)
@@ -82,6 +84,7 @@ int main(int argc, char **argv)
 					msg_judg.data = 3;
 					pub_judg.publish(msg_judg);
 					judg = false;
+          //flag = true;
 				}
 			}
 			else
@@ -113,6 +116,7 @@ void throw_cb(const std_msgs::Int8& msg)
     flag = false;
 		leave = true;
 		judg - false;
+    t = 0.0f;
 	}
 	else if(msg.data == 52)
 	{
@@ -120,6 +124,7 @@ void throw_cb(const std_msgs::Int8& msg)
     flag = false;
 		leave = false;
 		judg = true;
+    t = 0.0f;
 	}
 	else if(msg.data == 100)
 	{
@@ -128,9 +133,10 @@ void throw_cb(const std_msgs::Int8& msg)
 	}
   else
   {
-    flag = true;
+    //flag = true;
     leave = false;
     judg - false;
+    t = 0.0f;
     ROS_INFO("msg_judg false");
   }
 }

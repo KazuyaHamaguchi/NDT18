@@ -105,14 +105,14 @@ float clamp(float input, float min, float max, int type)
 	}
 	if(type == 2)
 	{
-		if(max > 0 && 1 <= input && input < 4)
+		/*if(max > 0 && 1 <= input && input < 4)
 		{
 			output = 2;
 		}
 		if(min < 0 && -4 < input && input <= -1)
 		{
 			output = -2;
-		}
+		}*/
 		/*if(max > 0 && input <= 0.1)
 		{
 			output = 8080;
@@ -505,10 +505,10 @@ int main(int argc, char **argv)
 
 		if(pattern == -2)	//その場Yaw角補正
 		{
-				speedFR = clamp(nearbyint(- (speed + turn_imu)), -20, 20, 1);
-				speedFL = clamp(nearbyint( speed + turn_imu), -20, 20, 1);
-				speedRL = clamp(nearbyint( speed + turn_imu), -20, 20, 1);
-				speedRR = clamp(nearbyint(- (speed +  turn_imu)), -20, 20, 1);
+				speedFR = clamp(nearbyint(- (speed + turn_imu)), -20, 20, 2);
+				speedFL = clamp(nearbyint( speed + turn_imu), -20, 20, 2);
+				speedRL = clamp(nearbyint( speed + turn_imu), -20, 20, 2);
+				speedRR = clamp(nearbyint(- (speed +  turn_imu)), -20, 20, 2);
 		}
 
 		else if(pattern == -1)	//lrfその場旋回

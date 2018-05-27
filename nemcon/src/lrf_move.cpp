@@ -196,7 +196,7 @@ int main(int argc, char **argv)
 					msg_acc.V = 0;
 					pub_tar_dis.publish(msg_pid_param);
 					pub_acc.publish(msg_acc);
-					if(-0.01 + offset_x <= x && x <= 0.01 + offset_x && t >= 0.2)
+					if(-0.01 + offset_x <= x && x <= 0.01 + offset_x/* && t >= 0.2*/)
 					{
 						ROS_INFO("lrf_xy OK");
             flag_x = true;
@@ -229,10 +229,10 @@ int main(int argc, char **argv)
 					flag_z = false;
 					first = false;
 				}*/
-				if(0.001 + offset_z < z /*&& z <= 0.01 + offset_z*/)
+				if(0.002 + offset_z < z /*&& z <= 0.01 + offset_z*/)
 				{
 					ROS_INFO("lrf_z2:%f", z);
-					msg_acc.V = 0.005;
+					msg_acc.V = 0.002;
 					msg_pid_param.pattern = -1;
 					msg_pid_param.front = 2;
 					pub_tar_dis.publish(msg_pid_param);
@@ -251,10 +251,10 @@ int main(int argc, char **argv)
 					flag_z = false;
 					first = false;
 				}*/
-				if(/*-0.01 + offset_z <= z &&*/ z <= -0.001 + offset_z)
+				if(/*-0.01 + offset_z <= z &&*/ z <= -0.002 + offset_z)
 				{
 					ROS_INFO("-lrf_z2:%f", lrf_z);
-					msg_acc.V = 0.005;
+					msg_acc.V = 0.002;
 					msg_pid_param.pattern = -1;
 					msg_pid_param.front = 4;
 					pub_tar_dis.publish(msg_pid_param);
@@ -262,7 +262,7 @@ int main(int argc, char **argv)
 					flag_z = false;
 					first = false;
 				}
-				if(-0.001 + offset_z <= z && z <= 0.001 + offset_z)
+				if(-0.002 + offset_z <= z && z <= 0.002 + offset_z)
 				{
 					ROS_INFO("lrf_z OK");
 					msg_acc.V = 0;
