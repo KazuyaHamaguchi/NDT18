@@ -125,10 +125,10 @@ int main(int argc, char **argv)
 						pub_tar_dis.publish(msg_pid_param);
 						pub_acc.publish(msg_acc);
 						flag_x = true;
-            if(type == 1)
-            {
-              flag_y = true;
-            }
+						if(type == 1)
+						{
+							flag_y = true;
+						}
 					}
 					else
 					{
@@ -277,9 +277,9 @@ void flag_cb(const nemcon::lrf_flag& msg)
 
 	if(type == 0)
 	{
-    flag_x = false;
-    flag_y = false;
-    first = false;
+		flag_x = false;
+		flag_y = false;
+		first = false;
 		switch(msg.TZ)
 		{
 			case 1: case 3:
@@ -300,9 +300,9 @@ void flag_cb(const nemcon::lrf_flag& msg)
 	}
 	if(type == 1)
 	{
-    flag_x = false;
-    flag_y = false;
-    first = false;
+		flag_x = false;
+		flag_y = false;
+		first = false;
 		offset_x = -2.00f;
 		offset_y = enc_y;
 	}
