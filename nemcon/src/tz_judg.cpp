@@ -42,8 +42,6 @@ int main(int argc, char **argv)
 		current_time = ros::Time::now();
 		t += (current_time - last_time).toSec();
 
-    if(!flag)
-    {
 		if(leave)
 		{
 			if(!objR && !objL)
@@ -54,7 +52,6 @@ int main(int argc, char **argv)
 					msg_judg.data = 1;
 					pub_judg.publish(msg_judg);
 					leave = false;
-          //flag = true;
 				}
 			}
 			else
@@ -73,7 +70,6 @@ int main(int argc, char **argv)
 					msg_judg.data = 2;
 					pub_judg.publish(msg_judg);
 					judg = false;
-          //flag = true;
 				}
 			}
 			else if(!objR && objL)
@@ -84,7 +80,6 @@ int main(int argc, char **argv)
 					msg_judg.data = 3;
 					pub_judg.publish(msg_judg);
 					judg = false;
-          //flag = true;
 				}
 			}
 			else
@@ -92,8 +87,6 @@ int main(int argc, char **argv)
 				t = 0.0f;
 			}
 		}
-    }
-    else;
 
 		last_time = current_time;
 		loop_rate.sleep();
@@ -109,34 +102,31 @@ void object_cb(const nemcon::object_in& msg)
 
 void throw_cb(const std_msgs::Int8& msg)
 {
-  ROS_INFO("%d", msg.data);
+	ROS_INFO("%d", msg.data);
 	if(msg.data == 50)
 	{
 		ROS_INFO("msg_leave");
-    flag = false;
 		leave = true;
 		judg - false;
-    t = 0.0f;
+		t = 0.0f;
 	}
 	else if(msg.data == 52)
 	{
 		ROS_INFO("msg_judg");
-    flag = false;
 		leave = false;
 		judg = true;
-    t = 0.0f;
+		t = 0.0f;
 	}
 	else if(msg.data == 100)
 	{
 		msg_throw.data = -41;
 		pub_throw.publish(msg_throw);
 	}
-  else
-  {
-    //flag = true;
-    leave = false;
-    judg - false;
-    t = 0.0f;
-    ROS_INFO("msg_judg false");
-  }
+	else
+	{
+		leave = false;
+		judg = false;
+		t = 0.0f;
+		ROS_INFO("msg_judg false");
+	}
 }
