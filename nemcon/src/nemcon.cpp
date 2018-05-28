@@ -363,8 +363,8 @@ void judg_cb(const std_msgs::Int8& msg)
 			msg_lrf.type = 0;
 			msg_lrf.TZ = 1;
 			pub_lrf.publish(msg_lrf);
-      msg_throw.data = 41;
-      pub_throw.publish(msg_throw);
+			msg_throw.data = 41;
+			pub_throw.publish(msg_throw);
 			first = true;
 		}
 
@@ -380,14 +380,14 @@ void judg_cb(const std_msgs::Int8& msg)
 			msg_lrf.type = 0;
 			msg_lrf.TZ = 1;
 			pub_lrf.publish(msg_lrf);
-      msg_throw.data = 41;
-      pub_throw.publish(msg_throw);
+			msg_throw.data = 41;
+			pub_throw.publish(msg_throw);
 		}
 		else if(TZ == 2 && pre_TZ == 1)	//TZ1 → TZ2
 		{
 			set_servo_pulsewidth(pi, pin_servo, 1520);
 			ROS_INFO("TZ2 OK!");
-      ros::Duration(7).sleep();
+			ros::Duration(4).sleep();
 			acc_move(0, 3, 0, 2, 1.25, -1.1, 4.4, 2);
 			ros::Duration(1.981664 + 0.1).sleep();
 			acc_move(0, 3, 0, 2, 2.2, -1.0, 4.4, 1);
