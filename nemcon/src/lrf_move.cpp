@@ -199,8 +199,8 @@ int main(int argc, char **argv)
 					if(-0.01 + offset_x <= x && x <= 0.01 + offset_x/* && t >= 0.2*/)
 					{
 						ROS_INFO("lrf_xy OK");
-            flag_x = true;
-            flag_y = true;
+						flag_x = true;
+						flag_y = true;
 					}
 					else
 					{
@@ -218,18 +218,8 @@ int main(int argc, char **argv)
 
 			if(flag_x && flag_y && !flag_z)
 			{
-				/*if(0.01 + offset_z < z)
-				{
-					ROS_INFO("lrf_z:%f", z);
-					msg_acc.V = 0.01;
-					msg_pid_param.pattern = -1;
-					msg_pid_param.front = 2;
-					pub_tar_dis.publish(msg_pid_param);
-					pub_acc.publish(msg_acc);
-					flag_z = false;
-					first = false;
-				}*/
-				if(0.002 + offset_z < z /*&& z <= 0.01 + offset_z*/)
+
+				if(0.002 + offset_z < z)
 				{
 					ROS_INFO("lrf_z2:%f", z);
 					msg_acc.V = 0.002;
@@ -240,18 +230,7 @@ int main(int argc, char **argv)
 					flag_z = false;
 					first = false;
 				}
-				/*if(z < -0.01 + offset_z)
-				{
-					ROS_INFO("-lrf_z:%f", z);
-					msg_acc.V = 0.01;
-					msg_pid_param.pattern = -1;
-					msg_pid_param.front = 4;
-					pub_tar_dis.publish(msg_pid_param);
-					pub_acc.publish(msg_acc);
-					flag_z = false;
-					first = false;
-				}*/
-				if(/*-0.01 + offset_z <= z &&*/ z <= -0.002 + offset_z)
+				if(z <= -0.002 + offset_z)
 				{
 					ROS_INFO("-lrf_z2:%f", lrf_z);
 					msg_acc.V = 0.002;
@@ -283,7 +262,6 @@ int main(int argc, char **argv)
 					else
 					{
 						flag_x = false;
-						flag_y = false;
 					}
 				}
 				else
@@ -373,19 +351,19 @@ void flag_cb(const nemcon::lrf_flag& msg)
 			case 1: case 3:
 				offset_x = 0.0f;
 				offset_y = 0.0f;
-        offset_z = 0.02181490324;
+				offset_z = 0.02181490324;
 				break;
 
 			case 2:
 				offset_x = 3.27503521586;
 				offset_y = 0.0f;
-        offset_z = 0.02181490324;
+				offset_z = 0.02181490324;
 				break;
 
 			default:
 				offset_x = 0.0f;
 				offset_y = 0.0f;
-        offset_z = 0.02181490324;
+				offset_z = 0.02181490324;
 				break;
 		}
 	}
