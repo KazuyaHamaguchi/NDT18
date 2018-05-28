@@ -112,8 +112,8 @@ float clamp(float input, float min, float max, int type)
 		if(min < 0 && -4 < input && input <= -1)
 		{
 			output = -2;
-		}*/
-		/*if(max > 0 && input <= 0.1)
+		}
+		if(max > 0 && input <= 0.1)
 		{
 			output = 8080;
 		}
@@ -121,6 +121,17 @@ float clamp(float input, float min, float max, int type)
 		{
 			output = 8080;
 		}*/
+	}
+	if(type == 3)
+	{
+		if(max > 0 && input <= 0.1)
+		{
+			output = 8080;
+		}
+		if(min < 0 && -0.1 <= input)
+		{
+			output = 8080;
+		}
 	}
 	return output;
 }
@@ -516,18 +527,18 @@ int main(int argc, char **argv)
 			switch(front)
 			{
 				case 2:	//右旋回
-					speedFR = clamp(nearbyint(- speed_X), -20, 0, 1);
-					speedFL = clamp(nearbyint(  speed_X), 0, 20, 1);
-					speedRL = clamp(nearbyint(  speed_X), 0, 20, 1);
-					speedRR = clamp(nearbyint(- speed_X), -20, 0, 1);
-          break;
+					speedFR = clamp(nearbyint(- speed_X), -20, 0, 3);
+					speedFL = clamp(nearbyint(  speed_X), 0, 20, 3);
+					speedRL = clamp(nearbyint(  speed_X), 0, 20, 3);
+					speedRR = clamp(nearbyint(- speed_X), -20, 0, 3);
+					break;
 
 				case 4:	//左旋回
-					speedFR = clamp(nearbyint(  speed_X), 0, 20, 1);
-					speedFL = clamp(nearbyint(- speed_X), -20, 0, 1);
-					speedRL = clamp(nearbyint(- speed_X), -20, 0, 1);
-					speedRR = clamp(nearbyint(  speed_X), 0, 20, 1);
-          break;
+					speedFR = clamp(nearbyint(  speed_X), 0, 20, 3);
+					speedFL = clamp(nearbyint(- speed_X), -20, 0, 3);
+					speedRL = clamp(nearbyint(- speed_X), -20, 0, 3);
+					speedRR = clamp(nearbyint(  speed_X), 0, 20, 3);
+					break;
 
 				default:
 					speedFR = 0;
