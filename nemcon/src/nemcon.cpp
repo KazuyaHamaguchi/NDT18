@@ -355,24 +355,24 @@ void judg_cb(const std_msgs::Int8& msg)
 		if(!first)	//1回だけTZ1
 		{
 			TZ = 1;
-			//msg_throw.data = 41;
-			//pub_throw.publish(msg_throw);
+			msg_throw.data = 41;
+			pub_throw.publish(msg_throw);
 			acc_move(0, 3, 0, 2, 1.4, -1.15, 4.41, 4);
 			ros::Duration(2.1 + 0.1).sleep();
 			msg_lrf.flag = true;
 			msg_lrf.type = 0;
 			msg_lrf.TZ = 1;
 			pub_lrf.publish(msg_lrf);
-			msg_throw.data = 41;
-			pub_throw.publish(msg_throw);
+			//msg_throw.data = 41;
+			//pub_throw.publish(msg_throw);
 			first = true;
 		}
 
 		else if(TZ == 1 && pre_TZ == 1)	//TZ1 → TZ1
 		{
 			set_servo_pulsewidth(pi, pin_servo, 1520);
-			//msg_throw.data = 41;
-			//pub_throw.publish(msg_throw);
+			msg_throw.data = 41;
+			pub_throw.publish(msg_throw);
 			ROS_INFO("TZ1 OK!");
 			acc_move(0, 3, 0, 2, 1.3, -1.15, 4.42, 4);
 			ros::Duration(2.020908 + 0.1).sleep();
@@ -380,14 +380,14 @@ void judg_cb(const std_msgs::Int8& msg)
 			msg_lrf.type = 0;
 			msg_lrf.TZ = 1;
 			pub_lrf.publish(msg_lrf);
-			msg_throw.data = 41;
-			pub_throw.publish(msg_throw);
+			//msg_throw.data = 41;
+			//pub_throw.publish(msg_throw);
 		}
 		else if(TZ == 2 && pre_TZ == 1)	//TZ1 → TZ2
 		{
 			set_servo_pulsewidth(pi, pin_servo, 1520);
 			ROS_INFO("TZ2 OK!");
-			ros::Duration(4).sleep();
+			ros::Duration(1.5).sleep();
 			acc_move(0, 3, 0, 2, 1.25, -1.1, 4.4, 2);
 			ros::Duration(1.981664 + 0.1).sleep();
 			acc_move(0, 3, 0, 2, 2.2, -1.0, 4.4, 1);
