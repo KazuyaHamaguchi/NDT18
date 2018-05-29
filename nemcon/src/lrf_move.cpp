@@ -262,7 +262,7 @@ int main(int argc, char **argv)
 					else
 					{
 						flag_x = false;
-            flag_y = false;
+						flag_y = false;
 					}
 				}
 				else
@@ -349,7 +349,7 @@ void flag_cb(const nemcon::lrf_flag& msg)
 		first = false;
 		switch(msg.TZ)
 		{
-			case 1: case 3:
+			case 1:
 				offset_x = 0.0f;
 				offset_y = 0.0f;
 				offset_z = 0.02181490324;
@@ -357,6 +357,12 @@ void flag_cb(const nemcon::lrf_flag& msg)
 
 			case 2:
 				offset_x = 3.27503521586;
+				offset_y = 0.0f;
+				offset_z = 0.02181490324;
+				break;
+
+			case 3:
+				offset_x = 0.0f;
 				offset_y = 0.0f;
 				offset_z = 0.02181490324;
 				break;
