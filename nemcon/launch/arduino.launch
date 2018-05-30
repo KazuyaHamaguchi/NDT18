@@ -1,10 +1,12 @@
 <launch>
   <node name="serial_node" pkg="rosserial_python" type="serial_node.py" output="screen">
-    <param name="port" value="/dev/ttyACM0"/>
+    <!--<param name="port" value="/dev/ttyACM0"/> -->
+    <param name="port" value="/dev/ttyACM_Arduino_reg"/>
     <param name="baud" value="57600" />
   </node>
   <node name="serial_node2" pkg="rosserial_python" type="serial_node.py" output="screen">
-    <param name="port" value="/dev/ttyACM1"/>
+    <!-- <param name="port" value="/dev/ttyACM1"/> -->
+    <param name="port" value="/dev/ttyACM_Arduino_throw"/>
     <param name="baud" value="57600" />
   </node>
   <node name="Gyro" pkg="mpu9250" type="Gyro" output="screen" />

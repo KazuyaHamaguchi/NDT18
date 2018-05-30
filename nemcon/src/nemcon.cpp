@@ -168,6 +168,7 @@ void switch_cb(const nemcon::switch_in& msg)
 		if(!msg.SZ && !msg.TZ1 && msg.TZ2 && !msg.TZ3 && !msg.SC/* && !cb_flag*/)	//TZ2受け渡しから
 		{
 			first = false;
+      reTZ = 2;
 			msg_throw.data = 43;
 			pub_throw.publish(msg_throw);
 			msg_throw.data = 4;
@@ -177,10 +178,10 @@ void switch_cb(const nemcon::switch_in& msg)
 			led_flash(3, 0.1, 0);
 			led_flash(-1, 0, 0);
 
-			acc_move(0, 3, 0, 2, 6.4, -1.15, 0, 1);	//TZ2横
-			ros::Duration(10 + 0.1).sleep();
-			acc_move(0, 3, 0, 2, 2.25, -1.1, 6.4, 4);
-			ros::Duration(2.65868 + 0.1).sleep();
+			acc_move(0, 3, 0, 2, 6.7, -1.1, 0, 1);	//TZ2横
+			ros::Duration(4.587882 + 0.1).sleep();
+			acc_move(0, 3, 0, 2, 0.95, -1.1, 6.55, 4);
+			ros::Duration(1.772454 + 0.1).sleep();
 
 			msg_throw.data = 30;
 			pub_throw.publish(msg_throw);
@@ -329,7 +330,7 @@ void receive_cb(const std_msgs::Int8& msg)
 		if(!(TZ == 3 && pre_TZ == 2))
 		{
 			set_servo_pulsewidth(pi, pin_servo, 1520);
-			acc_move(0, 2.5, 0, 2, 4.8, -1, 6.4, 2);
+			acc_move(0, 2.5, 0, 2, 4.8, -1, 6.55, 2);
 			ros::Duration(3.769912 + 0.1).sleep();
 			msg_lrf.flag = true;
 			msg_lrf.type = 1;
@@ -399,14 +400,14 @@ void judg_cb(const std_msgs::Int8& msg)
 
 				case 2:
 					TZ = 2;
-					acc_move(0, 3, 0, 2, 1.3, -1, 6.4, 4);
+					acc_move(0, 3, 0, 2, 1.3, -1, 6.45, 4);
 					ros::Duration(2.020908 + 0.1).sleep();
 					msg_lrf.TZ = 2;
 					break;
 
 				case 3:
 					TZ = 3;
-					acc_move(0, 2.4, 0, 2, 4.8, -1.15, 6.4, 4);
+					acc_move(0, 2.4, 0, 2, 4.8, -1.15, 6.55, 4);
 					ros::Duration(3.769912 + 0.1).sleep();
 					msg_lrf.TZ = 3;
 					break;
@@ -446,7 +447,7 @@ void judg_cb(const std_msgs::Int8& msg)
 			ros::Duration(1.981664 + 0.1).sleep();
 			acc_move(0, 3, 0, 2, 2.2, -1.0, 4.4, 1);
 			ros::Duration(2.628974 + 0.1).sleep();
-			acc_move(0, 3, 0, 2, 2.25, -1.1, 6.4, 4);
+			acc_move(0, 3, 0, 2, 2.25, -1.1, 6.55, 4);
 			ros::Duration(2.65868 + 0.1).sleep();
 			msg_lrf.flag = true;
 			msg_lrf.type = 0;
@@ -459,7 +460,7 @@ void judg_cb(const std_msgs::Int8& msg)
 		{
 			set_servo_pulsewidth(pi, pin_servo, 1520);
 			ROS_INFO("TZ2 OK!");
-			acc_move(0, 3, 0, 2, 1.3, -1, 6.4, 4);
+			acc_move(0, 3, 0, 2, 1.3, -1, 6.55, 4);
 			ros::Duration(2.020908 + 0.1).sleep();
 			msg_lrf.flag = true;
 			msg_lrf.type = 0;
@@ -479,7 +480,7 @@ void judg_cb(const std_msgs::Int8& msg)
 			}
 			else
 			{
-				acc_move(0, 2.4, 0, 2, 4.8, -1.15, 6.4, 4);
+				acc_move(0, 2.4, 0, 2, 4.8, -1.15, 6.55, 4);
 				ros::Duration(3.769912 + 0.1).sleep();
 				msg_lrf.flag = true;
 				msg_lrf.type = 0;
@@ -501,7 +502,7 @@ void judg_cb(const std_msgs::Int8& msg)
 		{
 			TZ = 3;
 			ROS_INFO("TZ3 OK!");
-			acc_move(0, 2.4, 0, 2, 4.8, -1.15, 6.4, 4);
+			acc_move(0, 2.4, 0, 2, 4.8, -1.15, 6.55, 4);
 			ros::Duration(3.769912 + 0.1).sleep();
 			msg_lrf.flag = true;
 			msg_lrf.type = 0;
