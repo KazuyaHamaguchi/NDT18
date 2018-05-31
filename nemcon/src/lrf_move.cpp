@@ -362,9 +362,9 @@ void flag_cb(const nemcon::lrf_flag& msg)
 				break;
 
 			case 3:
-				offset_x = -0.0249647841421;
-				offset_y = 0.0f;
-				offset_z = 0.00436330633238/*0.02181490324*/;
+				offset_x = /*0.0f*/-0.0249647841421;
+				offset_y = /*0.0f*/0.01;
+				offset_z = /*0.00436330633238*/0.02181490324;
 				break;
 
 			default:
