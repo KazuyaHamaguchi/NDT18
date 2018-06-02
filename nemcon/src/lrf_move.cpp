@@ -321,7 +321,7 @@ void flag_cb(const nemcon::lrf_flag& msg)
 			if(!first)
 			{
 				ROS_INFO("lrf_move first!");
-				if(type == 0)
+				if(type == 0 || type == 99)
 				{
 					msg_pid_param.pattern = 99;
 					pub_tar_dis.publish(msg_pid_param);
@@ -363,7 +363,7 @@ void flag_cb(const nemcon::lrf_flag& msg)
 
 			case 3:
 				offset_x = /*0.0f*/-0.0249647841421;
-				offset_y = /*0.0f*/0.01;
+				offset_y = 0.0f/*0.01*/;
 				offset_z = /*0.00436330633238*/0.02181490324;
 				break;
 

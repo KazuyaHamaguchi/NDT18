@@ -31,6 +31,7 @@ bool TZ_3_receive = false;
 bool flag_RESET = false;
 
 int TZ = 0;
+bool TZ2 = false;
 int reTZ = 0;
 int pre_TZ = 0;
 
@@ -165,7 +166,42 @@ void switch_cb(const nemcon::switch_in& msg)
 
 			//cb_flag = true;
 		}
-		if(!msg.SZ && !msg.TZ1 && msg.TZ2 && !msg.TZ3 && !msg.SC/* && !cb_flag*/)	//TZ2受け渡しから
+		if(!msg.SZ && msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC/* && !cb_flag*/)	//TZ2受け渡しから→TZ2のみ
+		{
+			first = false;
+      reTZ = 2;
+			msg_throw.data = 43;
+			pub_throw.publish(msg_throw);
+			msg_throw.data = 4;
+			pub_throw.publish(msg_throw);
+
+			led_flash(0, 0, 2);
+			led_flash(3, 0.1, 0);
+			led_flash(-1, 0, 0);
+
+			acc_move(0, 3, 0, 2, 6.7, -1.1, 0, 1);
+			ros::Duration(4.587882 + 0.1).sleep();
+			acc_move(0, 3, 0, 2, 0.95, -1.1, 6.55, 4);
+			ros::Duration(1.772454 + 0.1).sleep();
+
+			msg_throw.data = 30;
+			pub_throw.publish(msg_throw);
+
+			msg_throw.data = 3;
+			pub_throw.publish(msg_throw);
+
+			msg_lrf.flag = true;
+			msg_lrf.type = 1;
+			pub_lrf.publish(msg_lrf);
+
+			msg_throw.data = 40;	//受け取り待機
+			pub_throw.publish(msg_throw);
+
+      TZ2 = false;
+
+			//cb_flag = true;
+		}
+		if(!msg.SZ && !msg.TZ1 && msg.TZ2 && !msg.TZ3 && !msg.SC/* && !cb_flag*/)	//TZ2受け渡しから→TZ3
 		{
 			first = false;
       reTZ = 2;
@@ -195,6 +231,45 @@ void switch_cb(const nemcon::switch_in& msg)
 
 			msg_throw.data = 40;	//受け取り待機
 			pub_throw.publish(msg_throw);
+      TZ2 = false;
+
+			//cb_flag = true;
+		}
+    if(!msg.SZ && !msg.TZ1 && !msg.TZ2 && msg.TZ3 && !msg.SC/* && !cb_flag*/)	//TZ2受け渡しから
+		{
+			first = true;
+      pre_TZ = 3;
+      TZ = 3;
+      TZ_3_receive = true;
+      //reTZ = 3;
+      TZ_3 = true;
+			msg_throw.data = 43;
+			pub_throw.publish(msg_throw);
+			msg_throw.data = 4;
+			pub_throw.publish(msg_throw);
+
+			led_flash(0, 0, 2);
+			led_flash(3, 0.1, 0);
+			led_flash(-1, 0, 0);
+
+			acc_move(0, 3, 0, 2, 6.7, -1.1, 0, 1);	//TZ2横
+			ros::Duration(4.587882 + 0.1).sleep();
+			acc_move(0, 3, 0, 2, 0.95, -1.1, 6.55, 4);
+			ros::Duration(1.772454 + 0.1).sleep();
+
+			msg_throw.data = 30;
+			pub_throw.publish(msg_throw);
+
+			msg_throw.data = 3;
+			pub_throw.publish(msg_throw);
+
+			msg_lrf.flag = true;
+			msg_lrf.type = 1;
+			pub_lrf.publish(msg_lrf);
+
+			msg_throw.data = 40;	//受け取り待機
+			pub_throw.publish(msg_throw);
+      TZ2 = true;
 
 			//cb_flag = true;
 		}
@@ -216,7 +291,7 @@ void lrf_cb(const std_msgs::Int8& msg)
 		pub_tar_dis.publish(msg_pid_param);
 		if(TZ == 3 && pre_TZ == 2)	//TZ2 → TZ3時に投射へ
 		{
-			set_servo_pulsewidth(pi, pin_servo, 950);	//90度
+			set_servo_pulsewidth(pi, pin_servo, 920);	//90度
 			ros::Duration(1).sleep();
 			msg_throw.data = 111;
 			pub_throw.publish(msg_throw);
@@ -262,7 +337,7 @@ void receive_cb(const std_msgs::Int8& msg)
 
 		if(TZ == 1)			//TZ1投射指示
 		{
-			set_servo_pulsewidth(pi, pin_servo, 950);	//90度
+			set_servo_pulsewidth(pi, pin_servo, 920);	//90度
 			msg_lrf.flag = false;
 			pub_lrf.publish(msg_lrf);
 			ros::Duration(1).sleep();
@@ -271,7 +346,7 @@ void receive_cb(const std_msgs::Int8& msg)
 		}
 		else if(TZ == 2)	//TZ2投射指示
 		{
-			set_servo_pulsewidth(pi, pin_servo, 950);	//90度
+			set_servo_pulsewidth(pi, pin_servo, 920);	//90度
 			msg_lrf.flag = false;
 			pub_lrf.publish(msg_lrf);
 			ros::Duration(1).sleep();
@@ -289,7 +364,7 @@ void receive_cb(const std_msgs::Int8& msg)
 			else
 			{
 				ROS_INFO("TZ_3_receive: %d", TZ_3_receive);
-				set_servo_pulsewidth(pi, pin_servo, 950);	//90度
+				set_servo_pulsewidth(pi, pin_servo, 920);	//90度
 				msg_lrf.flag = false;
 				pub_lrf.publish(msg_lrf);
 				ros::Duration(1).sleep();
@@ -420,7 +495,14 @@ void judg_cb(const std_msgs::Int8& msg)
 			pub_lrf.publish(msg_lrf);
 			msg_throw.data = 41;
 			pub_throw.publish(msg_throw);
-			first = true;
+      if(TZ2)
+      {
+        first = false;
+      }
+      else
+      {
+			  first = true;
+      }
 		}
 
 		else if(TZ == 1 && pre_TZ == 1)	//TZ1 → TZ1
@@ -539,7 +621,7 @@ void judg_cb(const std_msgs::Int8& msg)
 
 	else if(msg.data == 2)	//true 投射成功
 	{
-		set_servo_pulsewidth(pi, pin_servo, 1450);
+		set_servo_pulsewidth(pi, pin_servo, 1300);
 		ROS_INFO("true");
 		switch(pre_TZ)
 		{
@@ -630,6 +712,7 @@ void reset()
 	TZ = 0;
 	reTZ = 0;
 	pre_TZ = 0;
+  TZ2 = false;
 
 	acc_t = 0.0f;
 
