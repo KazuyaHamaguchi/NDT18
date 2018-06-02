@@ -164,12 +164,14 @@ void switch_cb(const nemcon::switch_in& msg)
 			msg_throw.data = 40;	//受け取り待機
 			pub_throw.publish(msg_throw);
 
+			TZ2 = false;
+
 			//cb_flag = true;
 		}
 		if(!msg.SZ && msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC/* && !cb_flag*/)	//TZ2受け渡しから→TZ2のみ
 		{
 			first = false;
-      reTZ = 2;
+			reTZ = 2;
 			msg_throw.data = 43;
 			pub_throw.publish(msg_throw);
 			msg_throw.data = 4;
@@ -197,14 +199,14 @@ void switch_cb(const nemcon::switch_in& msg)
 			msg_throw.data = 40;	//受け取り待機
 			pub_throw.publish(msg_throw);
 
-      TZ2 = false;
+			TZ2 = false;
 
 			//cb_flag = true;
 		}
 		if(!msg.SZ && !msg.TZ1 && msg.TZ2 && !msg.TZ3 && !msg.SC/* && !cb_flag*/)	//TZ2受け渡しから→TZ3
 		{
 			first = false;
-      reTZ = 2;
+			reTZ = 2;
 			msg_throw.data = 43;
 			pub_throw.publish(msg_throw);
 			msg_throw.data = 4;
@@ -231,18 +233,18 @@ void switch_cb(const nemcon::switch_in& msg)
 
 			msg_throw.data = 40;	//受け取り待機
 			pub_throw.publish(msg_throw);
-      TZ2 = false;
+			TZ2 = false;
 
 			//cb_flag = true;
 		}
-    if(!msg.SZ && !msg.TZ1 && !msg.TZ2 && msg.TZ3 && !msg.SC/* && !cb_flag*/)	//TZ2受け渡しから
+		if(!msg.SZ && !msg.TZ1 && !msg.TZ2 && msg.TZ3 && !msg.SC/* && !cb_flag*/)	//TZ2受け渡しから
 		{
 			first = true;
-      pre_TZ = 3;
-      TZ = 3;
-      TZ_3_receive = true;
-      //reTZ = 3;
-      TZ_3 = true;
+			pre_TZ = 3;
+			TZ = 3;
+			TZ_3_receive = true;
+			//reTZ = 3;
+			TZ_3 = true;
 			msg_throw.data = 43;
 			pub_throw.publish(msg_throw);
 			msg_throw.data = 4;
@@ -269,7 +271,7 @@ void switch_cb(const nemcon::switch_in& msg)
 
 			msg_throw.data = 40;	//受け取り待機
 			pub_throw.publish(msg_throw);
-      TZ2 = true;
+			TZ2 = true;
 
 			//cb_flag = true;
 		}
@@ -495,14 +497,14 @@ void judg_cb(const std_msgs::Int8& msg)
 			pub_lrf.publish(msg_lrf);
 			msg_throw.data = 41;
 			pub_throw.publish(msg_throw);
-      if(TZ2)
-      {
-        first = false;
-      }
-      else
-      {
-			  first = true;
-      }
+			if(TZ2)
+			{
+				first = false;
+			}
+			else
+			{
+				first = true;
+			}
 		}
 
 		else if(TZ == 1 && pre_TZ == 1)	//TZ1 → TZ1
