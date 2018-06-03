@@ -327,8 +327,6 @@ void flag_cb(const nemcon::lrf_flag& msg)
 			flag_y = false;
 			flag_z = false;
 			first = false;
-      /*msg_pid_param.pattern = 99;
-      pub_tar_dis.publish(msg_pid_param);*/
 		}
 		else
 		{
@@ -367,21 +365,21 @@ void flag_cb(const nemcon::lrf_flag& msg)
 				offset_x = 0.0f;
 				offset_y = 0.0f;
 				offset_z = 0.02181490324;
-        TZ = 1;
+				TZ = 1;
 				break;
 
 			case 2:
 				offset_x = 3.27503521586;
 				offset_y = 0.0f;
 				offset_z = 0.02181490324;
-        TZ = 2;
+				TZ = 2;
 				break;
 
 			case 3:
 				offset_x = /*0.0f*/-0.0249647841421;
 				offset_y = 0.0f/*0.01*/;
 				offset_z = /*0.00436330633238*/0.02181490324;
-        TZ = 3;
+				TZ = 3;
 				break;
 
 			default:
