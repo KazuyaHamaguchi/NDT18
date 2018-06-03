@@ -127,8 +127,8 @@ void throw_cb(const std_msgs::Int8& msg)
 		leave = false;
 		judg = false;
 		t = 0.0f;
-    msg_judg.data = 99;
-    pub_judg.publish(msg_judg);
+		msg_judg.data = 99;
+		pub_judg.publish(msg_judg);
 		ROS_INFO("msg_judg false");
 	}
 }
