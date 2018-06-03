@@ -163,7 +163,6 @@ void switch_cb(const nemcon::switch_in& msg)
 			msg_throw.data = 40;	//受け取り待機
 			pub_throw.publish(msg_throw);
 
-			TZ2 = false;
 
 			//cb_flag = true;
 		}
@@ -198,7 +197,6 @@ void switch_cb(const nemcon::switch_in& msg)
 			msg_throw.data = 40;	//受け取り待機
 			pub_throw.publish(msg_throw);
 
-			TZ2 = false;
 
 			//cb_flag = true;
 		}
@@ -232,7 +230,6 @@ void switch_cb(const nemcon::switch_in& msg)
 
 			msg_throw.data = 40;	//受け取り待機
 			pub_throw.publish(msg_throw);
-			TZ2 = false;
 
 			//cb_flag = true;
 		}
@@ -271,7 +268,6 @@ void switch_cb(const nemcon::switch_in& msg)
 
 			msg_throw.data = 40;	//受け取り待機
 			pub_throw.publish(msg_throw);
-			TZ2 = true;
 
 			//cb_flag = true;
 		}
