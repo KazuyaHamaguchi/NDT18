@@ -10,6 +10,7 @@ void lrf_cb(const geometry_msgs::PoseStamped& msg);
 void flag_cb(const nemcon::lrf_flag& msg);
 
 int type = 0;
+int TZ = 0;
 
 bool flag = false;
 bool flag_x = false;
@@ -201,6 +202,17 @@ int main(int argc, char **argv)
 						ROS_INFO("lrf_xy OK");
 						flag_x = true;
 						flag_y = true;
+            if(TZ == 1 || TZ == 2)
+            {
+ 						msg_lrf.data = -50;
+						pub_lrf.publish(msg_lrf);
+						flag = false;
+						flag_x = false;
+						flag_y = false;
+						flag_z = false;
+						first = true;
+            }
+            else;
 					}
 					else
 					{
@@ -314,14 +326,16 @@ void flag_cb(const nemcon::lrf_flag& msg)
 			flag_x = false;
 			flag_y = false;
 			flag_z = false;
-			first = true;
+			first = false;
+      /*msg_pid_param.pattern = 99;
+      pub_tar_dis.publish(msg_pid_param);*/
 		}
 		else
 		{
 			if(!first)
 			{
 				ROS_INFO("lrf_move first!");
-				if(type == 0 || type == 99)
+				if(type == 0)
 				{
 					msg_pid_param.pattern = 99;
 					pub_tar_dis.publish(msg_pid_param);
@@ -353,18 +367,21 @@ void flag_cb(const nemcon::lrf_flag& msg)
 				offset_x = 0.0f;
 				offset_y = 0.0f;
 				offset_z = 0.02181490324;
+        TZ = 1;
 				break;
 
 			case 2:
 				offset_x = 3.27503521586;
 				offset_y = 0.0f;
 				offset_z = 0.02181490324;
+        TZ = 2;
 				break;
 
 			case 3:
 				offset_x = /*0.0f*/-0.0249647841421;
 				offset_y = 0.0f/*0.01*/;
 				offset_z = /*0.00436330633238*/0.02181490324;
+        TZ = 3;
 				break;
 
 			default:
