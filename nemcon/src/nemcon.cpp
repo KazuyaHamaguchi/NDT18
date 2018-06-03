@@ -31,7 +31,6 @@ bool TZ_3_receive = false;
 bool flag_RESET = false;
 
 int TZ = 0;
-bool TZ2 = false;
 int reTZ = 0;
 int pre_TZ = 0;
 
@@ -240,7 +239,7 @@ void switch_cb(const nemcon::switch_in& msg)
 		if(!msg.SZ && !msg.TZ1 && !msg.TZ2 && msg.TZ3 && !msg.SC/* && !cb_flag*/)	//TZ3のみ
 		{
 			first = false;
-      reTZ = 3;
+			reTZ = 3;
 			/*pre_TZ = 3;
 			TZ = 3;
 			TZ_3_receive = true;
@@ -485,7 +484,7 @@ void judg_cb(const std_msgs::Int8& msg)
 
 				case 3:
 					TZ = 3;
-          TZ_3_receive = true;
+					TZ_3_receive = true;
 					acc_move(0, 2.4, 0, 2, 4.8, -1.15, 6.55, 4);
 					ros::Duration(3.769912 + 0.1).sleep();
 					msg_lrf.TZ = 3;
@@ -716,7 +715,6 @@ void reset()
 	TZ = 0;
 	reTZ = 0;
 	pre_TZ = 0;
-  TZ2 = false;
 
 	acc_t = 0.0f;
 
