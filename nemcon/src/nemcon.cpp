@@ -134,7 +134,7 @@ void switch_cb(const nemcon::switch_in& msg)
 		if(msg.SZ && !msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC/* && !cb_flag*/)	//SZから通常通り
 		{
 			first = false;
-      Blue = true;
+      			Blue = false;
 			reTZ = 1;
 			msg_throw.data = 43;
 			pub_throw.publish(msg_throw);
@@ -171,7 +171,7 @@ void switch_cb(const nemcon::switch_in& msg)
 		if(!msg.SZ && msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC/* && !cb_flag*/)	//TZ2受け渡しから→TZ2のみ
 		{
 			first = false;
-      Blue = true;
+      			Blue = false;
 			reTZ = 2;
 			msg_throw.data = 43;
 			pub_throw.publish(msg_throw);
@@ -206,7 +206,7 @@ void switch_cb(const nemcon::switch_in& msg)
 		if(!msg.SZ && !msg.TZ1 && msg.TZ2 && !msg.TZ3 && !msg.SC/* && !cb_flag*/)	//TZ2受け渡しから→TZ3
 		{
 			first = false;
-      Blue = true;
+      			Blue = false;
 			reTZ = 2;
 			msg_throw.data = 43;
 			pub_throw.publish(msg_throw);
@@ -240,7 +240,7 @@ void switch_cb(const nemcon::switch_in& msg)
 		if(!msg.SZ && !msg.TZ1 && !msg.TZ2 && msg.TZ3 && !msg.SC/* && !cb_flag*/)	//TZ3のみ
 		{
 			first = false;
-      Blue = true;
+      			Blue = false;
 			reTZ = 3;
 			/*pre_TZ = 3;
 			TZ = 3;
@@ -283,7 +283,7 @@ void switch_cb(const nemcon::switch_in& msg)
 		{
 			first = false;
 			reTZ = 1;
-      Blue = true;
+      			Blue = truw;
 			msg_throw.data = 43;
 			pub_throw.publish(msg_throw);
 			msg_throw.data = 4;
@@ -313,10 +313,10 @@ void switch_cb(const nemcon::switch_in& msg)
 			msg_throw.data = 40;	//受け取り待機
 			pub_throw.publish(msg_throw);
 		}
-    if(!msg.SZ && msg.TZ1 && !msg.TZ2 && !msg.TZ3 && msg.SC/* && !cb_flag*/)	//Blue TZ2受け渡しから→TZ2のみ
+    		if(!msg.SZ && msg.TZ1 && !msg.TZ2 && !msg.TZ3 && msg.SC/* && !cb_flag*/)	//Blue TZ2受け渡しから→TZ2のみ
 		{
 			first = false;
-      Blue = true;
+      			Blue = true;
 			reTZ = 2;
 			msg_throw.data = 43;
 			pub_throw.publish(msg_throw);
@@ -348,10 +348,10 @@ void switch_cb(const nemcon::switch_in& msg)
 
 			//cb_flag = true;
 		}
-    if(!msg.SZ && !msg.TZ1 && msg.TZ2 && !msg.TZ3 && msg.SC/* && !cb_flag*/)	//Blue TZ2受け渡しから→TZ3
+    		if(!msg.SZ && !msg.TZ1 && msg.TZ2 && !msg.TZ3 && msg.SC/* && !cb_flag*/)	//Blue TZ2受け渡しから→TZ3
 		{
 			first = false;
-      Blue = true;
+			Blue = true;
 			reTZ = 2;
 			msg_throw.data = 43;
 			pub_throw.publish(msg_throw);
@@ -382,10 +382,10 @@ void switch_cb(const nemcon::switch_in& msg)
 
 			//cb_flag = true;
 		}
-    if(!msg.SZ && !msg.TZ1 && !msg.TZ2 && msg.TZ3 && msg.SC/* && !cb_flag*/)	//Blue TZ3のみ
+    		if(!msg.SZ && !msg.TZ1 && !msg.TZ2 && msg.TZ3 && msg.SC/* && !cb_flag*/)	//Blue TZ3のみ
 		{
 			first = false;
-      Blue = true;
+      			Blue = true;
 			reTZ = 3;
 			/*pre_TZ = 3;
 			TZ = 3;
