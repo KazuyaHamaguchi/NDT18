@@ -26,6 +26,7 @@ bool lrf = false;
 bool throw_on = false;
 bool TZ_3 = false;
 bool TZ_3_receive = false;
+bool Blue = false;
 
 
 bool flag_RESET = false;
@@ -133,6 +134,7 @@ void switch_cb(const nemcon::switch_in& msg)
 		if(msg.SZ && !msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC/* && !cb_flag*/)	//SZから通常通り
 		{
 			first = false;
+      Blue = true;
 			reTZ = 1;
 			msg_throw.data = 43;
 			pub_throw.publish(msg_throw);
@@ -169,6 +171,7 @@ void switch_cb(const nemcon::switch_in& msg)
 		if(!msg.SZ && msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC/* && !cb_flag*/)	//TZ2受け渡しから→TZ2のみ
 		{
 			first = false;
+      Blue = true;
 			reTZ = 2;
 			msg_throw.data = 43;
 			pub_throw.publish(msg_throw);
@@ -203,6 +206,7 @@ void switch_cb(const nemcon::switch_in& msg)
 		if(!msg.SZ && !msg.TZ1 && msg.TZ2 && !msg.TZ3 && !msg.SC/* && !cb_flag*/)	//TZ2受け渡しから→TZ3
 		{
 			first = false;
+      Blue = true;
 			reTZ = 2;
 			msg_throw.data = 43;
 			pub_throw.publish(msg_throw);
@@ -236,6 +240,7 @@ void switch_cb(const nemcon::switch_in& msg)
 		if(!msg.SZ && !msg.TZ1 && !msg.TZ2 && msg.TZ3 && !msg.SC/* && !cb_flag*/)	//TZ3のみ
 		{
 			first = false;
+      Blue = true;
 			reTZ = 3;
 			/*pre_TZ = 3;
 			TZ = 3;
@@ -271,11 +276,157 @@ void switch_cb(const nemcon::switch_in& msg)
 
 			//cb_flag = true;
 		}
-		if(!msg.SZ && msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
+
+
+
+		if(msg.SZ && !msg.TZ1 && !msg.TZ2 && !msg.TZ3 && msg.SC) //Blue SZから通常通り
+		{
+			first = false;
+			reTZ = 1;
+      Blue = true;
+			msg_throw.data = 43;
+			pub_throw.publish(msg_throw);
+			msg_throw.data = 4;
+			pub_throw.publish(msg_throw);
+
+			led_flash(0, 0, 2);
+			led_flash(3, 0.1, 0);
+			led_flash(-1, 0, 0);
+
+			//acc_move(0, 1, 0, 0.5, 1.05, 0, 0, 4);	//SZ横
+			//ros::Duration(3.632449 + 0.05).sleep();
+			acc_move(0, 3, 0, 2, 4.5, -0.8, 0, 1);	//TZ1横
+			ros::Duration(3.759942 + 0.1).sleep();
+			acc_move(0, 3, 0, 2, 0.95, -0.8, 4.42, 4);	//TZ1受け渡しポイント
+			ros::Duration(1.772454 + 0.1).sleep();
+
+			msg_throw.data = 30;
+			pub_throw.publish(msg_throw);
+
+			msg_throw.data = 3;
+			pub_throw.publish(msg_throw);
+
+			msg_lrf.flag = true;
+			msg_lrf.type = 1;
+			pub_lrf.publish(msg_lrf);
+
+			msg_throw.data = 40;	//受け取り待機
+			pub_throw.publish(msg_throw);
+		}
+    if(!msg.SZ && msg.TZ1 && !msg.TZ2 && !msg.TZ3 && msg.SC/* && !cb_flag*/)	//Blue TZ2受け渡しから→TZ2のみ
+		{
+			first = false;
+      Blue = true;
+			reTZ = 2;
+			msg_throw.data = 43;
+			pub_throw.publish(msg_throw);
+			msg_throw.data = 4;
+			pub_throw.publish(msg_throw);
+
+			led_flash(0, 0, 2);
+			led_flash(3, 0.1, 0);
+			led_flash(-1, 0, 0);
+
+			acc_move(0, 3, 0, 2, 6.7, -0.7, 0, 1);
+			ros::Duration(4.587882 + 0.1).sleep();
+			acc_move(0, 3, 0, 2, 0.95, -0.7, 6.55, 4);
+			ros::Duration(1.772454 + 0.1).sleep();
+
+			msg_throw.data = 30;
+			pub_throw.publish(msg_throw);
+
+			msg_throw.data = 3;
+			pub_throw.publish(msg_throw);
+
+			msg_lrf.flag = true;
+			msg_lrf.type = 1;
+			pub_lrf.publish(msg_lrf);
+
+			msg_throw.data = 40;	//受け取り待機
+			pub_throw.publish(msg_throw);
+
+
+			//cb_flag = true;
+		}
+    if(!msg.SZ && !msg.TZ1 && msg.TZ2 && !msg.TZ3 && msg.SC/* && !cb_flag*/)	//Blue TZ2受け渡しから→TZ3
+		{
+			first = false;
+      Blue = true;
+			reTZ = 2;
+			msg_throw.data = 43;
+			pub_throw.publish(msg_throw);
+			msg_throw.data = 4;
+			pub_throw.publish(msg_throw);
+
+			led_flash(0, 0, 2);
+			led_flash(3, 0.1, 0);
+			led_flash(-1, 0, 0);
+
+			acc_move(0, 3, 0, 2, 6.7, -0.8/*-1.1*/, 0, 1);	//TZ2横
+			ros::Duration(4.587882 + 0.1).sleep();
+			acc_move(0, 3, 0, 2, 0.95, -0.8/*-1.1*/, 6.55, 4);
+			ros::Duration(1.772454 + 0.1).sleep();
+
+			msg_throw.data = 30;
+			pub_throw.publish(msg_throw);
+
+			msg_throw.data = 3;
+			pub_throw.publish(msg_throw);
+
+			msg_lrf.flag = true;
+			msg_lrf.type = 1;
+			pub_lrf.publish(msg_lrf);
+
+			msg_throw.data = 40;	//受け取り待機
+			pub_throw.publish(msg_throw);
+
+			//cb_flag = true;
+		}
+    if(!msg.SZ && !msg.TZ1 && !msg.TZ2 && msg.TZ3 && msg.SC/* && !cb_flag*/)	//Blue TZ3のみ
+		{
+			first = false;
+      Blue = true;
+			reTZ = 3;
+			/*pre_TZ = 3;
+			TZ = 3;
+			TZ_3_receive = true;
+			//reTZ = 3;
+			TZ_3 = true;*/
+			msg_throw.data = 43;
+			pub_throw.publish(msg_throw);
+			msg_throw.data = 4;
+			pub_throw.publish(msg_throw);
+
+			led_flash(0, 0, 2);
+			led_flash(3, 0.1, 0);
+			led_flash(-1, 0, 0);
+
+			acc_move(0, 3, 0, 2, 6.7, -0.9, 0, 1);	//TZ2横
+			ros::Duration(4.587882 + 0.1).sleep();
+			acc_move(0, 3, 0, 2, 0.95, -0.9, 6.55, 4);
+			ros::Duration(1.772454 + 0.1).sleep();
+
+			msg_throw.data = 30;
+			pub_throw.publish(msg_throw);
+
+			msg_throw.data = 3;
+			pub_throw.publish(msg_throw);
+
+			msg_lrf.flag = true;
+			msg_lrf.type = 1;
+			pub_lrf.publish(msg_lrf);
+
+			msg_throw.data = 40;	//受け取り待機
+			pub_throw.publish(msg_throw);
+
+			//cb_flag = true;
+		}
+		/*if(!msg.SZ && msg.TZ1 && !msg.TZ2 && !msg.TZ3 && !msg.SC && !cb_flag)
 		{
 			led_flash(3, 0.25, 1);
 			cb_flag = true;
-		}
+		}*/
+
 	}
 	end = true;
 }
@@ -490,7 +641,14 @@ void judg_cb(const std_msgs::Int8& msg)
 					break;
 			}
 			msg_lrf.flag = true;
-			msg_lrf.type = 0;
+      if(!Blue)
+      {
+			  msg_lrf.type = 0;
+      }
+      else
+      {
+        msg_lrf.type = 2;
+      }
 			pub_lrf.publish(msg_lrf);
 			msg_throw.data = 41;
 			pub_throw.publish(msg_throw);
@@ -531,7 +689,14 @@ void judg_cb(const std_msgs::Int8& msg)
 			acc_move(0, 3, 0, 2, 2.25, -1.1, 6.55, 4);
 			ros::Duration(2.65868 + 0.1).sleep();
 			msg_lrf.flag = true;
-			msg_lrf.type = 0;
+      if(!Blue)
+      {
+			  msg_lrf.type = 0;
+      }
+      else
+      {
+        msg_lrf.type = 2;
+      }
 			msg_lrf.TZ = 2;
 			pub_lrf.publish(msg_lrf);
 			msg_throw.data = 41;
@@ -544,7 +709,14 @@ void judg_cb(const std_msgs::Int8& msg)
 			acc_move(0, 3, 0, 2, 1.3, -1, 6.55, 4);
 			ros::Duration(2.020908 + 0.1).sleep();
 			msg_lrf.flag = true;
-			msg_lrf.type = 0;
+      if(!Blue)
+      {
+			  msg_lrf.type = 0;
+      }
+      else
+      {
+        msg_lrf.type = 2;
+      }
 			msg_lrf.TZ = 2;
 			pub_lrf.publish(msg_lrf);
 			msg_throw.data = 41;
@@ -705,6 +877,7 @@ void reset()
 	throw_on = false;
 	TZ_3 = false;
 	TZ_3_receive = false;
+  Blue = false;
 
 	flag_RESET = false;
 

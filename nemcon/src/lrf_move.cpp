@@ -23,6 +23,7 @@ float z = 0.0f;
 
 float enc_x = 0.0f;
 float enc_y = 0.0f;
+float gyro_z = 0.0f;
 
 float lrf_x = 0.0f;
 float lrf_y = 0.0f;
@@ -80,6 +81,14 @@ int main(int argc, char **argv)
 			y = enc_y;
 			msg_pid_param.pattern = 1;
 		}
+    else if(type == 2)
+    {
+      x = enc_x;
+      y = enc_y;
+      z = gyro_z;
+      msg_pid_param.pattern = 1;
+    }
+    else;
 
 		if(flag)
 		{
@@ -304,6 +313,7 @@ void pose_cb(const geometry_msgs::PoseStamped& msg)
 {
 	enc_x = msg.pose.position.x;
 	enc_y = msg.pose.position.y;
+  gyro_z = msg.pose.orientation.z;
 }
 
 void lrf_cb(const geometry_msgs::PoseStamped& msg)
@@ -382,6 +392,13 @@ void flag_cb(const nemcon::lrf_flag& msg)
 				TZ = 3;
 				break;
 
+			case 4:
+				offset_x = /*0.0f*/-0.0249647841421;
+				offset_y = 0.0f/*0.01*/;
+				offset_z = /*0.00436330633238*/0.02181490324;
+				TZ = 4;
+				break;
+
 			default:
 				offset_x = 0.0f;
 				offset_y = 0.0f;
@@ -398,4 +415,14 @@ void flag_cb(const nemcon::lrf_flag& msg)
 		offset_x = -2.00f;
 		offset_y = enc_y;
 	}
+  if(type == 2)
+  {
+		flag_x = false;
+		flag_y = false;
+		flag_z = false;
+		first = false;
+		offset_x = enc_x;
+		offset_y = enc_y + 0.09;
+    offset_z = 0.0f;
+  }
 }
