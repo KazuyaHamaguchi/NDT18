@@ -283,7 +283,7 @@ void switch_cb(const nemcon::switch_in& msg)
 		{
 			first = false;
 			reTZ = 1;
-      			Blue = truw;
+      			Blue = true;
 			msg_throw.data = 43;
 			pub_throw.publish(msg_throw);
 			msg_throw.data = 4;
